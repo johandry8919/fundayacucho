@@ -46,13 +46,26 @@ function App() {
     }
   };
 
+  let codigoEstado = 0;
+
+  if(userData) codigoEstado = userData.cod_estado ; else codigoEstado
+
+
+
 
   return (
-    <div className="container-fluid app">
+   <>
+
+    <Header/>
+
+   <div className='sesion'>
+     <div className="card app">
 
     
 
-         <h1 className="mb-4">Sistema de Registro de Becarios</h1>
+         <div className='card-header'>
+          <h1 className="mb-4">Sistema de Registro de Becarios</h1>
+         </div>
       
       {error && (
         <div className="alert alert-danger" role="alert">
@@ -60,23 +73,31 @@ function App() {
         </div>
       )}
       
-      <SearchForm 
+     <div className='card-body'>
+       <SearchForm 
         onSearch={handleSearch} 
         loading={loading}
       />
-      
-      <DataModal
+
+
+       <DataModal
         show={showModal}
         onHide={() => setShowModal(false)}
         initialData={userData}
         onSubmit={handleSubmit}
         loading={loading}
-        
+        idEstadoFiltro={codigoEstado}
       />
+     </div>
+      
+     
 
-      <Footer/>
+     
      
     </div>
+     <Footer/>
+   </div>
+   </>
   );
 }
 

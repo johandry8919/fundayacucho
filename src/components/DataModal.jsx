@@ -7,27 +7,27 @@ function DataModal({ show, onHide, initialData, onSubmit, loading ,idEstadoFiltr
     const [universidades, setUniversidades] = useState([]);
 
   const [formData, setFormData] = useState({
-    nombreCompleto: '',
+    nombre_completo: '',
     cedula: '',
     correo: '',
-    telefonoCelular: '',
-    telefonoAlternativo: '',
-    fechaNacimiento: '',
+    telefono_celular: '',
+    telefono_alternativo: '',
+    fecha_nacimiento: '',
     estado: '',
     municipio: '',
     parroquia: '',
-    tipoBeca: '',
+    tipo_beca: '',
     cod_estado:'',
-    carreraCursada: '',
-    fechaIngreso: '',
-    fechaEgreso: '',
+    carrera_cursada: '',
+    fecha_ingreso: '',
+    fecha_egreso: '',
     titularidad: '',
     idiomas: '',
-    ocupacionActual: '',
+    ocupacion_actual: '',
     universidad: '',
-    becarioInternacionalVenezuela: false,
-    becarioVenezolanoVenezuela: false,
-    becarioVenezolanoExterior: false
+    becario_internacional_venezuela: false,
+    becario_venezolano_venezuela: false,
+    becario_venezolano_exterior: false
   });
 
 
@@ -98,9 +98,9 @@ function DataModal({ show, onHide, initialData, onSubmit, loading ,idEstadoFiltr
 
       setFormData({
         ...formData,
-        nombreCompleto: `${name || ''} ${lastname || ''}`.trim(),
+        nombre_completo: `${name || ''} ${lastname || ''}`.trim(),
         cedula: cedula || '',
-        fechaNacimiento: birthDate || '',
+        fecha_nacimiento: birthDate || '',
         estado: cleanLocationName(name_estado),
         municipio: cleanLocationName(name_municipio),
         parroquia: cleanLocationName(name_parroquia),
@@ -108,26 +108,26 @@ function DataModal({ show, onHide, initialData, onSubmit, loading ,idEstadoFiltr
       });
     } else {
       setFormData({
-        nombreCompleto: '',
+        nombre_completo: '',
         cedula: '',
         correo: '',
-        telefonoCelular: '',
-        telefonoAlternativo: '',
-        fechaNacimiento: '',
+        telefono_celular: '',
+        telefono_alternativo: '',
+        fecha_nacimiento: '',
         estado: '',
         municipio: '',
         parroquia: '',
-        tipoBeca: '',
-        carreraCursada: '',
-        fechaIngreso: '',
-        fechaEgreso: '',
+        tipo_beca: '',
+        carrera_cursada: '',
+        fecha_ingreso: '',
+        fecha_egreso: '',
         titularidad: '',
         idiomas: '',
         cod_estado:'',
-        ocupacionActual: '',
-        becarioInternacionalVenezuela: false,
-        becarioVenezolanoVenezuela: false,
-        becarioVenezolanoExterior: false
+        ocupacion_actual: '',
+        becario_internacional_venezuela: false,
+        becario_venezolano_venezuela: false,
+        becario_venezolano_exterior: false
       });
     }
   }, [initialData]);
@@ -172,8 +172,8 @@ function DataModal({ show, onHide, initialData, onSubmit, loading ,idEstadoFiltr
                       type="text"
                       className="form-control"
                       id="formFullName"
-                      name="nombreCompleto"
-                      value={formData.nombreCompleto}
+                      name="nombre_completo"
+                      value={formData.nombre_completo}
                       onChange={handleChange}
                       required
                     />
@@ -213,8 +213,8 @@ function DataModal({ show, onHide, initialData, onSubmit, loading ,idEstadoFiltr
                       type="tel"
                       className="form-control"
                       id="formPhone"
-                      name="telefonoCelular"
-                      value={formData.telefonoCelular}
+                      name="telefono_celular"
+                      value={formData.telefono_celular}
                       onChange={handleChange}
                       required
                     />
@@ -230,8 +230,8 @@ function DataModal({ show, onHide, initialData, onSubmit, loading ,idEstadoFiltr
                       type="date"
                       className="form-control"
                       id="formBirthDate"
-                      name="fechaNacimiento"
-                      value={formData.fechaNacimiento}
+                      name="fecha_nacimiento"
+                      value={formData.fecha_nacimiento}
                       onChange={handleChange}
                       required
                     />
@@ -314,8 +314,8 @@ function DataModal({ show, onHide, initialData, onSubmit, loading ,idEstadoFiltr
                     <select
                       className="form-select"
                       id="formDegree"
-                      name="tipoBeca"
-                      value={formData.tipoBeca}
+                      name="tipo_beca"
+                      value={formData.tipo_beca}
                       onChange={handleChange}
                       required
                     >
@@ -336,8 +336,8 @@ function DataModal({ show, onHide, initialData, onSubmit, loading ,idEstadoFiltr
                           className="form-check-input"
                           type="checkbox"
                           id="checkInternacional"
-                          name="becarioInternacionalVenezuela"
-                          checked={formData.becarioInternacionalVenezuela}
+                          name="becario_internacional_venezuela"
+                          checked={formData.becario_internacional_venezuela}
                           onChange={handleChange}
                         />
                         <label className="form-check-label" htmlFor="checkInternacional">
@@ -349,8 +349,8 @@ function DataModal({ show, onHide, initialData, onSubmit, loading ,idEstadoFiltr
                           className="form-check-input"
                           type="checkbox"
                           id="checkVenezolanoVzla"
-                          name="becarioVenezolanoVenezuela"
-                          checked={formData.becarioVenezolanoVenezuela}
+                          name="becario_venezolano_venezuela"
+                          checked={formData.becario_venezolano_venezuela}
                           onChange={handleChange}
                         />
                         <label className="form-check-label" htmlFor="checkVenezolanoVzla">
@@ -362,8 +362,8 @@ function DataModal({ show, onHide, initialData, onSubmit, loading ,idEstadoFiltr
                           className="form-check-input"
                           type="checkbox"
                           id="checkVenezolanoExt"
-                          name="becarioVenezolanoExterior"
-                          checked={formData.becarioVenezolanoExterior}
+                          name="becario_venezolano_exterior"
+                          checked={formData.becario_venezolano_exterior}
                           onChange={handleChange}
                         />
                         <label className="form-check-label" htmlFor="checkVenezolanoExt">
@@ -378,8 +378,8 @@ function DataModal({ show, onHide, initialData, onSubmit, loading ,idEstadoFiltr
                       type="text"
                       className="form-control"
                       id="formCareer"
-                      name="carreraCursada"
-                      value={formData.carreraCursada}
+                      name="carrera_cursada"
+                      value={formData.carrera_cursada}
                       onChange={handleChange}
                       required
                     />
@@ -392,8 +392,8 @@ function DataModal({ show, onHide, initialData, onSubmit, loading ,idEstadoFiltr
                       type="date"
                       className="form-control"
                       id="formStartDate"
-                      name="fechaIngreso"
-                      value={formData.fechaIngreso}
+                      name="fecha_ingreso"
+                      value={formData.fecha_ingreso}
                       onChange={handleChange}
                       required
                     />
@@ -405,8 +405,8 @@ function DataModal({ show, onHide, initialData, onSubmit, loading ,idEstadoFiltr
                       type="date"
                       className="form-control"
                       id="formEndDate"
-                      name="fechaEgreso"
-                      value={formData.fechaEgreso}
+                      name="fecha_egreso"
+                      value={formData.fecha_egreso}
                       onChange={handleChange}
                     />
                   </div>
@@ -449,8 +449,8 @@ function DataModal({ show, onHide, initialData, onSubmit, loading ,idEstadoFiltr
                       type="text"
                       className="form-control"
                       id="formOccupation"
-                      name="ocupacionActual"
-                      value={formData.ocupacionActual}
+                      name="ocupacion_actual"
+                      value={formData.ocupacion_actual}
                       onChange={handleChange}
                     />
                   </div>

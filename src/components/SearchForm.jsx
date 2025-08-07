@@ -73,9 +73,9 @@ function SearchForm({ onSearch, loading }) {
       </div>
 
       {/* Botón de búsqueda */}
-      <div className="col-12">
+      <div className="col-12 ">
         <button
-          className="btn btn-primary"
+          className="btn btn-primary w-100"
           type="submit"
           disabled={loading}
         >
