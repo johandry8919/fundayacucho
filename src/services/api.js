@@ -54,6 +54,6 @@ export const searchUser = async (nacionalidad, cedula) => {
 };
 
 export const submitForm = async (formData) => {
-  const response = await api.post('/users/register', formData);
+  const response = await api.post('/register', formData);
   return response.data;
 };
