@@ -64,7 +64,7 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
       try {
         if (!idEstadoFiltro) return; // No cargar si no hay filtro
 
-        const response = await fetch("/fundayacucho/uner.csv");
+        const response = await fetch("/uner.csv");
         const csvData = await response.text();
 
         const lines = csvData.split("\n");
