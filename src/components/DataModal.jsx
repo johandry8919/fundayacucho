@@ -253,6 +253,15 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
           <div className="modal-dialog modal-lg">
             <div className="modal-content">
               {/* Header */}
+              <div className="modal-header">
+               
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={onHide}
+                  aria-label="Close"
+                ></button>
+              </div>
              
 
               {/* Body */}
@@ -563,13 +572,7 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
                         />
                         {formData.latitud && formData.longitud && (
                       
-                           <Marker position={[parseFloat(formData.latitud), parseFloat(formData.longitud)]}>
-                            <Popup>
-                              {formData.estado && <div><strong>Estado:</strong> {formData.estado}</div>}
-                              {formData.municipio && <div><strong>Municipio:</strong> {formData.municipio}</div>}
-                              {formData.parroquia && <div><strong>Parroquia:</strong> {formData.parroquia}</div>}
-                            </Popup>
-                          </Marker>
+                           <Marker position={[parseFloat(formData.latitud), parseFloat(formData.longitud)]}></Marker>
                         )}
                       </MapContainer>
                     </div>
