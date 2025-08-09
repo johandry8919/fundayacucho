@@ -327,8 +327,8 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
                       required
                     >
                       <option value="">Seleccione...</option>
-                      <option value="">Si</option>
-                      <option value="">No</option>
+                      <option value="Si">Si</option>
+                      <option value="No">No</option>
                       
                     </select>
                   </div>
