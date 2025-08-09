@@ -17,12 +17,16 @@ const api = axios.create({
 // Interceptor para manejar errores globalmente
 api.interceptors.response.use(
   response => response,
+
+ 
   error => {
     let errorObj = {
       status: null,
       message: 'Error desconocido',
       originalError: error
     };
+
+     
 
     if (error.response) {
       // Error de servidor (4xx, 5xx)
@@ -53,7 +57,38 @@ export const searchUser = async (nacionalidad, cedula) => {
   return response.data;
 };
 
+export const estado = async () => {
+  const response = await api.get('/get_estado');
+  return response.data;
+};
+
+export const get_municipios = async (codigomunicipio) => {
+  const response = await api.get('/get_municipios' ,{
+     params: {codigomunicipio }
+  })
+  return response.data;
+};
+
+export const get_parroquias = async (codigomunicipio) => {
+  const response = await api.get('/get_parroquias' ,{
+     params: {codigomunicipio }
+  })
+  return response.data;
+};
+
+
+
+
+
+
+
 export const submitForm = async (formData) => {
   const response = await api.post('/register', formData);
-  return response.data;
+
+  if(response.data.status == 500){
+     return response.data
+  }else return response.data;
+  
+
+ 
 };

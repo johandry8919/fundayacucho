@@ -6,7 +6,7 @@ import Footer from './components/Footer';
 import { searchUser, submitForm } from './services/api';
 import '../src/styles/App.css';
 import Header from './components/Header';
-
+import Swal from 'sweetalert2'
 
 
 function App() {
@@ -18,7 +18,6 @@ function App() {
   const handleSearch = async (nationality, idNumber) => {
     setLoading(true);
     setError(null);
-    
     try {
       const response = await searchUser(nationality, idNumber);
       setUserData(response.data);
@@ -31,14 +30,31 @@ function App() {
   };
 
   const handleSubmit = async (formData) => {
+
     setLoading(true);
     setError(null);
     
     try {
-      await submitForm(formData);
+     let data =  await submitForm(formData);
       setShowModal(false);
-      // Puedes mostrar un mensaje de éxito aquí
-      alert('¡Formulario enviado con éxito!');
+
+      console.log(data.status)
+
+      if(data.status == 500) {
+         Swal.fire({
+        title: "La cédula ya se encuentra Registrada",
+        icon: "error",
+        draggable: true
+      });
+
+      }else{ Swal.fire({
+        title: "¡Los datos Registrado con éxito!",
+        icon: "success",
+        draggable: true
+      });}
+
+   
+    
     } catch (err) {
       setError(err.message || 'Error al enviar el formulario.');
     } finally {
@@ -60,11 +76,8 @@ function App() {
 
    <div className='sesion'>
      <div className="card app">
-
-    
-
-         <div className='card-header'>
-          <h1 className="mb-4">Sistema de Registro de Becarios</h1>
+         <div className='card-title'>
+          <h1 className="mb-4">Registro de Egresados Fundayacucho</h1>
          </div>
       
       {error && (

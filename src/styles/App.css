@@ -2,7 +2,11 @@
   max-width:800px;
   margin: 0 auto;
   padding: 2rem;
-  border:  solid 1px red;
+   font-family: "Tinos", serif;
+  font-weight: 400;
+  font-style: normal;
+
+  box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
 
 }
 

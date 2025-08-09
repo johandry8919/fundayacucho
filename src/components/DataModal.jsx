@@ -1,10 +1,24 @@
 import { useState, useEffect } from 'react';
+import '../../src/styles/modal.css';
+import { estado ,get_municipios ,get_parroquias} from '../services/api';
+import 'leaflet/dist/leaflet.css';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+
+
 
 const SCHOLARSHIP_TYPES = ['Nacional', 'Internacional'];
 const DEGREE_TYPES = ['Pre-grado', 'Maestría', 'Doctorado', 'Postgrado'];
 
-function DataModal({ show, onHide, initialData, onSubmit, loading ,idEstadoFiltro= 21}) {
+function DataModal({ show, onHide, initialData, onSubmit, loading}) {
     const [universidades, setUniversidades] = useState([]);
+  const [estados, setEstado] = useState([]);
+   const [municipios, setMunicipio] = useState([]);
+  const [parroquias, setParroquia] = useState([]);
+
+
+  const [mapCenter, setMapCenter] = useState([6.4238, -66.5897]); // Centro de Venezuela por defecto
+  const [zoomLevel, setZoomLevel] = useState(5);
+
 
   const [formData, setFormData] = useState({
     nombre_completo: '',
@@ -25,25 +39,53 @@ function DataModal({ show, onHide, initialData, onSubmit, loading ,idEstadoFiltr
     idiomas: '',
     ocupacion_actual: '',
     universidad: '',
-    becario_internacional_venezuela: false,
-    becario_venezolano_venezuela: false,
-    becario_venezolano_exterior: false
+    becario_tipo:'',
+    codigoestado: '',
+    codigomunicipio: '',
+    codigoparroquia: '',
+    latitud: '',
+    longitud : '',
+    direccion: '',
+    codigoestado2: ''
+  
+
   });
 
 
+
+
+    let idEstadoFiltro=formData.codigoestado2
+
+
+
+ 
+   const SubmitEstado = async () => {
+   
+     try {
+      let data =  await estado();
+      setEstado(data)
+     } catch (err) {
+       console.log(err)
+     } finally {
+      console.log('asasd')
+     }
+   };
+
+
    useEffect(() => {
+    SubmitEstado()
     const loadUniversidades = async () => {
       try {
         if (!idEstadoFiltro) return; // No cargar si no hay filtro
         
-        const response = await fetch('/uner.csv');
+        const response = await fetch('/fundayacucho/uner.csv');
         const csvData = await response.text();
         
         const lines = csvData.split('\n');
         const headers = lines[0].split(',');
         
         const nomEstIndex = headers.indexOf('nomb_uni');
-        const idEstadoIndex = headers.indexOf('id_est');
+        const idEstadoIndex = headers.indexOf('id_est-2');
         
         if (nomEstIndex === -1 || idEstadoIndex === -1) {
           console.error('Columnas requeridas no encontradas en el CSV');
@@ -125,20 +167,81 @@ function DataModal({ show, onHide, initialData, onSubmit, loading ,idEstadoFiltr
         idiomas: '',
         cod_estado:'',
         ocupacion_actual: '',
-        becario_internacional_venezuela: false,
-        becario_venezolano_venezuela: false,
-        becario_venezolano_exterior: false
+        becario_tipo:'',
+        codigoestado: '',
+        codigomunicipio: '',
+        codigoparroquia: '',
+        latitud: '',
+        longitud : '',
+        direccion: '',
+        codigoestado2:''
       });
     }
   }, [initialData]);
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
+  console.log(formData)
+
+
+const handleChange = (e) => {
+  const { name, value} = e.target;
+  
+  setFormData(prev => {
+    const newData = {
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }));
-  };
+      [name]:  value
+    };
+
+  
+    if (e.target.tagName === 'SELECT') {
+      const selectedOption = e.target.options[e.target.selectedIndex];
+      const lat = selectedOption.getAttribute('latitud');
+      const lng = selectedOption.getAttribute('longitud');
+      
+      if (lat && lng) {
+        newData.latitud = lat;
+        newData.longitud = lng;
+        
+   
+        setMapCenter([parseFloat(lat), parseFloat(lng)]);
+        setZoomLevel(name === 'codigoestado' ? 7 : name === 'codigomunicipio' ? 10 : 12);
+      }
+    }
+
+
+    if (name === 'codigoestado') {
+      get_municipio(value);
+    }
+
+    if (name === 'codigomunicipio') {
+      get_parroquia(value);
+
+    }
+
+    return newData;
+  });
+};
+
+ const get_municipio = async (codigomunicipio) => {
+  try {
+    setMunicipio(null); 
+    const data = await get_municipios(codigomunicipio);
+    setMunicipio(data);
+  } catch (err) {
+    console.error("Error al obtener municipios:", err);
+    setMunicipio(null);
+  }
+};
+
+ const get_parroquia = async (codigomunicipio) => {
+  try {
+    setParroquia(null); 
+    const data = await get_parroquias(codigomunicipio);
+    setParroquia(data);
+  } catch (err) {
+    console.error("Error al obtener municipios:", err);
+    setParroquia(null);
+  }
+};
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -146,8 +249,8 @@ function DataModal({ show, onHide, initialData, onSubmit, loading ,idEstadoFiltr
   };
 
   // Clase condicional para mostrar el modal
-  const modalClass = show ? 'modal fade show d-block' : 'modal fade';
-  const backdropClass = show ? 'modal-backdrop fade show' : '';
+  const modalClass = show ? 'modal fade show d-block fondo' : 'modal fade';
+  const backdropClass = show ? 'modal-backdrop fade show fondo' : '';
 
   return (
     <>
@@ -164,6 +267,8 @@ function DataModal({ show, onHide, initialData, onSubmit, loading ,idEstadoFiltr
 
               {/* Body */}
               <div className="modal-body">
+
+              <h5 className="mt-4 mb-3">Datos Personales</h5>
                 <form onSubmit={handleSubmit} className="row g-3">
                   {/* Nombres y cédula */}
                   <div className="col-md-6">
@@ -191,6 +296,20 @@ function DataModal({ show, onHide, initialData, onSubmit, loading ,idEstadoFiltr
                       required
                     />
                     <div className="invalid-feedback">Por favor ingrese la cédula o pasaporte.</div>
+                  </div>
+
+                  <div className="col-md-12">
+                    <label htmlFor="formBirthDate" className="form-label">Fecha de nacimiento</label>
+                    <input
+                      type="date"
+                      className="form-control"
+                      id="formBirthDate"
+                      name="fecha_nacimiento"
+                      value={formData.fecha_nacimiento}
+                      onChange={handleChange}
+                      required
+                    />
+                    <div className="invalid-feedback">Por favor seleccione una fecha.</div>
                   </div>
 
                   {/* Correo y teléfono */}
@@ -221,67 +340,254 @@ function DataModal({ show, onHide, initialData, onSubmit, loading ,idEstadoFiltr
                     <div className="invalid-feedback">Por favor ingrese un número de contacto.</div>
                   </div>
 
-                  {/* Información Personal */}
-                  <h5 className="mt-4 mb-3">Información Personal</h5>
+
+                  
+
 
                   <div className="col-md-4">
-                    <label htmlFor="formBirthDate" className="form-label">Fecha de nacimiento</label>
-                    <input
-                      type="date"
-                      className="form-control"
-                      id="formBirthDate"
-                      name="fecha_nacimiento"
-                      value={formData.fecha_nacimiento}
+                    <label htmlFor="codigoestado" className="form-label">
+                      Estado
+                    </label>
+                    <select
+                      className="form-select"
+                      id="codigoestado"
+                      name="codigoestado"
+                      value={formData.codigoestado}
                       onChange={handleChange}
+                     
                       required
-                    />
-                    <div className="invalid-feedback">Por favor seleccione una fecha.</div>
+                    >
+                      <option value="">Seleccione...</option>
+                      {estados.data.map((stad) => (
+                        <option 
+                        key={stad.codigoestado}
+                         value={stad.codigoestado}
+                           latitud={stad.latitud}
+                           longitud={stad.longitud}
+                           
+                         >
+                          {stad.nombre}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="invalid-feedback">
+                      Por favor seleccione una universidad.
+                    </div>
                   </div>
                   <div className="col-md-4">
-                    <label htmlFor="formState" className="form-label">Estado de nacimiento</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="formState"
-                      name="estado"
-                      value={formData.estado}
+                    <label htmlFor="municipio" className="form-label">
+                      municipio
+                    </label>
+                    <select
+                      className="form-select"
+                      id="municipio"
+                      name="codigomunicipio"
+                      value={formData.codigomunicipio}
                       onChange={handleChange}
-                      readOnly
                       required
-                    />
-                    <div className="invalid-feedback">El estado es obligatorio.</div>
+                    >
+                      <option value="">Seleccione...</option>
+                        {!municipios ? (
+                          <option value="" disabled>Cargando municipios...</option>
+                        ) : municipios.data?.length > 0 ? (
+                          municipios.data.map((muni) => (
+                            <option 
+                            key={muni.codigomunicipio}
+                             value={muni.codigomunicipio}
+                             latitud={muni.latitud}
+                           longitud={muni.longitud}
+                             >
+                              {muni.nombre}
+                            </option>
+                          ))
+                        ) : (
+                          <option value="" disabled>No hay municipios disponibles</option>
+                        )}
+                    </select>
+                    <div className="invalid-feedback">
+                      Por favor seleccione una universidad.
+                    </div>
                   </div>
-                  <div className="col-md-4">
-                    <label htmlFor="formMunicipality" className="form-label">Municipio</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="formMunicipality"
-                      name="municipio"
-                      value={formData.municipio}
+
+                   <div className="col-md-4">
+                    <label htmlFor="municipio" className="form-label">
+                      Parroquia
+                    </label>
+                    <select
+                      className="form-select"
+                      id="codigoparroquia"
+                      name="codigoparroquia"
+                      value={formData.codigoparroquia}
                       onChange={handleChange}
-                      readOnly
                       required
-                    />
-                    <div className="invalid-feedback">El municipio es obligatorio.</div>
+                    >
+                      <option value="">Seleccione...</option>
+                        {!parroquias ? (
+                          <option value="" disabled>Cargando municipios...</option>
+                        ) : parroquias.data?.length > 0 ? (
+                          parroquias.data.map((muni) => (
+                            <option
+
+                             key={muni.codigoparroquia} 
+                             value={muni.codigoparroquia}
+                              latitud={muni.latitud}
+                           longitud={muni.longitud}
+                             >
+                            {muni.nombre}
+                            </option>
+                          ))
+                        ) : (
+                          <option value="" disabled>No hay parroquias disponibles</option>
+                        )}
+                    </select>
+                    <div className="invalid-feedback">
+                      Por favor seleccione una universidad.
+                    </div>
                   </div>
-                  <div className="col-12">
-                    <label htmlFor="formParish" className="form-label">Parroquia</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="formParish"
-                      name="parroquia"
-                      value={formData.parroquia}
-                      onChange={handleChange}
-                      readOnly
-                      required
-                    />
-                    <div className="invalid-feedback">La parroquia es obligatoria.</div>
+
+                  <h5>Dirección en Venezuela</h5>
+                  <div >
+                    <textarea className='col-12'  value={formData.direccion}
+                      onChange={handleChange} rows="4" cols="80" name="direccion" id="direccion"></textarea>
                   </div>
+
+                   <div className="col-12 mt-4">
+                    <h5 className="mb-3">Ubicación seleccionada</h5>
+                    <div style={{ height: '300px', width: '100%', borderRadius: '8px', overflow: 'hidden' }}>
+                     <MapContainer 
+                      center={mapCenter} 
+                      zoom={zoomLevel} 
+                      style={{ height: '100%', width: '100%' }}
+                      dragging={false}          // Deshabilita arrastrar el mapa
+                      touchZoom={false}         // Deshabilita zoom con gestos táctiles
+                      doubleClickZoom={false}   // Deshabilita zoom con doble click
+                      scrollWheelZoom={false}   // Deshabilita zoom con rueda del mouse
+                      zoomControl={false}       // Oculta los controles de zoom
+                      tap={false}               // Deshabilita interacciones táctiles
+                    >
+                      <TileLayer
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                      />
+                      {formData.latitud && formData.longitud && (
+                        <Marker position={[parseFloat(formData.latitud), parseFloat(formData.longitud)]}>
+                          
+                        </Marker>
+                      )}
+                    </MapContainer>
+                    </div>
+                  </div>
+                 
+                  
+                 
+
+                  <h5 className="mt-4 mb-3">Información Académica</h5>
+
+
+              
 
                   {/* Información Académica */}
-                  <h5 className="mt-4 mb-3">Información Académica</h5>
+
+
+                
+
+                  <div className="col-md-6">
+                    <label htmlFor="formDegree" className="form-label">Tipo de beca</label>
+                    <select
+                      className="form-select"
+                      id="formDegree"
+                      name="tipo_beca"
+                      value={formData.tipo_beca}
+                      onChange={handleChange}
+                      required
+                    >
+                      <option value="">Seleccione...</option>
+                      {SCHOLARSHIP_TYPES.map((type) => (
+                        <option key={type} value={type}>{type}</option>
+                      ))}
+                    </select>
+                    <div className="invalid-feedback">Seleccione un tipo de beca.</div>
+                  </div>
+
+                       <div className="col-6 ">
+                    <label className="form-label">Tipo de becario</label>
+                    <div className="d-flex flex-wrap gap-3">
+                     <div className="form-check">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              id="checkInternacional"
+                              name="becario_tipo"  // Mismo nombre para todos los radios
+                              value="internacional"
+                              checked={formData.becario_tipo === "internacional"}
+                              onChange={handleChange}
+                            />
+                            <label className="form-check-label" htmlFor="checkInternacional">
+                              Becario Internacional en Venezuela
+                            </label>
+                          </div>
+                          <div className="form-check">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              id="checkVenezolanoVzla"
+                              name="becario_tipo"  // Mismo nombre para todos los radios
+                              value="venezolano_venezuela"
+                              checked={formData.becario_tipo === "venezolano_venezuela"}
+                              onChange={handleChange}
+                            />
+                            <label className="form-check-label" htmlFor="checkVenezolanoVzla">
+                              Becario Venezolano en Venezuela
+                            </label>
+                          </div>
+                          <div className="form-check">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              id="checkVenezolanoExt"
+                              name="becario_tipo"  // Mismo nombre para todos los radios
+                              value="venezolano_exterior"
+                              checked={formData.becario_tipo === "venezolano_exterior"}
+                              onChange={handleChange}
+                            />
+                            <label className="form-check-label" htmlFor="checkVenezolanoExt">
+                              Becario Venezolano en el Exterior
+                            </label>
+                          </div>
+                    </div>
+                  </div>
+
+                  
+
+                    <div className="col-md-6">
+                    <label htmlFor="codigoestado2" className="form-label">
+                      Estado de Venezuela de donde se postuló
+                    </label>
+                    <select
+                      className="form-select"
+                      id="codigoestado2"
+                      name="codigoestado2"
+                      value={formData.codigoestado2}
+                      onChange={handleChange}
+                     
+                      required
+                    >
+                      <option value="">Seleccione...</option>
+                      {estados.data.map((stad) => (
+                        <option 
+                        key={stad.codigoestado}
+                         value={stad.codigoestado}
+                    
+                         >
+                          {stad.nombre}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="invalid-feedback">
+                      Por favor seleccione una universidad.
+                    </div>
+                  </div>
+                 
 
     
                   <div className="col-md-6">
@@ -309,69 +615,7 @@ function DataModal({ show, onHide, initialData, onSubmit, loading ,idEstadoFiltr
                   </div>
                                 
 
-                  <div className="col-md-6">
-                    <label htmlFor="formDegree" className="form-label">Tipo de beca</label>
-                    <select
-                      className="form-select"
-                      id="formDegree"
-                      name="tipo_beca"
-                      value={formData.tipo_beca}
-                      onChange={handleChange}
-                      required
-                    >
-                      <option value="">Seleccione...</option>
-                      {SCHOLARSHIP_TYPES.map((type) => (
-                        <option key={type} value={type}>{type}</option>
-                      ))}
-                    </select>
-                    <div className="invalid-feedback">Seleccione un tipo de beca.</div>
-                  </div>
-
-
-                  <div className="col-6 ">
-                    <label className="form-label">Tipo de becario</label>
-                    <div className="d-flex flex-wrap gap-3">
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          id="checkInternacional"
-                          name="becario_internacional_venezuela"
-                          checked={formData.becario_internacional_venezuela}
-                          onChange={handleChange}
-                        />
-                        <label className="form-check-label" htmlFor="checkInternacional">
-                          Becario Internacional en Venezuela
-                        </label>
-                      </div>
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          id="checkVenezolanoVzla"
-                          name="becario_venezolano_venezuela"
-                          checked={formData.becario_venezolano_venezuela}
-                          onChange={handleChange}
-                        />
-                        <label className="form-check-label" htmlFor="checkVenezolanoVzla">
-                          Becario Venezolano en Venezuela
-                        </label>
-                      </div>
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          id="checkVenezolanoExt"
-                          name="becario_venezolano_exterior"
-                          checked={formData.becario_venezolano_exterior}
-                          onChange={handleChange}
-                        />
-                        <label className="form-check-label" htmlFor="checkVenezolanoExt">
-                          Becario Venezolano en Exterior
-                        </label>
-                      </div>
-                    </div>
-                  </div>
+               
                   <div className="col-md-6">
                     <label htmlFor="formCareer" className="form-label">Carrera cursada</label>
                     <input
@@ -386,7 +630,7 @@ function DataModal({ show, onHide, initialData, onSubmit, loading ,idEstadoFiltr
                     <div className="invalid-feedback">Por favor ingrese la carrera.</div>
                   </div>
 
-                  <div className="col-md-4">
+                  <div className="col-md-6">
                     <label htmlFor="formStartDate" className="form-label">Fecha de ingreso</label>
                     <input
                       type="date"
@@ -399,7 +643,7 @@ function DataModal({ show, onHide, initialData, onSubmit, loading ,idEstadoFiltr
                     />
                     <div className="invalid-feedback">Seleccione una fecha de ingreso.</div>
                   </div>
-                  <div className="col-md-4">
+                  <div className="col-md-6">
                     <label htmlFor="formEndDate" className="form-label">Fecha de egreso</label>
                     <input
                       type="date"
@@ -410,7 +654,7 @@ function DataModal({ show, onHide, initialData, onSubmit, loading ,idEstadoFiltr
                       onChange={handleChange}
                     />
                   </div>
-                  <div className="col-md-4">
+                  <div className="col-md-6">
                     <label htmlFor="formDegreeType" className="form-label">Titularidad</label>
                     <select
                       className="form-select"
@@ -427,6 +671,8 @@ function DataModal({ show, onHide, initialData, onSubmit, loading ,idEstadoFiltr
                     </select>
                     <div className="invalid-feedback">Seleccione la titularidad.</div>
                   </div>
+
+
 
                   {/* Información Adicional */}
                   <h5 className="mt-4 mb-3">Información Adicional</h5>
@@ -457,7 +703,12 @@ function DataModal({ show, onHide, initialData, onSubmit, loading ,idEstadoFiltr
 
                   
 
-                  {/* Botones */}
+              
+
+                  {/* Mapa interactivo */}
+                 
+
+                      {/* Botones */}
                   <div className="col-12 text-end mt-4">
                     <button type="button" className="btn btn-secondary me-2" onClick={onHide}>
                       Cancelar
@@ -473,7 +724,7 @@ function DataModal({ show, onHide, initialData, onSubmit, loading ,idEstadoFiltr
                       )}
                     </button>
                   </div>
-                </form>
+                                  </form>
               </div>
             </div>
           </div>

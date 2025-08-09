@@ -2,35 +2,14 @@ import React from 'react'
 
 export default function Footer() {
   return (
-   <footer class="py-3 my-4">
-  <ul class="nav justify-content-center border-bottom pb-3 mb-3">
-    <li class="nav-item">
-      <a href="#" class="nav-link px-2 text-body-secondary">
-        Home
-      </a>
-    </li>
-    <li class="nav-item">
-      <a href="#" class="nav-link px-2 text-body-secondary">
-        Features
-      </a>
-    </li>
-    <li class="nav-item">
-      <a href="#" class="nav-link px-2 text-body-secondary">
-        Pricing
-      </a>
-    </li>{" "}
-    <li class="nav-item">
-      <a href="#" class="nav-link px-2 text-body-secondary">
-        FAQs
-      </a>
-    </li>{" "}
-    <li class="nav-item">
-      <a href="#" class="nav-link px-2 text-body-secondary">
-        About
-      </a>
-    </li>{" "}
-  </ul>{" "}
-  <p class="text-center text-body-secondary">© 2025 Company, Inc</p>{" "}
+   <footer className="py-3 my-4 text-white">
+    <div className="text-center p-4">
+                © 2025 Copyright:
+                <a className="text-reset fw-bold" href="index.php">
+                  <img width={40} src="https://fundayacucho.gob.ve/img/logo50ani.ico" alt=""  className="rounded-pill"/> 
+                      fundayacucho.gob.ve</a>
+                      <p>Direción General de Tecnología de la Información  </p>
+      </div>
 </footer>
 
   )

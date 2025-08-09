@@ -1,0 +1,5 @@
+.fondo{
+background-image: url('/public/img/fondo.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+}
