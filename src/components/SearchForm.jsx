@@ -1,13 +1,13 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 const COUNTRIES = [
-  { value: 'V', label: 'Venezolano' },
-  { value: 'E', label: 'Extranjero' },
+  { value: "V", label: "Venezolano" },
+  { value: "E", label: "Extranjero" },
 ];
 
 function SearchForm({ onSearch, loading }) {
-  const [nationality, setNationality] = useState('');
-  const [idNumber, setIdNumber] = useState('');
+  const [nationality, setNationality] = useState("");
+  const [idNumber, setIdNumber] = useState("");
   const [validated, setValidated] = useState(false);
 
   const handleSubmit = (e) => {
@@ -25,7 +25,9 @@ function SearchForm({ onSearch, loading }) {
 
   return (
     <form
-      className={`row g-1 needs-validation ${validated ? 'was-validated' : ''}  `}
+      className={`row g-1 needs-validation ${
+        validated ? "was-validated" : ""
+      }  `}
       onSubmit={handleSubmit}
       noValidate
     >
@@ -35,7 +37,9 @@ function SearchForm({ onSearch, loading }) {
           Nacionalidad
         </label>
         <select
-          className={`form-select ${validated && !nationality ? 'is-invalid' : ''}`}
+          className={`form-select ${
+            validated && !nationality ? "is-invalid" : ""
+          }`}
           id="nationality"
           value={nationality}
           onChange={(e) => setNationality(e.target.value)}
@@ -60,7 +64,9 @@ function SearchForm({ onSearch, loading }) {
         </label>
         <input
           type="text"
-          className={`form-control ${validated && !idNumber ? 'is-invalid' : ''}`}
+          className={`form-control ${
+            validated && !idNumber ? "is-invalid" : ""
+          }`}
           id="idNumber"
           placeholder="Ingrese su número de identificación"
           value={idNumber}
@@ -89,7 +95,7 @@ function SearchForm({ onSearch, loading }) {
               <span className="ms-2">Buscando...</span>
             </>
           ) : (
-            'Buscar'
+            "Buscar"
           )}
         </button>
       </div>

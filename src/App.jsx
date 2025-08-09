@@ -1,13 +1,12 @@
 // App.jsx
-import { useState } from 'react';
-import SearchForm from './components/SearchForm';
-import DataModal from './components/DataModal';
-import Footer from './components/Footer';
-import { searchUser, submitForm } from './services/api';
-import '../src/styles/App.css';
-import Header from './components/Header';
-import Swal from 'sweetalert2'
-
+import { useState } from "react";
+import SearchForm from "./components/SearchForm";
+import DataModal from "./components/DataModal";
+import Footer from "./components/Footer";
+import { searchUser, submitForm } from "./services/api";
+import "../src/styles/App.css";
+import Header from "./components/Header";
+import Swal from "sweetalert2";
 
 function App() {
   const [showModal, setShowModal] = useState(false);
@@ -23,40 +22,37 @@ function App() {
       setUserData(response.data);
       setShowModal(true);
     } catch (err) {
-      setError(err.message || 'Error al buscar los datos. Por favor intente nuevamente.');
+      setError(
+        err.message ||
+          "Error al buscar los datos. Por favor intente nuevamente."
+      );
     } finally {
       setLoading(false);
     }
   };
 
   const handleSubmit = async (formData) => {
-
     setLoading(true);
     setError(null);
-    
+
     try {
-     let data =  await submitForm(formData);
+      let data = await submitForm(formData);
       setShowModal(false);
-
-      console.log(data.status)
-
-      if(data.status == 500) {
-         Swal.fire({
-        title: "La cédula ya se encuentra Registrada",
-        icon: "error",
-        draggable: true
-      });
-
-      }else{ Swal.fire({
-        title: "¡Los datos Registrado con éxito!",
-        icon: "success",
-        draggable: true
-      });}
-
-   
-    
+      if (data.status == 500) {
+        Swal.fire({
+          title: "La cédula ya se encuentra Registrada",
+          icon: "error",
+          draggable: true,
+        });
+      } else {
+        Swal.fire({
+          title: "¡Los datos Registrado con éxito!",
+          icon: "success",
+          draggable: true,
+        });
+      }
     } catch (err) {
-      setError(err.message || 'Error al enviar el formulario.');
+      setError(err.message || "Error al enviar el formulario.");
     } finally {
       setLoading(false);
     }
@@ -64,53 +60,41 @@ function App() {
 
   let codigoEstado = 0;
 
-  if(userData) codigoEstado = userData.cod_estado ; else codigoEstado
-
-
-
+  if (userData) codigoEstado = userData.cod_estado;
+  else codigoEstado;
 
   return (
-   <>
+    <>
+      <Header />
 
-    <Header/>
+      <div className="sesion">
+        <div className="card app">
+          <div className="card-title">
+            <h1 className="mb-4">Registro de Egresados Fundayacucho</h1>
+          </div>
 
-   <div className='sesion'>
-     <div className="card app">
-         <div className='card-title'>
-          <h1 className="mb-4">Registro de Egresados Fundayacucho</h1>
-         </div>
-      
-      {error && (
-        <div className="alert alert-danger" role="alert">
-          {error}
+          {error && (
+            <div className="alert alert-danger" role="alert">
+              {error}
+            </div>
+          )}
+
+          <div className="card-body">
+            <SearchForm onSearch={handleSearch} loading={loading} />
+
+            <DataModal
+              show={showModal}
+              onHide={() => setShowModal(false)}
+              initialData={userData}
+              onSubmit={handleSubmit}
+              loading={loading}
+              idEstadoFiltro={codigoEstado}
+            />
+          </div>
         </div>
-      )}
-      
-     <div className='card-body'>
-       <SearchForm 
-        onSearch={handleSearch} 
-        loading={loading}
-      />
-
-
-       <DataModal
-        show={showModal}
-        onHide={() => setShowModal(false)}
-        initialData={userData}
-        onSubmit={handleSubmit}
-        loading={loading}
-        idEstadoFiltro={codigoEstado}
-      />
-     </div>
-      
-     
-
-     
-     
-    </div>
-     <Footer/>
-   </div>
-   </>
+        <Footer />
+      </div>
+    </>
   );
 }
 

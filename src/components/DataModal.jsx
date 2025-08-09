@@ -1,125 +1,112 @@
-import { useState, useEffect } from 'react';
-import '../../src/styles/modal.css';
-import { estado ,get_municipios ,get_parroquias} from '../services/api';
-import 'leaflet/dist/leaflet.css';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { useState, useEffect } from "react";
+import "../../src/styles/modal.css";
+import { estado, get_municipios, get_parroquias } from "../services/api";
+import "leaflet/dist/leaflet.css";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 
+const SCHOLARSHIP_TYPES = ["Nacional", "Internacional"];
+const DEGREE_TYPES = ["Pre-grado", "Maestría", "Doctorado", "Postgrado"];
 
-
-const SCHOLARSHIP_TYPES = ['Nacional', 'Internacional'];
-const DEGREE_TYPES = ['Pre-grado', 'Maestría', 'Doctorado', 'Postgrado'];
-
-function DataModal({ show, onHide, initialData, onSubmit, loading}) {
-    const [universidades, setUniversidades] = useState([]);
+function DataModal({ show, onHide, initialData, onSubmit, loading }) {
+  const [universidades, setUniversidades] = useState([]);
   const [estados, setEstado] = useState([]);
-   const [municipios, setMunicipio] = useState([]);
+  const [municipios, setMunicipio] = useState([]);
   const [parroquias, setParroquia] = useState([]);
-
 
   const [mapCenter, setMapCenter] = useState([6.4238, -66.5897]); // Centro de Venezuela por defecto
   const [zoomLevel, setZoomLevel] = useState(5);
 
-
   const [formData, setFormData] = useState({
-    nombre_completo: '',
-    cedula: '',
-    correo: '',
-    telefono_celular: '',
-    telefono_alternativo: '',
-    fecha_nacimiento: '',
-    estado: '',
-    municipio: '',
-    parroquia: '',
-    tipo_beca: '',
-    cod_estado:'',
-    carrera_cursada: '',
-    fecha_ingreso: '',
-    fecha_egreso: '',
-    titularidad: '',
-    idiomas: '',
-    ocupacion_actual: '',
-    universidad: '',
-    becario_tipo:'',
-    codigoestado: '',
-    codigomunicipio: '',
-    codigoparroquia: '',
-    latitud: '',
-    longitud : '',
-    direccion: '',
-    codigoestado2: ''
-  
-
+    nombre_completo: "",
+    cedula: "",
+    correo: "",
+    telefono_celular: "",
+    telefono_alternativo: "",
+    fecha_nacimiento: "",
+    estado: "",
+    municipio: "",
+    parroquia: "",
+    tipo_beca: "",
+    cod_estado: "",
+    carrera_cursada: "",
+    fecha_ingreso: "",
+    fecha_egreso: "",
+    titularidad: "",
+    idiomas: "",
+    ocupacion_actual: "",
+    universidad: "",
+    becario_tipo: "",
+    codigoestado: "",
+    codigomunicipio: "",
+    codigoparroquia: "",
+    latitud: "",
+    longitud: "",
+    direccion: "",
+    codigoestado2: "",
   });
 
+  let idEstadoFiltro = formData.codigoestado2;
 
+  const SubmitEstado = async () => {
+    try {
+      let data = await estado();
+      setEstado(data);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      console.log("asasd");
+    }
+  };
 
-
-    let idEstadoFiltro=formData.codigoestado2
-
-
-
- 
-   const SubmitEstado = async () => {
-   
-     try {
-      let data =  await estado();
-      setEstado(data)
-     } catch (err) {
-       console.log(err)
-     } finally {
-      console.log('asasd')
-     }
-   };
-
-
-   useEffect(() => {
-    SubmitEstado()
+  useEffect(() => {
+    SubmitEstado();
     const loadUniversidades = async () => {
       try {
         if (!idEstadoFiltro) return; // No cargar si no hay filtro
-        
-        const response = await fetch('/fundayacucho/uner.csv');
+
+        const response = await fetch("/fundayacucho/uner.csv");
         const csvData = await response.text();
-        
-        const lines = csvData.split('\n');
-        const headers = lines[0].split(',');
-        
-        const nomEstIndex = headers.indexOf('nomb_uni');
-        const idEstadoIndex = headers.indexOf('id_est-2');
-        
+
+        const lines = csvData.split("\n");
+        const headers = lines[0].split(",");
+
+        const nomEstIndex = headers.indexOf("nomb_uni");
+        const idEstadoIndex = headers.indexOf("id_est-2");
+
         if (nomEstIndex === -1 || idEstadoIndex === -1) {
-          console.error('Columnas requeridas no encontradas en el CSV');
+          console.error("Columnas requeridas no encontradas en el CSV");
           return;
         }
-        
+
         const universidadesFiltradas = [];
         const universidadesSet = new Set();
-        
+
         for (let i = 1; i < lines.length; i++) {
-          const currentLine = lines[i].split(',');
-          
+          const currentLine = lines[i].split(",");
+
           if (currentLine.length > Math.max(nomEstIndex, idEstadoIndex)) {
             const idEstado = currentLine[idEstadoIndex].trim();
             const nombreUniversidad = currentLine[nomEstIndex].trim();
-            
-            if (idEstado === idEstadoFiltro.toString() && 
-                nombreUniversidad && 
-                !universidadesSet.has(nombreUniversidad)) {
+
+            if (
+              idEstado === idEstadoFiltro.toString() &&
+              nombreUniversidad &&
+              !universidadesSet.has(nombreUniversidad)
+            ) {
               universidadesSet.add(nombreUniversidad);
               universidadesFiltradas.push(nombreUniversidad);
             }
           }
         }
-        
+
         setUniversidades(universidadesFiltradas.sort());
       } catch (error) {
-        console.error('Error al cargar universidades:', error);
+        console.error("Error al cargar universidades:", error);
       }
     };
 
     loadUniversidades();
   }, [idEstadoFiltro]);
-
 
   useEffect(() => {
     if (initialData) {
@@ -131,117 +118,114 @@ function DataModal({ show, onHide, initialData, onSubmit, loading}) {
         name_estado,
         name_municipio,
         name_parroquia,
-        cod_estado
+        cod_estado,
       } = initialData;
 
       const cleanLocationName = (name) => {
-        return name ? name.replace(/\s+/g, ' ').trim() : '';
+        return name ? name.replace(/\s+/g, " ").trim() : "";
       };
 
       setFormData({
         ...formData,
-        nombre_completo: `${name || ''} ${lastname || ''}`.trim(),
-        cedula: cedula || '',
-        fecha_nacimiento: birthDate || '',
+        nombre_completo: `${name || ""} ${lastname || ""}`.trim(),
+        cedula: cedula || "",
+        fecha_nacimiento: birthDate || "",
         estado: cleanLocationName(name_estado),
         municipio: cleanLocationName(name_municipio),
         parroquia: cleanLocationName(name_parroquia),
-        cod_estado: cod_estado || '',
+        cod_estado: cod_estado || "",
       });
     } else {
       setFormData({
-        nombre_completo: '',
-        cedula: '',
-        correo: '',
-        telefono_celular: '',
-        telefono_alternativo: '',
-        fecha_nacimiento: '',
-        estado: '',
-        municipio: '',
-        parroquia: '',
-        tipo_beca: '',
-        carrera_cursada: '',
-        fecha_ingreso: '',
-        fecha_egreso: '',
-        titularidad: '',
-        idiomas: '',
-        cod_estado:'',
-        ocupacion_actual: '',
-        becario_tipo:'',
-        codigoestado: '',
-        codigomunicipio: '',
-        codigoparroquia: '',
-        latitud: '',
-        longitud : '',
-        direccion: '',
-        codigoestado2:''
+        nombre_completo: "",
+        cedula: "",
+        correo: "",
+        telefono_celular: "",
+        telefono_alternativo: "",
+        fecha_nacimiento: "",
+        estado: "",
+        municipio: "",
+        parroquia: "",
+        tipo_beca: "",
+        carrera_cursada: "",
+        fecha_ingreso: "",
+        fecha_egreso: "",
+        titularidad: "",
+        idiomas: "",
+        cod_estado: "",
+        ocupacion_actual: "",
+        becario_tipo: "",
+        codigoestado: "",
+        codigomunicipio: "",
+        codigoparroquia: "",
+        latitud: "",
+        longitud: "",
+        direccion: "",
+        codigoestado2: "",
       });
     }
   }, [initialData]);
 
-  console.log(formData)
+  console.log(formData);
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
 
-const handleChange = (e) => {
-  const { name, value} = e.target;
-  
-  setFormData(prev => {
-    const newData = {
-      ...prev,
-      [name]:  value
-    };
+    setFormData((prev) => {
+      const newData = {
+        ...prev,
+        [name]: value,
+      };
 
-  
-    if (e.target.tagName === 'SELECT') {
-      const selectedOption = e.target.options[e.target.selectedIndex];
-      const lat = selectedOption.getAttribute('latitud');
-      const lng = selectedOption.getAttribute('longitud');
-      
-      if (lat && lng) {
-        newData.latitud = lat;
-        newData.longitud = lng;
-        
-   
-        setMapCenter([parseFloat(lat), parseFloat(lng)]);
-        setZoomLevel(name === 'codigoestado' ? 7 : name === 'codigomunicipio' ? 10 : 12);
+      if (e.target.tagName === "SELECT") {
+        const selectedOption = e.target.options[e.target.selectedIndex];
+        const lat = selectedOption.getAttribute("latitud");
+        const lng = selectedOption.getAttribute("longitud");
+
+        if (lat && lng) {
+          newData.latitud = lat;
+          newData.longitud = lng;
+
+          setMapCenter([parseFloat(lat), parseFloat(lng)]);
+          setZoomLevel(
+            name === "codigoestado" ? 7 : name === "codigomunicipio" ? 10 : 12
+          );
+        }
       }
+
+      if (name === "codigoestado") {
+        get_municipio(value);
+      }
+
+      if (name === "codigomunicipio") {
+        get_parroquia(value);
+      }
+
+      return newData;
+    });
+  };
+
+  const get_municipio = async (codigomunicipio) => {
+    try {
+      setMunicipio(null);
+      const data = await get_municipios(codigomunicipio);
+      setMunicipio(data);
+    } catch (err) {
+      console.error("Error al obtener municipios:", err);
+      setMunicipio(null);
     }
+  };
 
-
-    if (name === 'codigoestado') {
-      get_municipio(value);
+  const get_parroquia = async (codigomunicipio) => {
+    try {
+      setParroquia(null);
+      const data = await get_parroquias(codigomunicipio);
+      setParroquia(data);
+    } catch (err) {
+      console.error("Error al obtener municipios:", err);
+      setParroquia(null);
     }
-
-    if (name === 'codigomunicipio') {
-      get_parroquia(value);
-
-    }
-
-    return newData;
-  });
-};
-
- const get_municipio = async (codigomunicipio) => {
-  try {
-    setMunicipio(null); 
-    const data = await get_municipios(codigomunicipio);
-    setMunicipio(data);
-  } catch (err) {
-    console.error("Error al obtener municipios:", err);
-    setMunicipio(null);
-  }
-};
-
- const get_parroquia = async (codigomunicipio) => {
-  try {
-    setParroquia(null); 
-    const data = await get_parroquias(codigomunicipio);
-    setParroquia(data);
-  } catch (err) {
-    console.error("Error al obtener municipios:", err);
-    setParroquia(null);
-  }
-};
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -249,30 +233,44 @@ const handleChange = (e) => {
   };
 
   // Clase condicional para mostrar el modal
-  const modalClass = show ? 'modal fade show d-block fondo' : 'modal fade';
-  const backdropClass = show ? 'modal-backdrop fade show fondo' : '';
+  const modalClass = show ? "modal fade show d-block fondo" : "modal fade";
+  const backdropClass = show ? "modal-backdrop fade show fondo" : "";
 
   return (
     <>
       {/* Modal */}
       {show && (
-        <div className={modalClass} style={{ display: 'block' }} tabIndex="-1" aria-labelledby="modalTitle" aria-hidden={!show}>
+        <div
+          className={modalClass}
+          style={{ display: "block" }}
+          tabIndex="-1"
+          aria-labelledby="modalTitle"
+          aria-hidden={!show}
+        >
           <div className="modal-dialog modal-lg">
             <div className="modal-content">
               {/* Header */}
               <div className="modal-header">
-                <h5 className="modal-title" id="modalTitle">Formulario de Registro</h5>
-                <button type="button" className="btn-close" onClick={onHide} aria-label="Close"></button>
+                <h5 className="modal-title" id="modalTitle">
+                  Formulario de Registro
+                </h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={onHide}
+                  aria-label="Close"
+                ></button>
               </div>
 
               {/* Body */}
               <div className="modal-body">
-
-              <h5 className="mt-4 mb-3">Datos Personales</h5>
+                <h5 className="mt-4 mb-3">Datos Personales</h5>
                 <form onSubmit={handleSubmit} className="row g-3">
                   {/* Nombres y cédula */}
                   <div className="col-md-6">
-                    <label htmlFor="formFullName" className="form-label">Nombres y apellidos</label>
+                    <label htmlFor="formFullName" className="form-label">
+                      Nombres y apellidos
+                    </label>
                     <input
                       type="text"
                       className="form-control"
@@ -282,10 +280,14 @@ const handleChange = (e) => {
                       onChange={handleChange}
                       required
                     />
-                    <div className="invalid-feedback">Por favor ingrese nombres y apellidos.</div>
+                    <div className="invalid-feedback">
+                      Por favor ingrese nombres y apellidos.
+                    </div>
                   </div>
                   <div className="col-md-6">
-                    <label htmlFor="formIdNumber" className="form-label">Cédula/Pasaporte</label>
+                    <label htmlFor="formIdNumber" className="form-label">
+                      Cédula/Pasaporte
+                    </label>
                     <input
                       type="text"
                       className="form-control"
@@ -295,11 +297,15 @@ const handleChange = (e) => {
                       onChange={handleChange}
                       required
                     />
-                    <div className="invalid-feedback">Por favor ingrese la cédula o pasaporte.</div>
+                    <div className="invalid-feedback">
+                      Por favor ingrese la cédula o pasaporte.
+                    </div>
                   </div>
 
                   <div className="col-md-12">
-                    <label htmlFor="formBirthDate" className="form-label">Fecha de nacimiento</label>
+                    <label htmlFor="formBirthDate" className="form-label">
+                      Fecha de nacimiento
+                    </label>
                     <input
                       type="date"
                       className="form-control"
@@ -309,12 +315,16 @@ const handleChange = (e) => {
                       onChange={handleChange}
                       required
                     />
-                    <div className="invalid-feedback">Por favor seleccione una fecha.</div>
+                    <div className="invalid-feedback">
+                      Por favor seleccione una fecha.
+                    </div>
                   </div>
 
                   {/* Correo y teléfono */}
                   <div className="col-md-6">
-                    <label htmlFor="formEmail" className="form-label">Correo electrónico</label>
+                    <label htmlFor="formEmail" className="form-label">
+                      Correo electrónico
+                    </label>
                     <input
                       type="email"
                       className="form-control"
@@ -324,10 +334,14 @@ const handleChange = (e) => {
                       onChange={handleChange}
                       required
                     />
-                    <div className="invalid-feedback">Por favor ingrese un correo válido.</div>
+                    <div className="invalid-feedback">
+                      Por favor ingrese un correo válido.
+                    </div>
                   </div>
                   <div className="col-md-6">
-                    <label htmlFor="formPhone" className="form-label">Teléfono celular</label>
+                    <label htmlFor="formPhone" className="form-label">
+                      Teléfono celular
+                    </label>
                     <input
                       type="tel"
                       className="form-control"
@@ -337,12 +351,10 @@ const handleChange = (e) => {
                       onChange={handleChange}
                       required
                     />
-                    <div className="invalid-feedback">Por favor ingrese un número de contacto.</div>
+                    <div className="invalid-feedback">
+                      Por favor ingrese un número de contacto.
+                    </div>
                   </div>
-
-
-                  
-
 
                   <div className="col-md-4">
                     <label htmlFor="codigoestado" className="form-label">
@@ -354,18 +366,16 @@ const handleChange = (e) => {
                       name="codigoestado"
                       value={formData.codigoestado}
                       onChange={handleChange}
-                     
                       required
                     >
                       <option value="">Seleccione...</option>
                       {estados.data.map((stad) => (
-                        <option 
-                        key={stad.codigoestado}
-                         value={stad.codigoestado}
-                           latitud={stad.latitud}
-                           longitud={stad.longitud}
-                           
-                         >
+                        <option
+                          key={stad.codigoestado}
+                          value={stad.codigoestado}
+                          latitud={stad.latitud}
+                          longitud={stad.longitud}
+                        >
                           {stad.nombre}
                         </option>
                       ))}
@@ -387,29 +397,33 @@ const handleChange = (e) => {
                       required
                     >
                       <option value="">Seleccione...</option>
-                        {!municipios ? (
-                          <option value="" disabled>Cargando municipios...</option>
-                        ) : municipios.data?.length > 0 ? (
-                          municipios.data.map((muni) => (
-                            <option 
+                      {!municipios ? (
+                        <option value="" disabled>
+                          Cargando municipios...
+                        </option>
+                      ) : municipios.data?.length > 0 ? (
+                        municipios.data.map((muni) => (
+                          <option
                             key={muni.codigomunicipio}
-                             value={muni.codigomunicipio}
-                             latitud={muni.latitud}
-                           longitud={muni.longitud}
-                             >
-                              {muni.nombre}
-                            </option>
-                          ))
-                        ) : (
-                          <option value="" disabled>No hay municipios disponibles</option>
-                        )}
+                            value={muni.codigomunicipio}
+                            latitud={muni.latitud}
+                            longitud={muni.longitud}
+                          >
+                            {muni.nombre}
+                          </option>
+                        ))
+                      ) : (
+                        <option value="" disabled>
+                          No hay municipios disponibles
+                        </option>
+                      )}
                     </select>
                     <div className="invalid-feedback">
                       Por favor seleccione una universidad.
                     </div>
                   </div>
 
-                   <div className="col-md-4">
+                  <div className="col-md-4">
                     <label htmlFor="municipio" className="form-label">
                       Parroquia
                     </label>
@@ -422,23 +436,26 @@ const handleChange = (e) => {
                       required
                     >
                       <option value="">Seleccione...</option>
-                        {!parroquias ? (
-                          <option value="" disabled>Cargando municipios...</option>
-                        ) : parroquias.data?.length > 0 ? (
-                          parroquias.data.map((muni) => (
-                            <option
-
-                             key={muni.codigoparroquia} 
-                             value={muni.codigoparroquia}
-                              latitud={muni.latitud}
-                           longitud={muni.longitud}
-                             >
+                      {!parroquias ? (
+                        <option value="" disabled>
+                          Cargando municipios...
+                        </option>
+                      ) : parroquias.data?.length > 0 ? (
+                        parroquias.data.map((muni) => (
+                          <option
+                            key={muni.codigoparroquia}
+                            value={muni.codigoparroquia}
+                            latitud={muni.latitud}
+                            longitud={muni.longitud}
+                          >
                             {muni.nombre}
-                            </option>
-                          ))
-                        ) : (
-                          <option value="" disabled>No hay parroquias disponibles</option>
-                        )}
+                          </option>
+                        ))
+                      ) : (
+                        <option value="" disabled>
+                          No hay parroquias disponibles
+                        </option>
+                      )}
                     </select>
                     <div className="invalid-feedback">
                       Por favor seleccione una universidad.
@@ -446,53 +463,63 @@ const handleChange = (e) => {
                   </div>
 
                   <h5>Dirección en Venezuela</h5>
-                  <div >
-                    <textarea className='col-12'  value={formData.direccion}
-                      onChange={handleChange} rows="4" cols="80" name="direccion" id="direccion"></textarea>
+                  <div>
+                    <textarea
+                      className="col-12"
+                      value={formData.direccion}
+                      onChange={handleChange}
+                      rows="4"
+                      cols="80"
+                      name="direccion"
+                      id="direccion"
+                    ></textarea>
                   </div>
 
-                   <div className="col-12 mt-4">
+                  <div className="col-12 mt-4">
                     <h5 className="mb-3">Ubicación seleccionada</h5>
-                    <div style={{ height: '300px', width: '100%', borderRadius: '8px', overflow: 'hidden' }}>
-                     <MapContainer 
-                      center={mapCenter} 
-                      zoom={zoomLevel} 
-                      style={{ height: '100%', width: '100%' }}
-                      dragging={false}          // Deshabilita arrastrar el mapa
-                      touchZoom={false}         // Deshabilita zoom con gestos táctiles
-                      doubleClickZoom={false}   // Deshabilita zoom con doble click
-                      scrollWheelZoom={false}   // Deshabilita zoom con rueda del mouse
-                      zoomControl={false}       // Oculta los controles de zoom
-                      tap={false}               // Deshabilita interacciones táctiles
+                    <div
+                      style={{
+                        height: "300px",
+                        width: "100%",
+                        borderRadius: "8px",
+                        overflow: "hidden",
+                      }}
                     >
-                      <TileLayer
-                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                      />
-                      {formData.latitud && formData.longitud && (
-                        <Marker position={[parseFloat(formData.latitud), parseFloat(formData.longitud)]}>
-                          
-                        </Marker>
-                      )}
-                    </MapContainer>
+                      <MapContainer
+                        center={mapCenter}
+                        zoom={zoomLevel}
+                        style={{ height: "100%", width: "100%" }}
+                        dragging={false} // Deshabilita arrastrar el mapa
+                        touchZoom={false} // Deshabilita zoom con gestos táctiles
+                        doubleClickZoom={false} // Deshabilita zoom con doble click
+                        scrollWheelZoom={false} // Deshabilita zoom con rueda del mouse
+                        zoomControl={false} // Oculta los controles de zoom
+                        tap={false} // Deshabilita interacciones táctiles
+                      >
+                        <TileLayer
+                          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        />
+                        {formData.latitud && formData.longitud && (
+                          <Marker
+                            position={[
+                              parseFloat(formData.latitud),
+                              parseFloat(formData.longitud),
+                            ]}
+                          ></Marker>
+                        )}
+                      </MapContainer>
                     </div>
                   </div>
-                 
-                  
-                 
 
                   <h5 className="mt-4 mb-3">Información Académica</h5>
 
-
-              
-
                   {/* Información Académica */}
 
-
-                
-
                   <div className="col-md-6">
-                    <label htmlFor="formDegree" className="form-label">Tipo de beca</label>
+                    <label htmlFor="formDegree" className="form-label">
+                      Tipo de beca
+                    </label>
                     <select
                       className="form-select"
                       id="formDegree"
@@ -503,63 +530,78 @@ const handleChange = (e) => {
                     >
                       <option value="">Seleccione...</option>
                       {SCHOLARSHIP_TYPES.map((type) => (
-                        <option key={type} value={type}>{type}</option>
+                        <option key={type} value={type}>
+                          {type}
+                        </option>
                       ))}
                     </select>
-                    <div className="invalid-feedback">Seleccione un tipo de beca.</div>
-                  </div>
-
-                       <div className="col-6 ">
-                    <label className="form-label">Tipo de becario</label>
-                    <div className="d-flex flex-wrap gap-3">
-                     <div className="form-check">
-                            <input
-                              className="form-check-input"
-                              type="radio"
-                              id="checkInternacional"
-                              name="becario_tipo"  // Mismo nombre para todos los radios
-                              value="internacional"
-                              checked={formData.becario_tipo === "internacional"}
-                              onChange={handleChange}
-                            />
-                            <label className="form-check-label" htmlFor="checkInternacional">
-                              Becario Internacional en Venezuela
-                            </label>
-                          </div>
-                          <div className="form-check">
-                            <input
-                              className="form-check-input"
-                              type="radio"
-                              id="checkVenezolanoVzla"
-                              name="becario_tipo"  // Mismo nombre para todos los radios
-                              value="venezolano_venezuela"
-                              checked={formData.becario_tipo === "venezolano_venezuela"}
-                              onChange={handleChange}
-                            />
-                            <label className="form-check-label" htmlFor="checkVenezolanoVzla">
-                              Becario Venezolano en Venezuela
-                            </label>
-                          </div>
-                          <div className="form-check">
-                            <input
-                              className="form-check-input"
-                              type="radio"
-                              id="checkVenezolanoExt"
-                              name="becario_tipo"  // Mismo nombre para todos los radios
-                              value="venezolano_exterior"
-                              checked={formData.becario_tipo === "venezolano_exterior"}
-                              onChange={handleChange}
-                            />
-                            <label className="form-check-label" htmlFor="checkVenezolanoExt">
-                              Becario Venezolano en el Exterior
-                            </label>
-                          </div>
+                    <div className="invalid-feedback">
+                      Seleccione un tipo de beca.
                     </div>
                   </div>
 
-                  
+                  <div className="col-6 ">
+                    <label className="form-label">Tipo de becario</label>
+                    <div className="d-flex flex-wrap gap-3">
+                      <div className="form-check">
+                        <input
+                          className="form-check-input"
+                          type="radio"
+                          id="checkInternacional"
+                          name="becario_tipo" // Mismo nombre para todos los radios
+                          value="internacional"
+                          checked={formData.becario_tipo === "internacional"}
+                          onChange={handleChange}
+                        />
+                        <label
+                          className="form-check-label"
+                          htmlFor="checkInternacional"
+                        >
+                          Becario Internacional en Venezuela
+                        </label>
+                      </div>
+                      <div className="form-check">
+                        <input
+                          className="form-check-input"
+                          type="radio"
+                          id="checkVenezolanoVzla"
+                          name="becario_tipo" // Mismo nombre para todos los radios
+                          value="venezolano_venezuela"
+                          checked={
+                            formData.becario_tipo === "venezolano_venezuela"
+                          }
+                          onChange={handleChange}
+                        />
+                        <label
+                          className="form-check-label"
+                          htmlFor="checkVenezolanoVzla"
+                        >
+                          Becario Venezolano en Venezuela
+                        </label>
+                      </div>
+                      <div className="form-check">
+                        <input
+                          className="form-check-input"
+                          type="radio"
+                          id="checkVenezolanoExt"
+                          name="becario_tipo" // Mismo nombre para todos los radios
+                          value="venezolano_exterior"
+                          checked={
+                            formData.becario_tipo === "venezolano_exterior"
+                          }
+                          onChange={handleChange}
+                        />
+                        <label
+                          className="form-check-label"
+                          htmlFor="checkVenezolanoExt"
+                        >
+                          Becario Venezolano en el Exterior
+                        </label>
+                      </div>
+                    </div>
+                  </div>
 
-                    <div className="col-md-6">
+                  <div className="col-md-6">
                     <label htmlFor="codigoestado2" className="form-label">
                       Estado de Venezuela de donde se postuló
                     </label>
@@ -569,16 +611,14 @@ const handleChange = (e) => {
                       name="codigoestado2"
                       value={formData.codigoestado2}
                       onChange={handleChange}
-                     
                       required
                     >
                       <option value="">Seleccione...</option>
                       {estados.data.map((stad) => (
-                        <option 
-                        key={stad.codigoestado}
-                         value={stad.codigoestado}
-                    
-                         >
+                        <option
+                          key={stad.codigoestado}
+                          value={stad.codigoestado}
+                        >
                           {stad.nombre}
                         </option>
                       ))}
@@ -587,9 +627,7 @@ const handleChange = (e) => {
                       Por favor seleccione una universidad.
                     </div>
                   </div>
-                 
 
-    
                   <div className="col-md-6">
                     <label htmlFor="formUniversidad" className="form-label">
                       Universidad de Venezuela de donde se postuló
@@ -613,11 +651,11 @@ const handleChange = (e) => {
                       Por favor seleccione una universidad.
                     </div>
                   </div>
-                                
 
-               
                   <div className="col-md-6">
-                    <label htmlFor="formCareer" className="form-label">Carrera cursada</label>
+                    <label htmlFor="formCareer" className="form-label">
+                      Carrera cursada
+                    </label>
                     <input
                       type="text"
                       className="form-control"
@@ -627,11 +665,15 @@ const handleChange = (e) => {
                       onChange={handleChange}
                       required
                     />
-                    <div className="invalid-feedback">Por favor ingrese la carrera.</div>
+                    <div className="invalid-feedback">
+                      Por favor ingrese la carrera.
+                    </div>
                   </div>
 
                   <div className="col-md-6">
-                    <label htmlFor="formStartDate" className="form-label">Fecha de ingreso</label>
+                    <label htmlFor="formStartDate" className="form-label">
+                      Fecha de ingreso
+                    </label>
                     <input
                       type="date"
                       className="form-control"
@@ -641,10 +683,14 @@ const handleChange = (e) => {
                       onChange={handleChange}
                       required
                     />
-                    <div className="invalid-feedback">Seleccione una fecha de ingreso.</div>
+                    <div className="invalid-feedback">
+                      Seleccione una fecha de ingreso.
+                    </div>
                   </div>
                   <div className="col-md-6">
-                    <label htmlFor="formEndDate" className="form-label">Fecha de egreso</label>
+                    <label htmlFor="formEndDate" className="form-label">
+                      Fecha de egreso
+                    </label>
                     <input
                       type="date"
                       className="form-control"
@@ -655,7 +701,9 @@ const handleChange = (e) => {
                     />
                   </div>
                   <div className="col-md-6">
-                    <label htmlFor="formDegreeType" className="form-label">Titularidad</label>
+                    <label htmlFor="formDegreeType" className="form-label">
+                      Titularidad
+                    </label>
                     <select
                       className="form-select"
                       id="formDegreeType"
@@ -666,19 +714,23 @@ const handleChange = (e) => {
                     >
                       <option value="">Seleccione...</option>
                       {DEGREE_TYPES.map((type) => (
-                        <option key={type} value={type}>{type}</option>
+                        <option key={type} value={type}>
+                          {type}
+                        </option>
                       ))}
                     </select>
-                    <div className="invalid-feedback">Seleccione la titularidad.</div>
+                    <div className="invalid-feedback">
+                      Seleccione la titularidad.
+                    </div>
                   </div>
-
-
 
                   {/* Información Adicional */}
                   <h5 className="mt-4 mb-3">Información Adicional</h5>
 
                   <div className="col-12">
-                    <label htmlFor="formLanguages" className="form-label">Idiomas que domina</label>
+                    <label htmlFor="formLanguages" className="form-label">
+                      Idiomas que domina
+                    </label>
                     <textarea
                       className="form-control"
                       id="formLanguages"
@@ -690,7 +742,9 @@ const handleChange = (e) => {
                   </div>
 
                   <div className="col-12">
-                    <label htmlFor="formOccupation" className="form-label">Ocupación actual</label>
+                    <label htmlFor="formOccupation" className="form-label">
+                      Ocupación actual
+                    </label>
                     <input
                       type="text"
                       className="form-control"
@@ -701,30 +755,37 @@ const handleChange = (e) => {
                     />
                   </div>
 
-                  
-
-              
-
                   {/* Mapa interactivo */}
-                 
 
-                      {/* Botones */}
+                  {/* Botones */}
                   <div className="col-12 text-end mt-4">
-                    <button type="button" className="btn btn-secondary me-2" onClick={onHide}>
+                    <button
+                      type="button"
+                      className="btn btn-secondary me-2"
+                      onClick={onHide}
+                    >
                       Cancelar
                     </button>
-                    <button type="submit" className="btn btn-primary" disabled={loading}>
+                    <button
+                      type="submit"
+                      className="btn btn-primary"
+                      disabled={loading}
+                    >
                       {loading ? (
                         <>
-                          <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                          <span
+                            className="spinner-border spinner-border-sm"
+                            role="status"
+                            aria-hidden="true"
+                          ></span>
                           <span className="ms-2">Enviando...</span>
                         </>
                       ) : (
-                        'Enviar Formulario'
+                        "Enviar Formulario"
                       )}
                     </button>
                   </div>
-                                  </form>
+                </form>
               </div>
             </div>
           </div>
