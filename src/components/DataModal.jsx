@@ -120,7 +120,6 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
 
         const lines = csvData.split("\n");
         const headers = lines[0].split(",");
-
         const nomEstIndex = headers.indexOf("nomb_uni");
         const idEstadoIndex = headers.indexOf("id_est-2");
 
@@ -162,7 +161,7 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
 useEffect(() => {
   const fetchAndProcessCountries = async () => {
     try {
-      const response = await fetch("./paises.csv");
+      const response = await fetch("/paises.csv");
       if (!response.ok) throw new Error("Error al cargar el archivo CSV");
       
       const csvData = await response.text();
