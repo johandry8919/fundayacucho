@@ -532,7 +532,7 @@ useEffect(() => {
                   </div>
                   <div className="col-md-4">
                     <label htmlFor="municipio" className="form-label">
-                      municipio
+                      Municipio
                     </label>
                     <div className="input-group">
                       <span className="input-group-text">
