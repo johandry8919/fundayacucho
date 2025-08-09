@@ -8,6 +8,12 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 const SCHOLARSHIP_TYPES = ["Nacional", "Internacional"];
 const DEGREE_TYPES = ["Pre-grado", "Maestría", "Doctorado", "Postgrado"];
 
+const DYNAMIC_LABELS = {
+  internacional: "¿De qué país es el becario?",
+  venezolano_venezuela: "¿En qué estado de Venezuela cursa sus estudios?",
+  venezolano_exterior: "¿En qué país cursa sus estudios?",
+};
+
 function DataModal({ show, onHide, initialData, onSubmit, loading }) {
   const [universidades, setUniversidades] = useState([]);
   const [estados, setEstado] = useState([]);
@@ -37,6 +43,7 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
     ocupacion_actual: "",
     universidad: "",
     becario_tipo: "",
+    descripcion_becario: "",
     codigoestado: "",
     codigomunicipio: "",
     codigoparroquia: "",
@@ -44,7 +51,7 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
     longitud: "",
     direccion: "",
     codigoestado2: "",
-    es_militar: ''
+    es_militar: ""
   });
 
   let idEstadoFiltro = formData.codigoestado2;
@@ -157,6 +164,7 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
         cod_estado: "",
         ocupacion_actual: "",
         becario_tipo: "",
+        descripcion_becario: "",
         codigoestado: "",
         codigomunicipio: "",
         codigoparroquia: "",
@@ -671,6 +679,26 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
                       </div>
                     </div>
                   </div>
+
+                  {formData.becario_tipo && (
+                    <div className="col-12 mt-3">
+                      <label
+                        htmlFor="descripcion_becario"
+                        className="form-label"
+                      >
+                        {DYNAMIC_LABELS[formData.becario_tipo]}
+                      </label>
+                      <textarea
+                        className="form-control"
+                        id="descripcion_becario"
+                        name="descripcion_becario"
+                        rows="3"
+                        value={formData.descripcion_becario}
+                        onChange={handleChange}
+                        placeholder="Ingrese la información aquí..."
+                      ></textarea>
+                    </div>
+                  )}
 
                   <div className="col-md-6">
                     <label htmlFor="codigoestado2" className="form-label">
