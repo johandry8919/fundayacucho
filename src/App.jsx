@@ -67,8 +67,8 @@ function App() {
     <>
       <Header />
 
-      <div className="sesion">
-        <div className="card app">
+      <div className="sesion p-2">
+        <div className="card app ">
           <div className="card-title">
             <div className="text-center">
               <h3 className="mb-0 text-mute">EGRESADOS FUNDAYACUCHO</h3>
