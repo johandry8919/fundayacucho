@@ -24,7 +24,6 @@ const DEGREE_TYPES = ["Pre-grado", "Maestría", "Doctorado", "Postgrado"];
 
 const DYNAMIC_LABELS = {
   internacional: "¿De qué país es el becario?",
-  venezolano_venezuela: "¿En qué estado de Venezuela cursa sus estudios?",
   venezolano_exterior: "¿En qué país cursa sus estudios?",
 };
 
@@ -775,21 +774,25 @@ useEffect(() => {
                       >
                         {DYNAMIC_LABELS[formData.becario_tipo]}
                       </label>
-                       <select
+
+                      {DYNAMIC_LABELS[formData.becario_tipo]  && 
+                      <select
                         className="form-select"
                         id="descripcion_becario"
                         name="descripcion_becario"
                         value={formData.descripcion_becario}
                         onChange={handleChange}
-                        required
                       >
-                        <option value="">Seleccione...</option>
+                        <option value="">Seleccione... </option>
                         {paises.map((type) => (
                           <option key={type} value={type}>
                             {type}
                           </option>
                         ))}
                       </select>
+                      
+                      }
+                       
                     </div>
                   )}
 
