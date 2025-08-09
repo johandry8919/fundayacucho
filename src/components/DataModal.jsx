@@ -43,6 +43,7 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
     longitud: "",
     direccion: "",
     codigoestado2: "",
+    es_militar: ''
   });
 
   let idEstadoFiltro = formData.codigoestado2;
@@ -162,6 +163,7 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
         longitud: "",
         direccion: "",
         codigoestado2: "",
+         es_militar: ''
       });
     }
   }, [initialData]);
@@ -250,17 +252,7 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
           <div className="modal-dialog modal-lg">
             <div className="modal-content">
               {/* Header */}
-              <div className="modal-header">
-                <h5 className="modal-title" id="modalTitle">
-                  Formulario de Registro
-                </h5>
-                <button
-                  type="button"
-                  className="btn-close"
-                  onClick={onHide}
-                  aria-label="Close"
-                ></button>
-              </div>
+             
 
               {/* Body */}
               <div className="modal-body">
@@ -286,7 +278,7 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
                   </div>
                   <div className="col-md-6">
                     <label htmlFor="formIdNumber" className="form-label">
-                      Cédula/Pasaporte
+                      Cédula
                     </label>
                     <input
                       type="text"
@@ -302,7 +294,9 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
                     </div>
                   </div>
 
-                  <div className="col-md-12">
+                   
+
+                  <div className="col-md-6">
                     <label htmlFor="formBirthDate" className="form-label">
                       Fecha de nacimiento
                     </label>
@@ -318,6 +312,25 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
                     <div className="invalid-feedback">
                       Por favor seleccione una fecha.
                     </div>
+                  </div>
+
+                  <div className="col-md-6">
+                    <label htmlFor="formIdNumber" className="form-label">
+                     ¿Es militar?
+                    </label>
+                   <select
+                      className="form-select"
+                      id="es_militar"
+                      name="es_militar"
+                      value={formData.es_militar}
+                      onChange={handleChange}
+                      required
+                    >
+                      <option value="">Seleccione...</option>
+                      <option value="">Si</option>
+                      <option value="">No</option>
+                      
+                    </select>
                   </div>
 
                   {/* Correo y teléfono */}
