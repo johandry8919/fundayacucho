@@ -121,7 +121,7 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
         const lines = csvData.split("\n");
         const headers = lines[0].split(",");
         const nomEstIndex = headers.indexOf("nomb_uni");
-        const idEstadoIndex = headers.indexOf("id_est-2");
+        const idEstadoIndex = headers.indexOf("id\r");
 
         if (nomEstIndex === -1 || idEstadoIndex === -1) {
           console.error("Columnas requeridas no encontradas en el CSV");
@@ -148,6 +148,8 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
             }
           }
         }
+
+        
 
         setUniversidades(universidadesFiltradas.sort());
       } catch (error) {
