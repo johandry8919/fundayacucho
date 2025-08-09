@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "../../src/styles/modal.css";
 import { estado, get_municipios, get_parroquias } from "../services/api";
 import "leaflet/dist/leaflet.css";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 
 const SCHOLARSHIP_TYPES = ["Nacional", "Internacional"];
 const DEGREE_TYPES = ["Pre-grado", "Maestría", "Doctorado", "Postgrado"];
@@ -14,6 +14,14 @@ const DYNAMIC_LABELS = {
   venezolano_exterior: "¿En qué país cursa sus estudios?",
 };
 
+function ChangeView({ center, zoom }) {
+  const map = useMap();
+  useEffect(() => {
+    map.setView(center, zoom);
+  }, [center, zoom]);
+  return null;
+}
+
 function DataModal({ show, onHide, initialData, onSubmit, loading }) {
   const [universidades, setUniversidades] = useState([]);
   const [estados, setEstado] = useState([]);
@@ -22,6 +30,25 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
 
   const [mapCenter, setMapCenter] = useState([6.4238, -66.5897]); // Centro de Venezuela por defecto
   const [zoomLevel, setZoomLevel] = useState(5);
+
+  const markerRef = useRef(null);
+  const markerEventHandlers = useMemo(
+    () => ({
+      dragend() {
+        const marker = markerRef.current
+        if (marker != null) {
+          const { lat, lng } = marker.getLatLng();
+          setFormData(prev => ({
+            ...prev,
+            latitud: lat.toString(),
+            longitud: lng.toString(),
+          }));
+          setMapCenter([lat, lng]);
+        }
+      },
+    }),
+    [],
+  );
 
   const [formData, setFormData] = useState({
     nombre_completo: "",
@@ -567,20 +594,24 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
                         center={mapCenter}
                         zoom={zoomLevel}
                         style={{ height: "100%", width: "100%" }}
-                        dragging={false} // Deshabilita arrastrar el mapa
-                        touchZoom={false} // Deshabilita zoom con gestos táctiles
-                        doubleClickZoom={false} // Deshabilita zoom con doble click
-                        scrollWheelZoom={false} // Deshabilita zoom con rueda del mouse
-                        zoomControl={false} // Oculta los controles de zoom
-                        tap={false} // Deshabilita interacciones táctiles
                       >
+                        <ChangeView center={mapCenter} zoom={zoomLevel} />
                         <TileLayer
                           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                         />
                         {formData.latitud && formData.longitud && (
-                      
-                           <Marker position={[parseFloat(formData.latitud), parseFloat(formData.longitud)]}></Marker>
+                           <Marker
+                             draggable={true}
+                             eventHandlers={markerEventHandlers}
+                             position={[
+                               parseFloat(formData.latitud),
+                               parseFloat(formData.longitud)
+                             ]}
+                             ref={markerRef}
+                           >
+                              <Popup>Puedes arrastrar el marcador para ajustar la ubicación</Popup>
+                           </Marker>
                         )}
                       </MapContainer>
                     </div>
