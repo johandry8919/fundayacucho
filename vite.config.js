@@ -3,5 +3,9 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  base: '/fundayacucho/'  // 👈 Asegúrate que coincida con tu repo
-})
+  base: '/fundayacucho/',
+  build: {
+    assetsDir: 'assets', // Asegura que los recursos estén en /assets
+    outDir: 'dist',
+  }
+});

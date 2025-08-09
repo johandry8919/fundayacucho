@@ -70,7 +70,7 @@ function App() {
       <div className="sesion">
         <div className="card app">
           <div className="card-title">
-            <h1 className="mb-4">Registro de Egresados Fundayacucho</h1>
+            <h3 className="mb-4 text-mute">EGRESADOS FUNDAYAUCHO EGREAYACUCHO</h3>
           </div>
 
           {error && (
