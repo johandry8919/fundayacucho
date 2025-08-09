@@ -44,6 +44,8 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
 
   const [mapCenter, setMapCenter] = useState([6.4238, -66.5897]); // Centro de Venezuela por defecto
   const [zoomLevel, setZoomLevel] = useState(5);
+    const [paises,  setPaises] = useState(5);
+ 
 
   const markerRef = useRef(null);
   const markerEventHandlers = useMemo(
@@ -157,6 +159,46 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
 
     loadUniversidades();
   }, [idEstadoFiltro]);
+
+useEffect(() => {
+  const fetchAndProcessCountries = async () => {
+    try {
+      const response = await fetch("./paises.csv");
+      if (!response.ok) throw new Error("Error al cargar el archivo CSV");
+      
+      const csvData = await response.text();
+      const countries = parseCountriesFromCSV(csvData);
+      
+      setPaises(countries.sort());
+    } catch (error) {
+      console.error("Error al procesar países:", error);
+      // Opcional: manejar el error en el estado (setErrorState)
+    }
+  };
+
+  const parseCountriesFromCSV = (csvText) => {
+    const lines = csvText.split("\n");
+    if (lines.length < 2) return []; // CSV vacío o solo headers
+    
+    const headers = lines[0].split(",");
+    const countryNameIndex = headers.indexOf("nombre");
+    if (countryNameIndex === -1) return []; // Columna 'nombre' no encontrada
+    
+    const uniqueCountries = new Set();
+    
+    for (let i = 1; i < lines.length; i++) {
+      const columns = lines[i].split(",");
+      if (columns.length > countryNameIndex) {
+        const countryName = columns[countryNameIndex].trim();
+        if (countryName) uniqueCountries.add(countryName);
+      }
+    }
+    
+    return Array.from(uniqueCountries);
+  };
+
+  fetchAndProcessCountries();
+}, []);
 
   useEffect(() => {
     if (initialData) {
@@ -587,7 +629,7 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
                       className="form-control"
                       value={formData.direccion}
                       onChange={handleChange}
-                      rows="4"
+                      rows="2"
                       cols="80"
                       name="direccion"
                       id="direccion"
@@ -733,21 +775,27 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
                       >
                         {DYNAMIC_LABELS[formData.becario_tipo]}
                       </label>
-                      <textarea
-                        className="form-control"
+                       <select
+                        className="form-select"
                         id="descripcion_becario"
                         name="descripcion_becario"
-                        rows="3"
                         value={formData.descripcion_becario}
                         onChange={handleChange}
-                        placeholder="Ingrese la información aquí..."
-                      ></textarea>
+                        required
+                      >
+                        <option value="">Seleccione...</option>
+                        {paises.map((type) => (
+                          <option key={type} value={type}>
+                            {type}
+                          </option>
+                        ))}
+                      </select>
                     </div>
                   )}
 
                   <div className="col-md-6">
                     <label htmlFor="codigoestado2" className="form-label">
-                      Estado de Venezuela de donde se postuló
+                      Estado de Venezuela  donde se postuló
                     </label>
                     <div className="input-group">
                       <span className="input-group-text">
@@ -779,7 +827,7 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
 
                   <div className="col-md-6">
                     <label htmlFor="formUniversidad" className="form-label">
-                      Universidad de Venezuela de donde se postuló
+                      Universidad de Venezuela donde se postuló
                     </label>
                     <div className="input-group">
                       <span className="input-group-text">
@@ -913,7 +961,7 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
                         className="form-control"
                         id="formLanguages"
                         name="idiomas"
-                        rows="2"
+                        rows="1"
                         value={formData.idiomas}
                         onChange={handleChange}
                       ></textarea>
