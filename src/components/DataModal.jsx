@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import "bootstrap-icons/font/bootstrap-icons.css";
 import "../../src/styles/modal.css";
 import { estado, get_municipios, get_parroquias } from "../services/api";
 import "leaflet/dist/leaflet.css";
@@ -263,15 +264,20 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
                     <label htmlFor="formFullName" className="form-label">
                       Nombres y apellidos
                     </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="formFullName"
-                      name="nombre_completo"
-                      value={formData.nombre_completo}
-                      onChange={handleChange}
-                      required
-                    />
+                    <div className="input-group">
+                      <span className="input-group-text">
+                        <i className="bi bi-person"></i>
+                      </span>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="formFullName"
+                        name="nombre_completo"
+                        value={formData.nombre_completo}
+                        onChange={handleChange}
+                        required
+                      />
+                    </div>
                     <div className="invalid-feedback">
                       Por favor ingrese nombres y apellidos.
                     </div>
@@ -280,15 +286,20 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
                     <label htmlFor="formIdNumber" className="form-label">
                       Cédula
                     </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="formIdNumber"
-                      name="cedula"
-                      value={formData.cedula}
-                      onChange={handleChange}
-                      required
-                    />
+                    <div className="input-group">
+                      <span className="input-group-text">
+                        <i className="bi bi-person-vcard"></i>
+                      </span>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="formIdNumber"
+                        name="cedula"
+                        value={formData.cedula}
+                        onChange={handleChange}
+                        required
+                      />
+                    </div>
                     <div className="invalid-feedback">
                       Por favor ingrese la cédula o pasaporte.
                     </div>
@@ -300,15 +311,20 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
                     <label htmlFor="formBirthDate" className="form-label">
                       Fecha de nacimiento
                     </label>
-                    <input
-                      type="date"
-                      className="form-control"
-                      id="formBirthDate"
-                      name="fecha_nacimiento"
-                      value={formData.fecha_nacimiento}
-                      onChange={handleChange}
-                      required
-                    />
+                    <div className="input-group">
+                      <span className="input-group-text">
+                        <i className="bi bi-calendar-event"></i>
+                      </span>
+                      <input
+                        type="date"
+                        className="form-control"
+                        id="formBirthDate"
+                        name="fecha_nacimiento"
+                        value={formData.fecha_nacimiento}
+                        onChange={handleChange}
+                        required
+                      />
+                    </div>
                     <div className="invalid-feedback">
                       Por favor seleccione una fecha.
                     </div>
@@ -318,19 +334,23 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
                     <label htmlFor="formIdNumber" className="form-label">
                      ¿Es militar?
                     </label>
-                   <select
-                      className="form-select"
-                      id="es_militar"
-                      name="es_militar"
-                      value={formData.es_militar}
-                      onChange={handleChange}
-                      required
-                    >
-                      <option value="">Seleccione...</option>
-                      <option value="Si">Si</option>
-                      <option value="No">No</option>
-                      
-                    </select>
+                    <div className="input-group">
+                      <span className="input-group-text">
+                        <i className="bi bi-shield-check"></i>
+                      </span>
+                      <select
+                        className="form-select"
+                        id="es_militar"
+                        name="es_militar"
+                        value={formData.es_militar}
+                        onChange={handleChange}
+                        required
+                      >
+                        <option value="">Seleccione...</option>
+                        <option value="Si">Si</option>
+                        <option value="No">No</option>
+                      </select>
+                    </div>
                   </div>
 
                   {/* Correo y teléfono */}
@@ -338,15 +358,20 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
                     <label htmlFor="formEmail" className="form-label">
                       Correo electrónico
                     </label>
-                    <input
-                      type="email"
-                      className="form-control"
-                      id="formEmail"
-                      name="correo"
-                      value={formData.correo}
-                      onChange={handleChange}
-                      required
-                    />
+                    <div className="input-group">
+                      <span className="input-group-text">
+                        <i className="bi bi-envelope"></i>
+                      </span>
+                      <input
+                        type="email"
+                        className="form-control"
+                        id="formEmail"
+                        name="correo"
+                        value={formData.correo}
+                        onChange={handleChange}
+                        required
+                      />
+                    </div>
                     <div className="invalid-feedback">
                       Por favor ingrese un correo válido.
                     </div>
@@ -355,15 +380,20 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
                     <label htmlFor="formPhone" className="form-label">
                       Teléfono celular
                     </label>
-                    <input
-                      type="tel"
-                      className="form-control"
-                      id="formPhone"
-                      name="telefono_celular"
-                      value={formData.telefono_celular}
-                      onChange={handleChange}
-                      required
-                    />
+                    <div className="input-group">
+                      <span className="input-group-text">
+                        <i className="bi bi-phone"></i>
+                      </span>
+                      <input
+                        type="tel"
+                        className="form-control"
+                        id="formPhone"
+                        name="telefono_celular"
+                        value={formData.telefono_celular}
+                        onChange={handleChange}
+                        required
+                      />
+                    </div>
                     <div className="invalid-feedback">
                       Por favor ingrese un número de contacto.
                     </div>
@@ -373,26 +403,31 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
                     <label htmlFor="codigoestado" className="form-label">
                       Estado
                     </label>
-                    <select
-                      className="form-select"
-                      id="codigoestado"
-                      name="codigoestado"
-                      value={formData.codigoestado}
-                      onChange={handleChange}
-                      required
-                    >
-                      <option value="">Seleccione...</option>
-                      {estados.data.map((stad) => (
-                        <option
-                          key={stad.codigoestado}
-                          value={stad.codigoestado}
-                          latitud={stad.latitud}
-                          longitud={stad.longitud}
-                        >
-                          {stad.nombre}
-                        </option>
-                      ))}
-                    </select>
+                    <div className="input-group">
+                      <span className="input-group-text">
+                        <i className="bi bi-geo-alt"></i>
+                      </span>
+                      <select
+                        className="form-select"
+                        id="codigoestado"
+                        name="codigoestado"
+                        value={formData.codigoestado}
+                        onChange={handleChange}
+                        required
+                      >
+                        <option value="">Seleccione...</option>
+                        {estados.data.map((stad) => (
+                          <option
+                            key={stad.codigoestado}
+                            value={stad.codigoestado}
+                            latitud={stad.latitud}
+                            longitud={stad.longitud}
+                          >
+                            {stad.nombre}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                     <div className="invalid-feedback">
                       Por favor seleccione una universidad.
                     </div>
@@ -401,36 +436,41 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
                     <label htmlFor="municipio" className="form-label">
                       municipio
                     </label>
-                    <select
-                      className="form-select"
-                      id="municipio"
-                      name="codigomunicipio"
-                      value={formData.codigomunicipio}
-                      onChange={handleChange}
-                      required
-                    >
-                      <option value="">Seleccione...</option>
-                      {!municipios ? (
-                        <option value="" disabled>
-                          Cargando municipios...
-                        </option>
-                      ) : municipios.data?.length > 0 ? (
-                        municipios.data.map((muni) => (
-                          <option
-                            key={muni.codigomunicipio}
-                            value={muni.codigomunicipio}
-                            latitud={muni.latitud}
-                            longitud={muni.longitud}
-                          >
-                            {muni.nombre}
+                    <div className="input-group">
+                      <span className="input-group-text">
+                        <i className="bi bi-geo-alt"></i>
+                      </span>
+                      <select
+                        className="form-select"
+                        id="municipio"
+                        name="codigomunicipio"
+                        value={formData.codigomunicipio}
+                        onChange={handleChange}
+                        required
+                      >
+                        <option value="">Seleccione...</option>
+                        {!municipios ? (
+                          <option value="" disabled>
+                            Cargando municipios...
                           </option>
-                        ))
-                      ) : (
-                        <option value="" disabled>
-                          No hay municipios disponibles
-                        </option>
-                      )}
-                    </select>
+                        ) : municipios.data?.length > 0 ? (
+                          municipios.data.map((muni) => (
+                            <option
+                              key={muni.codigomunicipio}
+                              value={muni.codigomunicipio}
+                              latitud={muni.latitud}
+                              longitud={muni.longitud}
+                            >
+                              {muni.nombre}
+                            </option>
+                          ))
+                        ) : (
+                          <option value="" disabled>
+                            No hay municipios disponibles
+                          </option>
+                        )}
+                      </select>
+                    </div>
                     <div className="invalid-feedback">
                       Por favor seleccione una universidad.
                     </div>
@@ -440,45 +480,53 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
                     <label htmlFor="municipio" className="form-label">
                       Parroquia
                     </label>
-                    <select
-                      className="form-select"
-                      id="codigoparroquia"
-                      name="codigoparroquia"
-                      value={formData.codigoparroquia}
-                      onChange={handleChange}
-                      required
-                    >
-                      <option value="">Seleccione...</option>
-                      {!parroquias ? (
-                        <option value="" disabled>
-                          Cargando municipios...
-                        </option>
-                      ) : parroquias.data?.length > 0 ? (
-                        parroquias.data.map((muni) => (
-                          <option
-                            key={muni.codigoparroquia}
-                            value={muni.codigoparroquia}
-                            latitud={muni.latitud}
-                            longitud={muni.longitud}
-                          >
-                            {muni.nombre}
+                    <div className="input-group">
+                      <span className="input-group-text">
+                        <i className="bi bi-geo-alt"></i>
+                      </span>
+                      <select
+                        className="form-select"
+                        id="codigoparroquia"
+                        name="codigoparroquia"
+                        value={formData.codigoparroquia}
+                        onChange={handleChange}
+                        required
+                      >
+                        <option value="">Seleccione...</option>
+                        {!parroquias ? (
+                          <option value="" disabled>
+                            Cargando municipios...
                           </option>
-                        ))
-                      ) : (
-                        <option value="" disabled>
-                          No hay parroquias disponibles
-                        </option>
-                      )}
-                    </select>
+                        ) : parroquias.data?.length > 0 ? (
+                          parroquias.data.map((muni) => (
+                            <option
+                              key={muni.codigoparroquia}
+                              value={muni.codigoparroquia}
+                              latitud={muni.latitud}
+                              longitud={muni.longitud}
+                            >
+                              {muni.nombre}
+                            </option>
+                          ))
+                        ) : (
+                          <option value="" disabled>
+                            No hay parroquias disponibles
+                          </option>
+                        )}
+                      </select>
+                    </div>
                     <div className="invalid-feedback">
                       Por favor seleccione una universidad.
                     </div>
                   </div>
 
                   <h5>Dirección en Venezuela</h5>
-                  <div>
+                  <div class="input-group">
+                    <span class="input-group-text">
+                      <i class="bi bi-geo-alt-fill"></i>
+                    </span>
                     <textarea
-                      className="col-12"
+                      className="form-control"
                       value={formData.direccion}
                       onChange={handleChange}
                       rows="4"
@@ -535,21 +583,26 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
                     <label htmlFor="formDegree" className="form-label">
                       Tipo de beca
                     </label>
-                    <select
-                      className="form-select"
-                      id="formDegree"
-                      name="tipo_beca"
-                      value={formData.tipo_beca}
-                      onChange={handleChange}
-                      required
-                    >
-                      <option value="">Seleccione...</option>
-                      {SCHOLARSHIP_TYPES.map((type) => (
-                        <option key={type} value={type}>
-                          {type}
-                        </option>
-                      ))}
-                    </select>
+                    <div className="input-group">
+                      <span className="input-group-text">
+                        <i className="bi bi-award"></i>
+                      </span>
+                      <select
+                        className="form-select"
+                        id="formDegree"
+                        name="tipo_beca"
+                        value={formData.tipo_beca}
+                        onChange={handleChange}
+                        required
+                      >
+                        <option value="">Seleccione...</option>
+                        {SCHOLARSHIP_TYPES.map((type) => (
+                          <option key={type} value={type}>
+                            {type}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                     <div className="invalid-feedback">
                       Seleccione un tipo de beca.
                     </div>
@@ -620,24 +673,29 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
                     <label htmlFor="codigoestado2" className="form-label">
                       Estado de Venezuela de donde se postuló
                     </label>
-                    <select
-                      className="form-select"
-                      id="codigoestado2"
-                      name="codigoestado2"
-                      value={formData.codigoestado2}
-                      onChange={handleChange}
-                      required
-                    >
-                      <option value="">Seleccione...</option>
-                      {estados.data.map((stad) => (
-                        <option
-                          key={stad.codigoestado}
-                          value={stad.codigoestado}
-                        >
-                          {stad.nombre}
-                        </option>
-                      ))}
-                    </select>
+                    <div className="input-group">
+                      <span className="input-group-text">
+                        <i className="bi bi-geo-alt"></i>
+                      </span>
+                      <select
+                        className="form-select"
+                        id="codigoestado2"
+                        name="codigoestado2"
+                        value={formData.codigoestado2}
+                        onChange={handleChange}
+                        required
+                      >
+                        <option value="">Seleccione...</option>
+                        {estados.data.map((stad) => (
+                          <option
+                            key={stad.codigoestado}
+                            value={stad.codigoestado}
+                          >
+                            {stad.nombre}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                     <div className="invalid-feedback">
                       Por favor seleccione una universidad.
                     </div>
@@ -647,21 +705,26 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
                     <label htmlFor="formUniversidad" className="form-label">
                       Universidad de Venezuela de donde se postuló
                     </label>
-                    <select
-                      className="form-select"
-                      id="formUniversidad"
-                      name="universidad"
-                      value={formData.universidad}
-                      onChange={handleChange}
-                      required
-                    >
-                      <option value="">Seleccione...</option>
-                      {universidades.map((universidad) => (
-                        <option key={universidad} value={universidad}>
-                          {universidad}
-                        </option>
-                      ))}
-                    </select>
+                    <div className="input-group">
+                      <span className="input-group-text">
+                        <i className="bi bi-building-fill"></i>
+                      </span>
+                      <select
+                        className="form-select"
+                        id="formUniversidad"
+                        name="universidad"
+                        value={formData.universidad}
+                        onChange={handleChange}
+                        required
+                      >
+                        <option value="">Seleccione...</option>
+                        {universidades.map((universidad) => (
+                          <option key={universidad} value={universidad}>
+                            {universidad}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                     <div className="invalid-feedback">
                       Por favor seleccione una universidad.
                     </div>
@@ -671,15 +734,20 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
                     <label htmlFor="formCareer" className="form-label">
                       Carrera cursada
                     </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="formCareer"
-                      name="carrera_cursada"
-                      value={formData.carrera_cursada}
-                      onChange={handleChange}
-                      required
-                    />
+                    <div className="input-group">
+                      <span className="input-group-text">
+                        <i className="bi bi-book"></i>
+                      </span>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="formCareer"
+                        name="carrera_cursada"
+                        value={formData.carrera_cursada}
+                        onChange={handleChange}
+                        required
+                      />
+                    </div>
                     <div className="invalid-feedback">
                       Por favor ingrese la carrera.
                     </div>
@@ -689,15 +757,20 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
                     <label htmlFor="formStartDate" className="form-label">
                       Fecha de ingreso
                     </label>
-                    <input
-                      type="date"
-                      className="form-control"
-                      id="formStartDate"
-                      name="fecha_ingreso"
-                      value={formData.fecha_ingreso}
-                      onChange={handleChange}
-                      required
-                    />
+                    <div className="input-group">
+                      <span className="input-group-text">
+                        <i className="bi bi-calendar-check"></i>
+                      </span>
+                      <input
+                        type="date"
+                        className="form-control"
+                        id="formStartDate"
+                        name="fecha_ingreso"
+                        value={formData.fecha_ingreso}
+                        onChange={handleChange}
+                        required
+                      />
+                    </div>
                     <div className="invalid-feedback">
                       Seleccione una fecha de ingreso.
                     </div>
@@ -706,34 +779,44 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
                     <label htmlFor="formEndDate" className="form-label">
                       Fecha de egreso
                     </label>
-                    <input
-                      type="date"
-                      className="form-control"
-                      id="formEndDate"
-                      name="fecha_egreso"
-                      value={formData.fecha_egreso}
-                      onChange={handleChange}
-                    />
+                    <div className="input-group">
+                      <span className="input-group-text">
+                        <i className="bi bi-calendar-x"></i>
+                      </span>
+                      <input
+                        type="date"
+                        className="form-control"
+                        id="formEndDate"
+                        name="fecha_egreso"
+                        value={formData.fecha_egreso}
+                        onChange={handleChange}
+                      />
+                    </div>
                   </div>
                   <div className="col-md-6">
                     <label htmlFor="formDegreeType" className="form-label">
                       Titularidad
                     </label>
-                    <select
-                      className="form-select"
-                      id="formDegreeType"
-                      name="titularidad"
-                      value={formData.titularidad}
-                      onChange={handleChange}
-                      required
-                    >
-                      <option value="">Seleccione...</option>
-                      {DEGREE_TYPES.map((type) => (
-                        <option key={type} value={type}>
-                          {type}
-                        </option>
-                      ))}
-                    </select>
+                    <div className="input-group">
+                      <span className="input-group-text">
+                        <i className="bi bi-patch-check"></i>
+                      </span>
+                      <select
+                        className="form-select"
+                        id="formDegreeType"
+                        name="titularidad"
+                        value={formData.titularidad}
+                        onChange={handleChange}
+                        required
+                      >
+                        <option value="">Seleccione...</option>
+                        {DEGREE_TYPES.map((type) => (
+                          <option key={type} value={type}>
+                            {type}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                     <div className="invalid-feedback">
                       Seleccione la titularidad.
                     </div>
@@ -746,28 +829,38 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
                     <label htmlFor="formLanguages" className="form-label">
                       Idiomas que domina
                     </label>
-                    <textarea
-                      className="form-control"
-                      id="formLanguages"
-                      name="idiomas"
-                      rows="2"
-                      value={formData.idiomas}
-                      onChange={handleChange}
-                    ></textarea>
+                    <div className="input-group">
+                      <span className="input-group-text">
+                        <i className="bi bi-translate"></i>
+                      </span>
+                      <textarea
+                        className="form-control"
+                        id="formLanguages"
+                        name="idiomas"
+                        rows="2"
+                        value={formData.idiomas}
+                        onChange={handleChange}
+                      ></textarea>
+                    </div>
                   </div>
 
                   <div className="col-12">
                     <label htmlFor="formOccupation" className="form-label">
                       Ocupación actual
                     </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="formOccupation"
-                      name="ocupacion_actual"
-                      value={formData.ocupacion_actual}
-                      onChange={handleChange}
-                    />
+                    <div className="input-group">
+                      <span className="input-group-text">
+                        <i className="bi bi-briefcase"></i>
+                      </span>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="formOccupation"
+                        name="ocupacion_actual"
+                        value={formData.ocupacion_actual}
+                        onChange={handleChange}
+                      />
+                    </div>
                   </div>
 
                   {/* Mapa interactivo */}

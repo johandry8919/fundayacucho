@@ -79,7 +79,8 @@ function SearchForm({ onSearch, loading }) {
       </div>
 
       {/* Botón de búsqueda */}
-      <div className="col-12 ">
+      <div className="col-12 mt-2">
+        
         <button
           className="btn btn-primary w-100"
           type="submit"
