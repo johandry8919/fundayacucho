@@ -70,7 +70,10 @@ function App() {
       <div className="sesion">
         <div className="card app">
           <div className="card-title">
-            <h3 className="mb-4 text-mute">EGRESADOS FUNDAYAUCHO EGREAYACUCHO</h3>
+            <div className="text-center">
+              <h3 className="mb-0 text-mute">EGRESADOS FUNDAYACUCHO</h3>
+              <h3 className="mb-4 fw-bold text-mute">EGREAYACUCHO</h3>
+            </div>
           </div>
 
           {error && (
