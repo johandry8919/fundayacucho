@@ -4,6 +4,20 @@ import "../../src/styles/modal.css";
 import { estado, get_municipios, get_parroquias } from "../services/api";
 import "leaflet/dist/leaflet.css";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import L from 'leaflet';
+
+// Fix for default marker icon issue with bundlers
+import iconUrl from 'leaflet/dist/images/marker-icon.png';
+import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
+
+L.Marker.prototype.options.icon = L.icon({
+  iconUrl,
+  shadowUrl,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+});
 
 const SCHOLARSHIP_TYPES = ["Nacional", "Internacional"];
 const DEGREE_TYPES = ["Pre-grado", "Maestría", "Doctorado", "Postgrado"];
@@ -951,7 +965,7 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
                           <span className="ms-2">Enviando...</span>
                         </>
                       ) : (
-                        "Enviar Formulario"
+                        "Guarda Formulario"
                       )}
                     </button>
                   </div>
