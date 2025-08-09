@@ -1,4 +1,5 @@
 import { useState } from "react";
+import "bootstrap-icons/font/bootstrap-icons.css";
 
 const COUNTRIES = [
   { value: "V", label: "Venezolano" },
@@ -25,64 +26,62 @@ function SearchForm({ onSearch, loading }) {
 
   return (
     <form
-      className={`row g-1 needs-validation ${
-        validated ? "was-validated" : ""
-      }  `}
+      className={`needs-validation ${validated ? "was-validated" : ""}`}
       onSubmit={handleSubmit}
       noValidate
     >
-      {/* Nacionalidad */}
-      <div className="col-12">
-        <label htmlFor="nationality" className="form-label">
-          Nacionalidad
-        </label>
-        <select
-          className={`form-select ${
-            validated && !nationality ? "is-invalid" : ""
-          }`}
-          id="nationality"
-          value={nationality}
-          onChange={(e) => setNationality(e.target.value)}
-          required
-        >
-          <option value="">Seleccione una nacionalidad</option>
-          {COUNTRIES.map((country) => (
-            <option key={country.value} value={country.value}>
-              {country.label}
-            </option>
-          ))}
-        </select>
-        <div className="invalid-feedback">
-          Por favor seleccione una nacionalidad
+      <div className="mb-3">
+        <div className="input-group">
+          <span className="input-group-text">
+            <i className="bi bi-globe"></i>
+          </span>
+          <select
+            className={`form-select ${
+              validated && !nationality ? "is-invalid" : ""
+            }`}
+            id="nationality"
+            value={nationality}
+            onChange={(e) => setNationality(e.target.value)}
+            required
+          >
+            <option value="">Nacionalidad</option>
+            {COUNTRIES.map((country) => (
+              <option key={country.value} value={country.value}>
+                {country.label}
+              </option>
+            ))}
+          </select>
+          <div className="invalid-feedback">
+            Por favor seleccione una nacionalidad.
+          </div>
         </div>
       </div>
 
-      {/* Cédula */}
-      <div className="col-12">
-        <label htmlFor="idNumber" className="form-label">
-          Cédula
-        </label>
-        <input
-          type="text"
-          className={`form-control ${
-            validated && !idNumber ? "is-invalid" : ""
-          }`}
-          id="idNumber"
-          placeholder="Ingrese su número de identificación"
-          value={idNumber}
-          onChange={(e) => setIdNumber(e.target.value)}
-          required
-        />
-        <div className="invalid-feedback">
-          Por favor ingrese su número de identificación
+      <div className="mb-3">
+        <div className="input-group">
+          <span className="input-group-text">
+            <i className="bi bi-person-vcard"></i>
+          </span>
+          <input
+            type="text"
+            className={`form-control ${
+              validated && !idNumber ? "is-invalid" : ""
+            }`}
+            id="idNumber"
+            placeholder="Número de Cédula"
+            value={idNumber}
+            onChange={(e) => setIdNumber(e.target.value)}
+            required
+          />
+          <div className="invalid-feedback">
+            Por favor ingrese su número de identificación.
+          </div>
         </div>
       </div>
 
-      {/* Botón de búsqueda */}
-      <div className="col-12 mt-2">
-        
+      <div className="d-grid">
         <button
-          className="btn btn-primary w-100"
+          className="btn btn-primary"
           type="submit"
           disabled={loading}
         >
@@ -96,7 +95,10 @@ function SearchForm({ onSearch, loading }) {
               <span className="ms-2">Buscando...</span>
             </>
           ) : (
-            "Buscar"
+            <>
+              <i className="bi bi-search me-2"></i>
+              Buscar
+            </>
           )}
         </button>
       </div>
