@@ -501,12 +501,14 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
                           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                         />
                         {formData.latitud && formData.longitud && (
-                          <Marker
-                            position={[
-                              parseFloat(formData.latitud),
-                              parseFloat(formData.longitud),
-                            ]}
-                          ></Marker>
+                      
+                           <Marker position={[parseFloat(formData.latitud), parseFloat(formData.longitud)]}>
+                            <Popup>
+                              {formData.estado && <div><strong>Estado:</strong> {formData.estado}</div>}
+                              {formData.municipio && <div><strong>Municipio:</strong> {formData.municipio}</div>}
+                              {formData.parroquia && <div><strong>Parroquia:</strong> {formData.parroquia}</div>}
+                            </Popup>
+                          </Marker>
                         )}
                       </MapContainer>
                     </div>
