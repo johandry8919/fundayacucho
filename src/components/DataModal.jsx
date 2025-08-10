@@ -23,7 +23,7 @@ const SCHOLARSHIP_TYPES = ["Nacional", "Internacional"];
 const DEGREE_TYPES = ["Pre-grado", "Maestría", "Doctorado", "Postgrado"];
 
 const DYNAMIC_LABELS = {
-  internacional: "¿De qué país es el becario?",
+  internacional: "¿Indique el país de procedencia?",
   venezolano_exterior: "¿En qué país cursa sus estudios?",
 };
 
