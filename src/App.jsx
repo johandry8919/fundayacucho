@@ -7,10 +7,13 @@ function App() {
   return (
     <>
       <Header />
-      <div className="sesion p-2">
+      <div className="app">
+        
         <Outlet />
+        
       </div>
       <Footer />
+  
     </>
   );
 }

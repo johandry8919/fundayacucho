@@ -2,31 +2,36 @@ body{
   padding: 0;
   margin: 0;
   width: 100%;
-  height: 100vh;
-
   background-image: url('/public/img/fonde2.png');
   background-repeat: no-repeat;
   background-size: cover;
-
-
- 
-
   box-sizing: border-box;
-   font-family: "Tinos", serif;
+  font-family: "Tinos", serif;
   font-weight: 400;
   font-style: normal;
+  height: 100vh;
+}
+
+header{
+  height: auto;
+  padding: 0;
+  margin: 0;
+
 
 }
 
-.sesion{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  margin-top: 90px;
+.home{
+  max-width: 580px;
+  padding: 2rem;
+  
+
 
 }
+.home .card{
+  max-width: 550px;
+  padding: 3rem;
 
+}
 .leaflet-control-attribution {
   display: none;
 }
@@ -36,5 +41,13 @@ body{
 
 textarea {
   box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+}
+
+
+@media (max-width: 768px) {
+  header .img {
+    width: 100%;
+    height: 50px;
+  }
 }
 
