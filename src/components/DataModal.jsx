@@ -797,9 +797,11 @@ useEffect(() => {
                     </div>
                   )}
 
+                  <h5>Universidad de Venezuela donde se postuló</h5>
+
                   <div className="col-md-6">
                     <label htmlFor="codigoestado2" className="form-label">
-                      Estado de Venezuela  donde se postuló
+                      Estado
                     </label>
                     <div className="input-group">
                       <span className="input-group-text">
@@ -831,7 +833,7 @@ useEffect(() => {
 
                   <div className="col-md-6">
                     <label htmlFor="formUniversidad" className="form-label">
-                      Universidad de Venezuela donde se postuló
+                      Universidad 
                     </label>
                     <div className="input-group">
                       <span className="input-group-text">
