@@ -2,7 +2,7 @@ import React from 'react'
 
 export default function Footer() {
   return (
-   <footer className="py-3 my-4 text-white">
+   <footer className=" text-white">
     <div className="text-center p-4">
                 © 2025 Copyright:
                 <a className="text-reset fw-bold" href="index.php">
