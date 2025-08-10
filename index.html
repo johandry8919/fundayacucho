@@ -1,19 +1,59 @@
 <!doctype html>
 <html lang="es">
   <head>
+    <!-- Codificación de caracteres -->
     <meta charset="UTF-8" />
+    
+    <!-- Viewport para responsive design -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+    
+    <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="https://fundayacucho.gob.ve/img/logo50ani.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="apple-touch-icon" href="https://fundayacucho.gob.ve/img/logo50ani.ico">
+    
+    <!-- Metadatos básicos SEO -->
+    <title>Fundayacucho - Fundación Gran Mariscal de Ayacucho</title>
+    <meta name="description" content="Sitio oficial de Fundayacucho, institución dedicada a la formación y capacitación de profesionales venezolanos mediante programas de becas y financiamiento educativo.">
+    <meta name="keywords" content="Fundayacucho, becas Venezuela, educación Venezuela, financiamiento educativo, programas académicos">
+    <meta name="author" content="Fundayacucho">
+    
+    <!-- Open Graph / Facebook (para compartir en redes) -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://fundayacucho.gob.ve/">
+    <meta property="og:title" content="Fundayacucho - Fundación Gran Mariscal de Ayacucho">
+    <meta property="og:description" content="Institución dedicada a la formación y capacitación de profesionales venezolanos mediante programas de becas y financiamiento educativo.">
+    <meta property="og:image" content="https://fundayacucho.gob.ve/img/logo-social.jpg">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://fundayacucho.gob.ve/">
+    <meta property="twitter:title" content="Fundayacucho - Fundación Gran Mariscal de Ayacucho">
+    <meta property="twitter:description" content="Institución dedicada a la formación y capacitación de profesionales venezolanos mediante programas de becas y financiamiento educativo.">
+    <meta property="twitter:image" content="https://fundayacucho.gob.ve/img/logo-social.jpg">
+    
+    <!-- Preconexión y precarga de recursos críticos -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Tinos:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
-
-
-    <title>Fundayacucho</title>
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Tinos:ital,wght@0,400;0,700;1,400;1,700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tinos:ital,wght@0,400;0,700;1,400;1,700&display=swap"></noscript>
+    
+    <!-- Preload de scripts críticos -->
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js" as="script">
+    
+    <!-- Theme color para navegadores móviles -->
+    <meta name="theme-color" content="#ffffff">
+    
+    <!-- Robots -->
+    <meta name="robots" content="index, follow">
+    
+    <!-- Canonical URL para evitar contenido duplicado -->
+    <link rel="canonical" href="https://fundayacucho.gob.ve/" />
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    
+    <!-- Carga diferida de SweetAlert -->
+    <script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   </body>
 </html>
