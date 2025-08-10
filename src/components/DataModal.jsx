@@ -24,7 +24,7 @@ const DEGREE_TYPES = ["Pre-grado", "Maestría", "Doctorado", "Postgrado"];
 
 const DYNAMIC_LABELS = {
   internacional: "¿Indique el país de procedencia?",
-  venezolano_exterior: "¿En qué país cursa sus estudios?",
+  venezolano_exterior: "¿Indique el país donde cursó los estudios?",
 };
 
 function ChangeView({ center, zoom }) {
