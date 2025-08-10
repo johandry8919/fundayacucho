@@ -44,7 +44,7 @@ function Home() {
         });
       } else {
         Swal.fire({
-          title: "¡Los datos Registrado con éxito!",
+          title: "¡Registrado con éxito!",
           icon: "success",
           draggable: true,
         });
