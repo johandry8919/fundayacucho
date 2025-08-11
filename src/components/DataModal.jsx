@@ -641,7 +641,7 @@ useEffect(() => {
                       cols="80"
                       name="direccion"
                       id="direccion"
-                    ></textarea>
+                    required></textarea>
                   </div>
 
                   <div className="col-12 mt-4">
@@ -732,6 +732,7 @@ useEffect(() => {
                           value="internacional"
                           checked={formData.becario_tipo === "internacional"}
                           onChange={handleChange}
+                          required
                         />
                         <label
                           className="form-check-label"
@@ -797,6 +798,7 @@ useEffect(() => {
                         name="descripcion_becario"
                         value={formData.descripcion_becario}
                         onChange={handleChange}
+                        required
                       >
                         <option value="">Seleccione... </option>
                         {paises.map((type) => (
@@ -873,6 +875,7 @@ useEffect(() => {
                         name="fecha_egreso"
                         value={formData.fecha_egreso}
                         onChange={handleChange}
+                        required
                       />
                     </div>
                   </div>
@@ -989,6 +992,7 @@ useEffect(() => {
                         name="ocupacion_actual"
                         value={formData.ocupacion_actual}
                         onChange={handleChange}
+                        required
                       />
                     </div>
                   </div>
@@ -1036,6 +1040,7 @@ useEffect(() => {
                         rows="1"
                         value={formData.idiomas}
                         onChange={handleChange}
+                        required
                       ></textarea>
                     </div>
                   </div>
