@@ -4,13 +4,14 @@
    font-family: "Tinos", serif;
   font-style: normal;
    display: flex;
+   flex-direction:column;
+   justify-content: space-between;
     align-items: center;
-    justify-content: center;
-    height: 60vh;
-    margin-top:50px;
-    padding: 0.1rem;
- 
-    
+    background-image: url("/public/img/fon12.png");
+  background-size:cover;
+  background-repeat: no-repeat;
+  height: 100vh;
+
 
 }
 
