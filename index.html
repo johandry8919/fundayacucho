@@ -52,7 +52,7 @@
   <body>
      <!-- Video de fondo -->
   <video autoplay muted loop id="bg-video">
-    <source src="/public/video/video1.mp4" type="video/mp4">
+    <source src="/public/video/video3.mp4" type="video/mp4">
     <source src="tu-video.webm" type="video/webm">
     <!-- Texto alternativo si el video no carga -->
     Tu navegador no soporta videos HTML5.
@@ -65,36 +65,8 @@
     <!-- Carga diferida de SweetAlert -->
     <script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-      <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const video = document.getElementById('bg-video');
-      
-      // Configuración inicial
-      video.muted = true;
-      video.autoplay = true;
-      video.loop = false; // Desactivamos el loop nativo para controlarlo manualmente
-      
-      // Control preciso del reinicio
-      video.addEventListener('timeupdate', function() {
-        // Cuando llegue al segundo 3 (o muy cerca por sincronización)
-        if (this.currentTime >= 3.9) {
-          this.currentTime = 0;
-          this.play();
-        }
-      });
-      
-      // Manejo de errores
-      video.addEventListener('error', function() {
-        console.error("Error al cargar el video:", this.error);
-      });
-      
-      // Reinicio forzado si se detiene (por políticas de autoplay)
-      video.addEventListener('pause', function() {
-        if (this.currentTime < 3.5 && !this.ended) {
-          this.play().catch(e => console.log("Autoplay prevented:", e));
-        }
-      });
-    });
-  </script>
+
+
+
   </body>
 </html>
