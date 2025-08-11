@@ -63,7 +63,7 @@ function SearchForm({ onSearch, loading }) {
             <i className="bi bi-person-vcard"></i>
           </span>
           <input
-            type="number"
+            type="text"
             className={`form-control ${
               validated && !idNumber ? "is-invalid" : ""
             }`}

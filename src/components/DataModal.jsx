@@ -806,68 +806,7 @@ useEffect(() => {
                     </div>
                   )}
 
-                  <h5>Universidad de Venezuela donde se postuló</h5>
-
-                  <div className="col-md-6">
-                    <label htmlFor="codigoestado2" className="form-label">
-                      Estado
-                    </label>
-                    <div className="input-group">
-                      <span className="input-group-text">
-                        <i className="bi bi-geo-alt"></i>
-                      </span>
-                      <select
-                        className="form-select"
-                        id="codigoestado2"
-                        name="codigoestado2"
-                        value={formData.codigoestado2}
-                        onChange={handleChange}
-                        required
-                      >
-                        <option value="">Seleccione...</option>
-                        {estados.data.map((stad) => (
-                          <option
-                            key={stad.codigoestado}
-                            value={stad.codigoestado}
-                          >
-                            {stad.nombre}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="invalid-feedback">
-                      Por favor seleccione una universidad.
-                    </div>
-                  </div>
-
-                  <div className="col-md-6">
-                    <label htmlFor="formUniversidad" className="form-label">
-                      Universidad 
-                    </label>
-                    <div className="input-group">
-                      <span className="input-group-text">
-                        <i className="bi bi-building-fill"></i>
-                      </span>
-                      <select
-                        className="form-select"
-                        id="formUniversidad"
-                        name="universidad"
-                        value={formData.universidad}
-                        onChange={handleChange}
-                        required
-                      >
-                        <option value="">Seleccione...</option>
-                        {universidades.map((universidad) => (
-                          <option key={universidad} value={universidad}>
-                            {universidad}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="invalid-feedback">
-                      Por favor seleccione una universidad.
-                    </div>
-                  </div>
+                 
 
                   <div className="col-md-6">
                     <label htmlFor="formCareer" className="form-label">
@@ -961,27 +900,74 @@ useEffect(() => {
                     </div>
                   </div>
 
-                  {/* Información Adicional */}
-                  <h5 className="mt-4 mb-3">Información Adicional</h5>
 
-                  <div className="col-12">
-                    <label htmlFor="formLanguages" className="form-label">
-                      Idiomas que domina
+                   <h5>Universidad de Venezuela donde se postuló</h5>
+
+                  <div className="col-md-6">
+                    <label htmlFor="codigoestado2" className="form-label">
+                      Estado
                     </label>
                     <div className="input-group">
                       <span className="input-group-text">
-                        <i className="bi bi-translate"></i>
+                        <i className="bi bi-geo-alt"></i>
                       </span>
-                      <textarea
-                        className="form-control"
-                        id="formLanguages"
-                        name="idiomas"
-                        rows="1"
-                        value={formData.idiomas}
+                      <select
+                        className="form-select"
+                        id="codigoestado2"
+                        name="codigoestado2"
+                        value={formData.codigoestado2}
                         onChange={handleChange}
-                      ></textarea>
+                        required
+                      >
+                        <option value="">Seleccione...</option>
+                        {estados.data.map((stad) => (
+                          <option
+                            key={stad.codigoestado}
+                            value={stad.codigoestado}
+                          >
+                            {stad.nombre}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="invalid-feedback">
+                      Por favor seleccione una universidad.
                     </div>
                   </div>
+
+                  <div className="col-md-6">
+                    <label htmlFor="formUniversidad" className="form-label">
+                      Universidad 
+                    </label>
+                    <div className="input-group">
+                      <span className="input-group-text">
+                        <i className="bi bi-building-fill"></i>
+                      </span>
+                      <select
+                        className="form-select"
+                        id="formUniversidad"
+                        name="universidad"
+                        value={formData.universidad}
+                        onChange={handleChange}
+                        required
+                      >
+                        <option value="">Seleccione...</option>
+                        {universidades.map((universidad) => (
+                          <option key={universidad} value={universidad}>
+                            {universidad}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="invalid-feedback">
+                      Por favor seleccione una universidad.
+                    </div>
+                  </div>
+
+                  {/* Información Adicional */}
+                  <h5 className="mt-4 mb-3">Información Adicional</h5>
+
+              
 
                   <div className="col-6">
                     <label htmlFor="formOccupation" className="form-label">
@@ -1027,6 +1013,25 @@ useEffect(() => {
                     </div>
                     <div className="invalid-feedback">
                       Por favor seleccione una universidad.
+                    </div>
+                  </div>
+
+                      <div className="col-12">
+                    <label htmlFor="formLanguages" className="form-label">
+                      Idiomas que domina
+                    </label>
+                    <div className="input-group">
+                      <span className="input-group-text">
+                        <i className="bi bi-translate"></i>
+                      </span>
+                      <textarea
+                        className="form-control"
+                        id="formLanguages"
+                        name="idiomas"
+                        rows="1"
+                        value={formData.idiomas}
+                        onChange={handleChange}
+                      ></textarea>
                     </div>
                   </div>
 
