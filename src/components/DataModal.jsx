@@ -387,7 +387,7 @@ useEffect(() => {
                   </div>
                   <div className="col-md-6">
                     <label htmlFor="formIdNumber" className="form-label">
-                      Cédula
+                      Cédula o Pasaporte
                     </label>
                     <div className="input-group">
                       <span className="input-group-text">
@@ -995,7 +995,7 @@ useEffect(() => {
                     </label>
                     <div className="input-group">
                       <span className="input-group-text">
-                        <i className="bi bi-geo-alt"></i>
+                        <i className="bi bi-briefcase"></i>
                       </span>
                       <select
                         className="form-select"
