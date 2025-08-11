@@ -2,8 +2,7 @@ body{
   padding: 0;
   margin: 0;
   width: 100%;
-  background-image: url('/public/img/fon3.png');
-  background-repeat: no-repeat;
+ 
   background-position-y:-30px ;
   background-size:cover;
   box-sizing: border-box;
@@ -12,6 +11,33 @@ body{
   font-style: normal;
   height: 100vh;
 }
+
+
+ /* Opcional: overlay para mejorar legibilidad del contenido */
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5); /* Ajusta opacidad según necesites */
+      z-index: -1;
+    }
+
+ #bg-video {
+      position: fixed;
+      right:0px;
+      bottom: 0;
+
+      top: -30px;
+      min-width: 100%;
+      min-height: 100%;
+      width: auto;
+      height: auto;
+      z-index: -1;
+      object-fit: cover;
+    }
 
 header{
   height: auto;
@@ -52,6 +78,14 @@ textarea {
   header .img {
     width: 100%;
     height: 50px;
+  }
+
+  #bg-video {
+    display: none;
+  }
+  body {
+  background-image: url('/public/img/fon3.png');
+  background-repeat: no-repeat;
   }
 }
 
