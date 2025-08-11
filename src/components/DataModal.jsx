@@ -96,7 +96,8 @@ function DataModal({ show, onHide, initialData, onSubmit, loading  ,cedulax, nac
     longitud: "",
     direccion: "",
     codigoestado2: "",
-    es_militar: ""
+    es_militar: "",
+    trabajando: ''
   });
 
   let idEstadoFiltro = formData.codigoestado2;
@@ -976,7 +977,7 @@ useEffect(() => {
                     </div>
                   </div>
 
-                  <div className="col-12">
+                  <div className="col-6">
                     <label htmlFor="formOccupation" className="form-label">
                       Ocupación actual
                     </label>
@@ -992,6 +993,34 @@ useEffect(() => {
                         value={formData.ocupacion_actual}
                         onChange={handleChange}
                       />
+                    </div>
+                  </div>
+
+
+                    <div className="col-md-6">
+                    <label htmlFor="trabajando" className="form-label">
+                        ¿Está trabajando?
+                    </label>
+                    <div className="input-group">
+                      <span className="input-group-text">
+                        <i className="bi bi-geo-alt"></i>
+                      </span>
+                      <select
+                        className="form-select"
+                        id="trabajando"
+                        name="trabajando"
+                        value={formData.trabajando}
+                        onChange={handleChange}
+                        required
+                      >
+                        <option value="">Seleccione...</option>
+                        <option value="si">Si</option>
+                        <option value="no">No</option>
+                        
+                      </select>
+                    </div>
+                    <div className="invalid-feedback">
+                      Por favor seleccione una universidad.
                     </div>
                   </div>
 
