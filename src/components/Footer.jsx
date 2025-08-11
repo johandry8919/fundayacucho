@@ -8,7 +8,7 @@ export default function Footer() {
                 <a className="text-reset fw-bold" href="">
                   <img width={40} src="https://fundayacucho.gob.ve/img/logo50ani.ico" alt=""  className="rounded-pill"/> 
                       fundayacucho.gob.ve</a>
-                      <p >Direción General de Tecnología de la Información  </p>
+                      <p >Dirección General de Tecnología de la Información  </p>
       </div>
 </footer>
 
