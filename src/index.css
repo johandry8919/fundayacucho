@@ -2,7 +2,7 @@ body{
   padding: 0;
   margin: 0;
   width: 100%;
-  background-image: url('/public/img/fonde2.png');
+  background-image: url('https://cdn.patria.org.ve/patria/images/patria_portada.png');
   background-repeat: no-repeat;
   background-size: cover;
   box-sizing: border-box;
@@ -23,6 +23,7 @@ header{
 .home{
   max-width: 580px;
   padding: 2rem;
+ 
   
 
 
@@ -30,6 +31,7 @@ header{
 .home .card{
   max-width: 550px;
   padding: 3rem;
+   background-color: #E6EAED;
 
 }
 .leaflet-control-attribution {
