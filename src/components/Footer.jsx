@@ -3,7 +3,7 @@ import React from 'react'
 export default function Footer() {
   return (
    <footer className=" text-white">
-    <div className=" p-5">
+    <div className="parra">
                 © 2025 Copyright:
                 <a className="text-reset fw-bold" href="">
                   <img width={40} src="https://fundayacucho.gob.ve/img/logo50ani.ico" alt=""  className="rounded-pill"/> 

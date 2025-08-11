@@ -61,11 +61,17 @@ footer {
   background-color: #6e7e8a00;
   position: absolute;
   bottom: 0;
-
   width: 100%;
   bottom: 0;
-  color: black;
+  right: 0;
+  left: 0;
 
+
+}
+
+footer .parra {
+  margin-bottom:85px;
+  margin-left: 4px;
 }
 
 @media (max-width: 768px) {
@@ -84,6 +90,11 @@ footer {
   #bg-video {
     display: none;
   }
+
+  footer .parra {
+  margin-bottom:35px;
+  margin-left: 10px;
+}
 
 
 }
