@@ -653,6 +653,12 @@ useEffect(() => {
                         center={mapCenter}
                         zoom={zoomLevel}
                         style={{ height: "100%", width: "100%" }}
+                          dragging={true}
+                          touchZoom={true}
+                          doubleClickZoom={true}
+                          scrollWheelZoom={true}
+                          zoomControl={true}
+                          tap={true}
                       >
                         <ChangeView center={mapCenter} zoom={zoomLevel} />
                         <TileLayer
