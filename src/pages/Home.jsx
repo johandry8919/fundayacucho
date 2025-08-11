@@ -74,8 +74,8 @@ function Home() {
         <div className="card">
           <div className="card-title">
             <div className="text-center">
-              <h3 className="mb-0 text-mute">EGRESADOS FUNDAYACUCHO</h3>
-              <h3 className="mb-4 fw-bold text-mute">EGREAYACUCHO</h3>
+              <h3 className="mb-0 ">EGRESADOS FUNDAYACUCHO</h3>
+              <h3 className="mb-2 ">EGREAYACUCHO</h3>
             </div>
           </div>
 
@@ -95,7 +95,7 @@ function Home() {
               onSubmit={handleSubmit}
               loading={loading}
               cedulax={cedula}
-              nacio={nacio}
+             nacio={nacio}
             />
           </div>
         </div>
