@@ -7,10 +7,13 @@ body {
   font-family: "Tinos", serif;
   font-weight: bold;
   font-style: normal;
-    background-image: url("/public/img/fon5.png");
+  background-image: url("/public/img/fon9.png");
   background-size:cover;
   background-repeat: no-repeat;
-
+  display: flex;
+  justify-content: space-around;
+  flex-direction: column;
+  position: relative;
   background-position-x: -240px;
 
  
@@ -20,6 +23,10 @@ header {
   height: auto;
   padding: 0;
   margin: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
 }
 
 .home {
@@ -52,7 +59,7 @@ textarea {
 
 footer {
   background-color: #6e7e8a00;
-  position: absolute;
+
   width: 100%;
   bottom: 0;
   color: black;
