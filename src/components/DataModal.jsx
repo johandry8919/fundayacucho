@@ -35,7 +35,7 @@ function ChangeView({ center, zoom }) {
   return null;
 }
 
-function DataModal({ show, onHide, initialData, onSubmit, loading }) {
+function DataModal({ show, onHide, initialData, onSubmit, loading  ,cedulax, nacio}) {
   const [universidades, setUniversidades] = useState([]);
   const [estados, setEstado] = useState([]);
   const [municipios, setMunicipio] = useState([]);
@@ -44,6 +44,9 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
   const [mapCenter, setMapCenter] = useState([6.4238, -66.5897]); // Centro de Venezuela por defecto
   const [zoomLevel, setZoomLevel] = useState(5);
     const [paises,  setPaises] = useState(5);
+
+
+  console.log(cedulax)
  
 
   const markerRef = useRef(null);
@@ -67,7 +70,7 @@ function DataModal({ show, onHide, initialData, onSubmit, loading }) {
 
   const [formData, setFormData] = useState({
     nombre_completo: "",
-    cedula: "",
+    cedula: cedulax,
     correo: "",
     telefono_celular: "",
     telefono_alternativo: "",
@@ -260,7 +263,6 @@ useEffect(() => {
     }
   }, [initialData]);
 
-  console.log(formData);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -395,7 +397,7 @@ useEffect(() => {
                         className="form-control"
                         id="formIdNumber"
                         name="cedula"
-                        value={formData.cedula}
+                        value={formData.cedula ?formData.cedula   :formData.cedula = nacio+'-'+cedulax}
                         onChange={handleChange}
                         required
                       />

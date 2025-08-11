@@ -12,7 +12,14 @@ function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const [nacio ,  setNacionalida] = useState('')
+   const [cedula ,  setCedula] = useState('')
+
   const handleSearch = async (nationality, idNumber) => {
+
+      
+    setNacionalida(nationality)
+    setCedula(idNumber)
     setLoading(true);
     setError(null);
     try {
@@ -87,7 +94,8 @@ function Home() {
               initialData={userData}
               onSubmit={handleSubmit}
               loading={loading}
-              idEstadoFiltro={codigoEstado}
+              cedulax={cedula}
+              nacio={nacio}
             />
           </div>
         </div>
