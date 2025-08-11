@@ -394,14 +394,19 @@ useEffect(() => {
                         <i className="bi bi-person-vcard"></i>
                       </span>
                       <input
-                        type="text"
-                        className="form-control"
-                        id="formIdNumber"
-                        name="cedula"
-                        value={formData.cedula ?formData.cedula   :formData.cedula = nacio+'-'+cedulax}
-                        onChange={handleChange}
-                        required
-                      />
+                      type="text"
+                      className="form-control"
+                      id="formIdNumber"
+                      name="cedula"
+                      value={formData.cedula ? formData.cedula : formData.cedula = nacio+'-'+cedulax}
+                      onChange={handleChange}
+                      required
+                      style={{ 
+                        MozAppearance: 'textfield',
+                        WebkitAppearance: 'none',
+                        margin: 0
+                      }}
+                    />
                     </div>
                     <div className="invalid-feedback">
                       Por favor ingrese la cédula o pasaporte.

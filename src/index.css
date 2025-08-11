@@ -2,21 +2,13 @@ body {
   padding: 0;
   margin: 0;
   width: 100%;
- 
   box-sizing: border-box;
   font-family: "Tinos", serif;
   font-weight: bold;
   font-style: normal;
-  
- 
-  position: relative;
-  background-position-x: -240px;
-
- 
 }
 
-* Controles personalizados */
-.leaflet-control-container {
+* Controles personalizados */ .leaflet-control-container {
   position: absolute;
   right: 10px;
   top: 10px;
@@ -26,7 +18,7 @@ body {
 .leaflet-control {
   background: white;
   border-radius: 4px;
-  box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4);
   margin-bottom: 10px;
 }
 
@@ -81,13 +73,11 @@ header {
   height: auto;
   padding: 0;
   margin: 0;
-    
 }
 
 .home {
-   padding: 5px;
-   margin-bottom: 100px;
- 
+  padding: 5px;
+  margin-bottom: 100px;
 }
 .home .card {
   width: 100%;
@@ -119,14 +109,10 @@ footer {
   bottom: 0;
   right: 0;
   left: 0;
-
-
 }
 
-
-
 footer .parra {
-  margin-bottom:10px;
+  margin-bottom: 10px;
   margin-left: 4px;
   text-align: center;
 }
@@ -137,22 +123,17 @@ footer .parra {
     height: 50px;
   }
   .home {
-   width: 100%;
- 
-}
-
-
+    width: 100%;
+  }
 
   #bg-video {
     display: none;
   }
 
   footer .parra {
-  margin-bottom:35px;
-  margin-left: 10px;
-}
-
-
+    margin-bottom: 35px;
+    margin-left: 10px;
+  }
 }
 
 @media (max-width: 990px) {
@@ -164,7 +145,4 @@ footer .parra {
   #bg-video {
     display: none;
   }
- 
 }
-
-

@@ -72,6 +72,16 @@ function SearchForm({ onSearch, loading }) {
             value={idNumber}
             onChange={(e) => setIdNumber(e.target.value)}
             required
+            onKeyPress={(e) => {
+              if (!/[0-9-]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'Tab') {
+                e.preventDefault();
+              }
+            }}
+             style={{ 
+              MozAppearance: 'textfield',
+              WebkitAppearance: 'none',
+              margin: 0
+            }}
           />
           <div className="invalid-feedback">
             Por favor ingrese su número de identificación.
