@@ -50,13 +50,17 @@
     <link rel="canonical" href="https://fundayacucho.gob.ve/" />
   </head>
   <body>
-     <!-- Video de fondo -->
-  <video autoplay muted loop id="bg-video">
-    <source src="/public/video/video3.mp4" type="video/mp4">
-    <source src="tu-video.webm" type="video/webm">
-    <!-- Texto alternativo si el video no carga -->
+
+    <div class="video-container">
+        <video autoplay muted loop id="bg-video">
+    <source src="/public/video/video6.mp4" type="video/mp4">
+   
+    <!-- <source src="tu-video.webm" type="video/webm"> -->
     Tu navegador no soporta videos HTML5.
   </video>
+
+    </div>
+     <!-- Video de fondo -->
 
 
     <div id="root"></div>
@@ -66,6 +70,93 @@
     <script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
+<script>
+ document.addEventListener('DOMContentLoaded', function() {
+  const video = document.getElementById('bg-video');
+  const videoContainer = document.createElement('div');
+  videoContainer.style.position = 'relative';
+  video.parentNode.insertBefore(videoContainer, video);
+  videoContainer.appendChild(video);
+  
+  // Crear elemento para la imagen de fondo
+  const bgImage = document.createElement('div');
+  bgImage.style.position = 'absolute';
+  bgImage.style.top = '0';
+  bgImage.style.left = '0';
+  bgImage.style.width = '100%';
+  bgImage.style.height = '100%';
+  bgImage.style.backgroundImage = 'url("/public/img/fon3.png")'; // Cambia por tu imagen
+  bgImage.style.backgroundSize = 'cover';
+  bgImage.style.backgroundPosition = 'center';
+  bgImage.style.opacity = '0';
+  bgImage.style.transition = 'opacity 1.2s ease-in-out';
+  videoContainer.appendChild(bgImage);
+  
+  // Configuración inicial
+  video.removeAttribute('loop');
+  video.style.transition = 'opacity 1.1s ease-in-out';
+  video.style.position = 'relative';
+  video.style.opacity = '1';
+  
+  // Función para manejar el ciclo de transición
+  function setupVideoTransition() {
+    video.addEventListener('ended', function() {
+      // Fade out del video y fade in de la imagen
+      video.style.opacity = '0';
+      bgImage.style.opacity = '1';
+      
+      // Esperar un momento con la imagen visible
+      setTimeout(function() {
+        // Reiniciar video
+        video.currentTime = 0;
+        
+        // Fade out de la imagen y fade in del video
+        bgImage.style.opacity = '0';
+        video.play().catch(e => console.log("Error al reiniciar:", e));
+        
+        setTimeout(() => {
+          video.style.opacity = '1';
+        }, 300); // Pequeño retraso para solapar transiciones
+      }, 2000); // Tiempo que la imagen permanece visible
+    });
+  }
+  
+  // Intentar reproducción automática
+  const playPromise = video.play();
+  
+  if (playPromise !== undefined) {
+    playPromise.then(() => {
+      // Autoplay funcionó, configurar transiciones
+      setupVideoTransition();
+    }).catch(error => {
+      // Autoplay falló, esperar interacción del usuario
+      console.log("Autoplay bloqueado, esperando interacción del usuario");
+      
+      // Mostrar un botón para permitir la reproducción manual
+      const playButton = document.createElement('div');
+      playButton.innerHTML = '▶ Reproducir Video';
+      playButton.style.position = 'fixed';
+      playButton.style.bottom = '20px';
+      playButton.style.right = '20px';
+      playButton.style.padding = '10px 15px';
+      playButton.style.background = 'rgba(0,0,0,0.0)';
+      playButton.style.color = 'white';
+      playButton.style.borderRadius = '5px';
+      playButton.style.cursor = 'pointer';
+      playButton.style.zIndex = '1000';
+      
+      playButton.addEventListener('click', function() {
+        video.play().then(() => {
+          document.body.removeChild(playButton);
+          setupVideoTransition();
+        });
+      });
+      
+      document.body.appendChild(playButton);
+    });
+  }
+});
+</script>
 
 
   </body>
