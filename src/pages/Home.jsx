@@ -73,9 +73,8 @@ function Home() {
       <div className="home">
         <div className="card">
           <div className="card-title">
-            <div className="text-center">
-              <h3 className="mb-0 ">EGRESADOS FUNDAYACUCHO</h3>
-              <h3 className="mb-2 ">EGREAYACUCHO</h3>
+            <div className="text-center titulo">
+            
             </div>
           </div>
 

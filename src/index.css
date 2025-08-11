@@ -66,11 +66,23 @@ header{
 
 }
 .home .card{
-   background-color: #E6EAED;
+   background-color: #42556357;
+     background-image: url('/public/img/card2.png');
+     background-size: cover;
+    background-repeat: no-repeat;
+   
+   color: aliceblue;
    padding: 1rem;
+
      box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
   
  
+
+}
+
+.home .card .titulo{
+   
+    height: 85px;
 
 }
 .leaflet-control-attribution {
