@@ -90,15 +90,16 @@ header {
  
 }
 .home .card {
-     width: 100%;
+  width: 100%;
   padding: 1rem;
-  background-color: #ecf0f3dc;
+  background-color: #ecf0f3bd;
   color: #01090f;
   box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
 }
 
 .home .card .titulo {
   color: rgb(3, 2, 2);
+  font-weight: bold;
 }
 .leaflet-control-attribution {
   display: none;
