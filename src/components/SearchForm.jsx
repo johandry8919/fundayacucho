@@ -63,12 +63,12 @@ function SearchForm({ onSearch, loading }) {
             <i className="bi bi-person-vcard"></i>
           </span>
           <input
-            type="text"
+            type="number"
             className={`form-control ${
               validated && !idNumber ? "is-invalid" : ""
             }`}
             id="idNumber"
-            placeholder="Número de Cédula"
+            placeholder="Número de Cédula o Pasaporte"
             value={idNumber}
             onChange={(e) => setIdNumber(e.target.value)}
             required
