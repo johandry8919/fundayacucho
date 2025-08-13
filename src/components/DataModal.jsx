@@ -44,11 +44,6 @@ function DataModal({ show, onHide, initialData, onSubmit, loading  ,cedulax, nac
   const [mapCenter, setMapCenter] = useState([6.4238, -66.5897]); // Centro de Venezuela por defecto
   const [zoomLevel, setZoomLevel] = useState(5);
     const [paises,  setPaises] = useState(5);
-
-
-  console.log(cedulax)
- 
-
   const markerRef = useRef(null);
   const markerEventHandlers = useMemo(
     () => ({

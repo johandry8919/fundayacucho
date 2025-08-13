@@ -4,6 +4,7 @@ import About from './pages/About';
 import Home from './pages/Home';
 import ErrorPage from './pages/ErrorPage';
 import Admin from './pages/Admin';
+import HomeAdministrador from './pages/HomeAdministrador';
 
 const router = createBrowserRouter([
   {
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
         element: <Admin />,
       },
     ],
+  },
+  {
+    path: "/homeadministrador",
+    element: <HomeAdministrador />,
   },
 ]);
 

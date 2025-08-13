@@ -77,11 +77,6 @@ export const get_parroquias = async (codigomunicipio) => {
 };
 
 
-
-
-
-
-
 export const submitForm = async (formData) => {
   const response = await api.post('/register', formData);
 
@@ -91,4 +86,14 @@ export const submitForm = async (formData) => {
   
 
  
+};
+
+export const login = async (correo, contraseña) => {
+  try {
+    const response = await api.post('/loguin', {correo, contraseña });
+    return response.data; 
+  } catch (error) {
+    console.error('Error en la función login:', error);
+    return { success: false, message: error.message || 'Credenciales inválidas' };
+  }
 };
