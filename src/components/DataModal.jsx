@@ -396,6 +396,7 @@ useEffect(() => {
                       value={formData.cedula ? formData.cedula : formData.cedula = nacio+'-'+cedulax}
                       onChange={handleChange}
                       required
+                      disabled
                       style={{ 
                         MozAppearance: 'textfield',
                         WebkitAppearance: 'none',
