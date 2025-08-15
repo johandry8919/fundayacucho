@@ -32,7 +32,7 @@ const drawerWidth = 240;
 const Dashboard = () => {
   const { logout } = useAuth();
   const navigate = useNavigate();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(true);
 
   const toggleDrawer = () => setOpen(!open);
 
