@@ -1,14 +1,7 @@
 import * as React from 'react';
 import {
-  AppBar,
   Toolbar,
   Typography,
-  IconButton,
-  Drawer,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
   Box,
   CssBaseline,
   Grid,
@@ -24,106 +17,18 @@ import HomeIcon from '@mui/icons-material/Home';
 import SettingsIcon from '@mui/icons-material/Settings';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import LogoutIcon from '@mui/icons-material/Logout';
-import { useAuth } from '../../context/AuthContext';
-import { Link, Outlet, useNavigate } from 'react-router-dom';
+import { Link, Outlet} from 'react-router-dom';
 
 const drawerWidth = 240;
 
 export default function Dashboard() {
-  const [open, setOpen] = React.useState(false);
-  const { logout } = useAuth();
-  const navigate = useNavigate();
 
-  const toggleDrawer = () => {
-    setOpen(!open);
-  };
-
-const handleLogout = () => {
-    logout();
-    navigate('/Admin');
-  };
-  
 
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-
-      {/* AppBar */}
-      <AppBar
-        position="fixed"
-        sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
-      >
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="menu"
-            edge="start"
-            onClick={toggleDrawer}
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap>
-            Dashboard MUI
-          </Typography>
-        </Toolbar>
-      </AppBar>
-
       {/* Drawer lateral */}
-      <Drawer
-        variant="persistent"
-        anchor="left"
-        open={open}
-        sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          '& .MuiDrawer-paper': {
-            width: drawerWidth,
-            boxSizing: 'border-box',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between'
-          },
-        }}
-      >
-        <Box>
-          <Toolbar />
-          <Box sx={{ overflow: 'auto' }}>
-            <List>
-              {[
-                { text: 'Inicio', icon: <HomeIcon />, path: '.' },
-                { text: 'Mapas', icon: <BarChartIcon />, path: 'mapa' },
-                { text: 'Reportes', icon: <BarChartIcon />, path: 'reporte' },
-                { text: 'Consultas', icon: <SettingsIcon />, path: 'consultas' },
-              ].map((item, index) => (
-                <ListItem button
-                 key={index}
-                 component={Link}
-                 to={item.path}
-
-                >
-                  <ListItemIcon>{item.icon}</ListItemIcon>
-                  <ListItemText primary={item.text} />
-                </ListItem>
-              ))}
-            </List>
-          </Box>
-        </Box>
-
-        {/* Botón de cerrar sesión abajo */}
-        <Box>
-          <Divider />
-          <List>
-            <ListItem button onClick={handleLogout}>
-              <ListItemIcon>
-                
-                <LogoutIcon color="error" />
-              </ListItemIcon>
-              <ListItemText primary="Cerrar Sesión" />
-            </ListItem>
-          </List>
-        </Box>
-      </Drawer>
+    
 
       {/* Contenido principal */}
       <Box
