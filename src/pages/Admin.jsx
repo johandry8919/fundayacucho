@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 //import { login } from '../../src/services/api'; // Asegúrate de que la ruta sea correcta
 
 const Admin = () => {
@@ -7,13 +8,15 @@ const Admin = () => {
   const [key, setKey] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { login: authLogin } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     try {
       //const response = await login(correo, key);
-      if (true) {
+      if (true) { 
+        authLogin(); 
         navigate('/homeadministrador');
       } else {
         //setError(response.message || 'Error de autenticación');

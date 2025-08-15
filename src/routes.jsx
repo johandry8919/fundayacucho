@@ -10,6 +10,7 @@ import Reporte from './pages/dashboard/Reporte';
 import Mapa from './pages/dashboard/Mapa';
 import Consultas from './pages/dashboard/Consultas';
 import DashboardHome from './pages/dashboard/DashboardHome';
+import ProtectedRoute from './components/ProtectedRoute';
 
 const router = createBrowserRouter([
   {
@@ -34,7 +35,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/homeadministrador",
-    element: <HomeAdministrador />,
+    element: <ProtectedRoute><HomeAdministrador /></ProtectedRoute>,
     children: [
       {
         index: true,
