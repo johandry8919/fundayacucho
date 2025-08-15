@@ -1,36 +1,132 @@
+import * as React from 'react';
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  IconButton,
+  Drawer,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Box,
+  CssBaseline,
+  Grid,
+  Card,
+  CardContent,
+  CardActions,
+  Button,
+} from '@mui/material';
 
-import React from 'react';
-import Chart from '../../components/Chart';
+import MenuIcon from '@mui/icons-material/Menu';
+import HomeIcon from '@mui/icons-material/Home';
+import SettingsIcon from '@mui/icons-material/Settings';
+import BarChartIcon from '@mui/icons-material/BarChart';
 
-const DashboardHome = () => {
+const drawerWidth = 240;
+
+export default function Dashboard() {
+  const [open, setOpen] = React.useState(false);
+
+  const toggleDrawer = () => {
+    setOpen(!open);
+  };
+
   return (
-    <div className="dashboard">
-      <div className="dashboard-header">
-        <h2>Dashboard de Administración</h2>
-      </div>
-      <div className="dashboard-cards">
-        <div className="card">
-          <h3>Usuarios Registrados</h3>
-          <p>1,234</p>
-        </div>
-        <div className="card">
-          <h3>Solicitudes Pendientes</h3>
-          <p>56</p>
-        </div>
-        <div className="card">
-          <h3>Becas Aprobadas</h3>
-          <p>789</p>
-        </div>
-        <div className="card">
-          <h3>Países Activos</h3>
-          <p>42</p>
-        </div>
-      </div>
-      <div className="dashboard-chart">
-        <Chart />
-      </div>
-    </div>
-  );
-};
+    <Box sx={{ display: 'flex' }}>
+      <CssBaseline />
 
-export default DashboardHome;
+      {/* AppBar */}
+      <AppBar
+        position="fixed"
+        sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+      >
+        <Toolbar>
+          <IconButton
+            color="inherit"
+            aria-label="menu"
+            edge="start"
+            onClick={toggleDrawer}
+            sx={{ mr: 2 }}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography variant="h6" noWrap>
+            Dashboard MUI
+          </Typography>
+        </Toolbar>
+      </AppBar>
+
+      {/* Drawer lateral */}
+      <Drawer
+        variant="persistent"
+        anchor="left"
+        open={open}
+        sx={{
+          width: drawerWidth,
+          flexShrink: 0,
+          '& .MuiDrawer-paper': {
+            width: drawerWidth,
+            boxSizing: 'border-box',
+          },
+        }}
+      >
+        <Toolbar />
+        <Box sx={{ overflow: 'auto' }}>
+          <List>
+            {[
+              { text: 'Inicio', icon: <HomeIcon /> },
+              { text: 'Reportes', icon: <BarChartIcon /> },
+              { text: 'Configuración', icon: <SettingsIcon /> },
+            ].map((item, index) => (
+              <ListItem button key={index}>
+                <ListItemIcon>{item.icon}</ListItemIcon>
+                <ListItemText primary={item.text} />
+              </ListItem>
+            ))}
+          </List>
+        </Box>
+      </Drawer>
+
+      {/* Contenido principal */}
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          marginLeft: open ? `${drawerWidth}px` : 0,
+          transition: 'margin 0.3s',
+        }}
+      >
+        <Toolbar />
+        <Typography variant="h4" gutterBottom>
+          Bienvenido al Dashboard
+        </Typography>
+
+        {/* Grid de tarjetas */}
+        <Grid container spacing={2}>
+          {[1, 2, 3, 4, 5, 6].map((item) => (
+            <Grid item xs={12} sm={6} md={4} key={item}>
+              <Card sx={{ boxShadow: 3, borderRadius: 2 }}>
+                <CardContent>
+                  <Typography variant="h6" gutterBottom>
+                    Tarjeta {item}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Esta es una tarjeta de ejemplo dentro del dashboard.
+                  </Typography>
+                </CardContent>
+                <CardActions>
+                  <Button size="small">Ver más</Button>
+                  <Button size="small" variant="contained" color="primary">
+                    Acción
+                  </Button>
+                </CardActions>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      </Box>
+    </Box>
+  );
+}
