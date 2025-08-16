@@ -114,6 +114,7 @@ export default function Dashboard() {
   const cargarBecariosFiltrados = async () => {
     try {
       setLoading(true);
+     
       const response = await get_becarios(
         filters.codigoestado || undefined,
         filters.codigomunicipio || undefined,
@@ -175,6 +176,8 @@ export default function Dashboard() {
       filters.codigomunicipio ||
       filters.codigoparroquia
     ) {
+
+       
       cargarBecariosFiltrados();
     } else if (initialLoadDone) {
       return;
@@ -312,7 +315,13 @@ export default function Dashboard() {
             <tr>
               <th>Nombre</th>
               <th>Cédula</th>
-              <th>Carrera</th>
+              <th>Telefono</th>
+              <th>Correo</th>
+              <th>Tipo de becario</th>
+              <th>Carrera cursada</th>
+             
+               
+             
               <th>Estado</th>
               <th>Municipio</th>
               <th>Parroquia</th>
@@ -324,6 +333,9 @@ export default function Dashboard() {
                 <tr key={becario.id}>
                   <td>{becario.nombre_completo}</td>
                   <td>{becario.cedula}</td>
+                   <td>{becario.telefono_celular}</td>
+                  <td>{becario.correo}</td>
+                  <td>{becario.becario_tipo}</td>
                   <td>{becario.carrera_cursada}</td>
                   <td>{becario.estado}</td>
                   <td>{becario.municipio}</td>

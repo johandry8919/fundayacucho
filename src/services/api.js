@@ -99,7 +99,7 @@ export const login = async (correo, contraseña) => {
 };
 
 
-export const get_becarios = async (estado = '' , municipio = '' , parroquia = '' ) => {
+export const get_becarios = async (estado= '' , municipio = '' , parroquia = '') => {
   const response = await api.get('/becarios' ,{
      params: {estado , municipio , parroquia }
   })
