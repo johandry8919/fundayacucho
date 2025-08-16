@@ -127,9 +127,9 @@ const Dashboard = () => {
       <Box
         component="main"
         sx={{
-          flexGrow: 1,
-          p: 3,
-          marginLeft: open ? `${drawerWidth}px` : 0,
+          flexGrow: 4,
+          p: 2,
+
           transition: 'margin 0.3s',
         }}
       >
