@@ -185,7 +185,7 @@ export default function Dashboard() {
   }, [filters]);
 
   return (
-    <div className="container-fluid">
+    <div className="container-fluid mt-2">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2>Consulta de Becarios</h2>
         <button
@@ -199,7 +199,7 @@ export default function Dashboard() {
 
       <div className="card mb-4">
         <div className="card-body">
-          <div className="row">
+          <div className="row ">
             <div className="col-md-4">
               <label htmlFor="codigoestado" className="form-label">
                 Estado
@@ -264,7 +264,7 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="col-md-4">
+            <div className="col-md-4 ">
               <label htmlFor="parroquia" className="form-label">
                 Parroquia
               </label>
@@ -302,56 +302,70 @@ export default function Dashboard() {
                 </select>
               </div>
             </div>
+
+        <div className="col-md-12 col-12 mt-4">
+       <div className="table-responsive" style={{overflowX: "auto"}}>
+  <table className="table table-striped table-bordered" style={{tableLayout: "fixed", width: "100%", wordWrap: "break-word"}}>
+    <thead className="thead-dark">
+      <tr>
+        <th style={{width: "10%"}}>Nombre</th>
+        <th style={{width: "7%"}}>Cédula</th>
+        <th style={{width: "8%"}}>Teléfono</th>
+        <th style={{width: "8%"}}>Correo</th>
+        
+        <th style={{width: "10%"}}>Es militar</th>
+        <th style={{width: "8%"}}>Tipo de beca</th>
+        <th style={{width: "10%"}}>Universidad</th>
+        <th style={{width: "10%"}}>Tipo de becario</th>
+        <th style={{width: "10%"}}>Carrera cursada</th>
+        <th style={{width: "7%"}}>Estado</th>
+        <th style={{width: "7%"}}>Municipio</th>
+        <th style={{width: "7%"}}>Parroquia</th>
+        <th style={{width: "10%"}}>Dirección</th>
+      </tr>
+    </thead>
+    <tbody>
+      {becarios.length > 0 ? (
+        becarios.map((becario) => (
+          <tr key={becario.id}>
+            <td className="text-truncate" title={becario.nombre_completo}>{becario.nombre_completo}</td>
+            <td>{becario.cedula}</td>
+            <td>{becario.telefono_celular}</td>
+            <td className="text-truncate" title={becario.correo}>{becario.correo}</td>
+           
+            <td>{becario.es_militar}</td>
+            <td>{becario.tipo_beca}</td>
+            <td className="text-truncate" title={becario.universidad}>{becario.universidad}</td>
+            <td>{becario.becario_tipo}</td>
+            <td className="text-truncate" title={becario.carrera_cursada}>{becario.carrera_cursada}</td>
+            <td>{becario.estado}</td>
+            <td>{becario.municipio}</td>
+            <td>{becario.parroquia}</td>
+             <td className="text-truncate" title={becario.direccion}>{becario.direccion}</td>
+          </tr>
+        ))
+      ) : (
+        <tr>
+          <td colSpan="13" className="text-center">
+            {!loading && "No se encontraron becarios"}
+          </td>
+        </tr>
+      )}
+    </tbody>
+  </table>
+</div>
+            </div>
           </div>
+
+
+
+
         </div>
       </div>
 
       {loading && <div className="text-center my-4">Cargando becarios...</div>}
       {error && <div className="alert alert-danger">{error}</div>}
 
-      <div className="table-responsive">
-        <table className="table table-striped table-bordered">
-          <thead className="thead-dark">
-            <tr>
-              <th>Nombre</th>
-              <th>Cédula</th>
-              <th>Telefono</th>
-              <th>Correo</th>
-              <th>Tipo de becario</th>
-              <th>Carrera cursada</th>
-             
-               
-             
-              <th>Estado</th>
-              <th>Municipio</th>
-              <th>Parroquia</th>
-            </tr>
-          </thead>
-          <tbody>
-            {becarios.length > 0 ? (
-              becarios.map((becario) => (
-                <tr key={becario.id}>
-                  <td>{becario.nombre_completo}</td>
-                  <td>{becario.cedula}</td>
-                   <td>{becario.telefono_celular}</td>
-                  <td>{becario.correo}</td>
-                  <td>{becario.becario_tipo}</td>
-                  <td>{becario.carrera_cursada}</td>
-                  <td>{becario.estado}</td>
-                  <td>{becario.municipio}</td>
-                  <td>{becario.parroquia}</td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="7" className="text-center">
-                  {!loading && "No se encontraron becarios"}
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
     </div>
   );
 }

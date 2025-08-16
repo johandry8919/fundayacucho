@@ -27,12 +27,13 @@ import MapIcon from '@mui/icons-material/Map';
 import SearchIcon from '@mui/icons-material/Search';
 import LogoutIcon from '@mui/icons-material/Logout';
 
+
 const drawerWidth = 240;
 
 const Dashboard = () => {
   const { logout } = useAuth();
   const navigate = useNavigate();
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = React.useState(false);
 
   const toggleDrawer = () => setOpen(!open);
 
@@ -42,7 +43,8 @@ const Dashboard = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex' }}>
+  <>
+     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
 
       {/* AppBar */}
@@ -123,20 +125,21 @@ const Dashboard = () => {
         </Box>
       </Drawer>
 
-      {/* Contenido principal */}
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 4,
-          p: 2,
 
-          transition: 'margin 0.3s',
-        }}
-      >
-        <Toolbar />
-        <Outlet />
-      </Box>
+
     </Box>
+
+  <div className='container-fluid' > 
+        <Toolbar />
+        
+        <Outlet />
+  </div>
+
+
+  </>
+   
+
+
   );
 };
 
