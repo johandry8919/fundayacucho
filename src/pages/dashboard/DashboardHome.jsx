@@ -99,69 +99,6 @@ export default function Dashboard() {
       setMunicipios(null);
     }
   };
-<<<<<<< HEAD
-  
-  return (
-    <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
-
-      {/* AppBar */}
-      <AppBar
-        position="fixed"
-        sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="menu"
-            edge="start"
-            onClick={toggleDrawer}
-            sx={{ mr: 2 }}>
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap>
-            Dashboard MUI
-          </Typography>
-        </Toolbar>
-      </AppBar>
-
-      {/* Drawer lateral */}
-      <Drawer
-        variant="persistent"
-        anchor="left"
-        open={open}
-        sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          '& .MuiDrawer-paper': {
-            width: drawerWidth,
-            boxSizing: 'border-box',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between'
-          },
-        }}>
-        <Box>
-          <Toolbar />
-          <Box sx={{ overflow: 'auto' }}>
-            <List>
-              {[
-                { text: 'Inicio', icon: <HomeIcon />, path: '.' },
-                { text: 'Mapas', icon: <BarChartIcon />, path: 'mapa' },
-                { text: 'Reportes', icon: <BarChartIcon />, path: 'reporte' },
-                { text: 'Consultas', icon: <SettingsIcon />, path: 'consultas' },
-              ].map((item, index) => (
-                <ListItem button
-                 key={index}
-                 component={Link}
-                 to={item.path}>
-                  <ListItemIcon>{item.icon}</ListItemIcon>
-                  <ListItemText primary={item.text} />
-                </ListItem>
-              ))}
-            </List>
-          </Box>
-        </Box>
-=======
 
   const cargarParroquias = async (codigomunicipio) => {
     try {
@@ -287,7 +224,6 @@ export default function Dashboard() {
                 </select>
               </div>
             </div>
->>>>>>> 23a41b19492cef8ce8a974485e9edb810d59c38c
 
             <div className="col-md-4">
               <label htmlFor="municipio" className="form-label">
