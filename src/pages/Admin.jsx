@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 //import { login } from '../../src/services/api'; // Asegúrate de que la ruta sea correcta
+import { Box, Button, TextField, Typography, Alert, Paper } from "@mui/material";
 
 const Admin = () => {
   const [correo, setEmail] = useState('');
@@ -29,30 +30,46 @@ const Admin = () => {
 
   return (
     <div className="admin-login-container">
-      <h2>Iniciar Sesión de Administrador</h2>
+          <Typography variant="h5" align="center" gutterBottom>
+          Iniciar Sesión de Administrador
+        </Typography>
+
       <form onSubmit={handleSubmit} className="admin-login-form">
         {error && <p className="error-message">{error}</p>}
         <div className="form-group">
-          <label htmlFor="correo">Correo Electrónico:</label>
-          <input
-            type="correo"
-            id="correo"
+
+          <TextField
+            fullWidth
+            margin="normal"
+            label="Correo Electrónico"
+            type="email"
             value={correo}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
+          
         </div>
         <div className="form-group">
-          <label htmlFor="key">Clave:</label>
-          <input
+          
+          <TextField
+            fullWidth
+            margin="normal"
+            label="Clave"
             type="password"
-            id="key"
             value={key}
             onChange={(e) => setKey(e.target.value)}
             required
           />
         </div>
-        <button type="submit" className="login-button">Iniciar Sesión</button>
+          <Button 
+            type="submit" 
+            variant="contained" 
+            color="primary" 
+            fullWidth 
+            sx={{ mt: 3 }}
+          >
+            Iniciar Sesión
+          </Button>
       </form>
     </div>
   );
