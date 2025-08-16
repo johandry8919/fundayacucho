@@ -97,3 +97,11 @@ export const login = async (correo, contraseña) => {
     return { success: false, message: error.message || 'Credenciales inválidas' };
   }
 };
+
+
+export const get_becarios = async (estado= '' , municipio = '' , parroquia = '') => {
+  const response = await api.get('/becarios' ,{
+     params: {estado , municipio , parroquia }
+  })
+  return response.data;
+};

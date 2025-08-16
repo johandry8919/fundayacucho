@@ -743,9 +743,9 @@ useEffect(() => {
                           type="radio"
                           id="checkVenezolanoVzla"
                           name="becario_tipo" // Mismo nombre para todos los radios
-                          value="venezolano_venezuela"
+                          value="venezolano en venezuela"
                           checked={
-                            formData.becario_tipo === "venezolano_venezuela"
+                            formData.becario_tipo === "venezolano en venezuela"
                           }
                           onChange={handleChange}
                         />
@@ -762,9 +762,9 @@ useEffect(() => {
                           type="radio"
                           id="checkVenezolanoExt"
                           name="becario_tipo" // Mismo nombre para todos los radios
-                          value="venezolano_exterior"
+                          value="venezolano exterior"
                           checked={
-                            formData.becario_tipo === "venezolano_exterior"
+                            formData.becario_tipo === "venezolano exterior"
                           }
                           onChange={handleChange}
                         />
