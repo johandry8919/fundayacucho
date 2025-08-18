@@ -1,40 +1,5 @@
-import * as React from 'react';
+import * as React from "react";
 import {
-<<<<<<< HEAD
-  AppBar,
-  Toolbar,
-  Typography,
-  IconButton,
-  Drawer,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Box,
-  CssBaseline,
-  Grid,
-  Card,
-  CardContent,
-  CardActions,
-  Button,
-  Divider,
-} from '@mui/material';
-
-import MenuIcon from '@mui/icons-material/Menu';
-import HomeIcon from '@mui/icons-material/Home';
-import SettingsIcon from '@mui/icons-material/Settings';
-import BarChartIcon from '@mui/icons-material/BarChart';
-import LogoutIcon from '@mui/icons-material/Logout';
-import { useAuth } from '../../context/AuthContext';
-import { Link, Outlet, useNavigate } from 'react-router-dom';
-
-const drawerWidth = 240;
-
-export default function Dashboard() {
-  const [open, setOpen] = React.useState(false);
-  const { logout } = useAuth();
-  const navigate = useNavigate();
-=======
   get_becarios,
   estado,
   get_municipios,
@@ -58,140 +23,112 @@ export default function Dashboard() {
   const [becarioToDelete, setBecarioToDelete] = React.useState(null);
   const [showConfirmModal, setShowConfirmModal] = React.useState(false);
 
->>>>>>> origin/main
 
-  const toggleDrawer = () => {
-    setOpen(!open);
+  const [filters, setFilters] = React.useState({
+    codigoestado: "",
+    codigomunicipio: "",
+    codigoparroquia: "",
+  });
+
+  const exportToExcel = () => {
+    if (becarios.length === 0) {
+      alert("No hay datos para exportar");
+      return;
+    }
+
+    const dataToExport = becarios.map((becario) => ({
+      ID: becario.id,
+      "Nombre Completo": becario.nombre_completo,
+      Cédula: becario.cedula,
+      Carrera: becario.carrera_cursada,
+      Estado: becario.estado,
+      Municipio: becario.municipio,
+      Parroquia: becario.parroquia,
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(dataToExport);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Becarios");
+
+    XLSX.writeFile(
+      wb,
+      `becarios_${new Date().toISOString().slice(0, 10)}.xlsx`
+    );
   };
 
-const handleLogout = () => {
-    logout();
-    navigate('/Admin');
+  React.useEffect(() => {
+    const cargarEstados = async () => {
+      try {
+        const data = await estado();
+        setEstados(data);
+      } catch (err) {
+        console.error("Error al cargar estados:", err);
+        setEstados(null);
+      }
+    };
+    cargarEstados();
+  }, []);
+
+  React.useEffect(() => {
+    if (initialLoadDone) return;
+
+    const cargarDatosIniciales = async () => {
+      try {
+        setLoading(true);
+        const response = await get_becarios();
+
+        if (response.success) {
+          setBecarios(response.data || []);
+          setError(null);
+        } else {
+          throw new Error(response.message || "Error al cargar becarios");
+        }
+
+        setInitialLoadDone(true);
+      } catch (err) {
+        console.error("Error al cargar becarios:", err);
+        setError(err.message || "Error al cargar los datos");
+        setBecarios([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    cargarDatosIniciales();
+  }, [initialLoadDone]);
+
+  const cargarMunicipios = async (codigoestado) => {
+    try {
+      setMunicipios(null);
+      const response = await get_municipios(codigoestado);
+      setMunicipios(response.data);
+    } catch (err) {
+      console.error("Error al obtener municipios:", err);
+      setMunicipios(null);
+    }
   };
-<<<<<<< HEAD
-  
-  return (
-    <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
 
-      {/* AppBar */}
-      <AppBar
-        position="fixed"
-        sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="menu"
-            edge="start"
-            onClick={toggleDrawer}
-            sx={{ mr: 2 }}>
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap>
-            Dashboard MUI
-          </Typography>
-        </Toolbar>
-      </AppBar>
+  const cargarParroquias = async (codigomunicipio) => {
+    try {
+      setParroquias(null);
+      const data = await get_parroquias(codigomunicipio);
+      setParroquias(data);
+    } catch (err) {
+      console.error("Error al obtener parroquias:", err);
+      setParroquias(null);
+    }
+  };
 
-      {/* Drawer lateral */}
-      <Drawer
-        variant="persistent"
-        anchor="left"
-        open={open}
-        sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          '& .MuiDrawer-paper': {
-            width: drawerWidth,
-            boxSizing: 'border-box',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between'
-          },
-        }}      >
-        <Box>
-          <Toolbar />
-          <Box sx={{ overflow: 'auto' }}>
-            <List>
-              {[
-                { text: 'Inicio', icon: <HomeIcon />, path: '.' },
-                { text: 'Mapas', icon: <BarChartIcon />, path: 'mapa' },
-                { text: 'Reportes', icon: <BarChartIcon />, path: 'reporte' },
-                { text: 'Consultas', icon: <SettingsIcon />, path: 'consultas' },
-              ].map((item, index) => (
-                <ListItem button
-                 key={index}
-                 component={Link}
-                 to={item.path}
+  const cargarBecariosFiltrados = async () => {
+    try {
+      setLoading(true);
+     
+      const response = await get_becarios(
+        filters.codigoestado || undefined,
+        filters.codigomunicipio || undefined,
+        filters.codigoparroquia || undefined
+      );
 
-                >
-                  <ListItemIcon>{item.icon}</ListItemIcon>
-                  <ListItemText primary={item.text} />
-                </ListItem>
-              ))}
-            </List>
-          </Box>
-        </Box>
-=======
->>>>>>> origin/main
-
-        {/* Botón de cerrar sesión abajo */}
-        <Box>
-          <Divider />
-          <List>
-            <ListItem button onClick={handleLogout}>
-              <ListItemIcon>
-                
-                <LogoutIcon color="error" />
-              </ListItemIcon>
-              <ListItemText primary="Cerrar Sesión" />
-            </ListItem>
-          </List>
-        </Box>
-      </Drawer>
-
-      {/* Contenido principal */}
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          p: 3,
-          marginLeft: open ? `${drawerWidth}px` : 0,
-          transition: 'margin 0.3s',
-        }}
-      >
-        <Toolbar />
-        <Typography variant="h4" gutterBottom>
-          Bienvenido al Dashboard
-        </Typography>
-
-<<<<<<< HEAD
-        {/* Grid de tarjetas */}
-        <Grid container spacing={2}>
-          {[1, 2, 3, 4, 5, 6].map((item) => (
-            <Grid item xs={12} sm={6} md={4} key={item}>
-              <Card sx={{ boxShadow: 3, borderRadius: 2 }}>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    Tarjeta {item}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Esta es una tarjeta de ejemplo dentro del dashboard.
-                  </Typography>
-                </CardContent>
-                <CardActions>
-                  <Button size="small">Ver más</Button>
-                  <Button size="small" variant="contained" color="primary">
-                    Acción
-                  </Button>
-                </CardActions>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-      </Box>
-    </Box>
-=======
       if (response?.success) {
         setBecarios(response.data || []);
         setError(null);
@@ -485,6 +422,5 @@ const handleLogout = () => {
         message={`¿Está seguro de que desea eliminar a ${becarioToDelete?.nombre_completo}?`}
       />
     </div>
->>>>>>> origin/main
   );
 }
