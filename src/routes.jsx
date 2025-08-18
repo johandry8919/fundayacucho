@@ -27,11 +27,13 @@ const router = createBrowserRouter([
         element: <About />,
       },
 
-      {
-        path: "Admin",
-        element: <Admin />,
-      },
+     
     ],
+  },
+  {
+    path: "/admin",
+    element: <Admin/>,
+    children: []
   },
   {
     path: "/homeadministrador",
