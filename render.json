@@ -1,8 +1,14 @@
 {
-  "rewrites": [
-    {
-      "source": "/*",
-      "destination": "/index.html"
-    }
-  ]
+  "rendering": {
+    "rewrites": [
+      {
+        "source": "/admin*",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/*",
+        "destination": "/index.html"
+      }
+    ]
+  }
 }
