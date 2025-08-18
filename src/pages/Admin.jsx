@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-//import { login } from '../../src/services/api'; // Asegúrate de que la ruta sea correcta
-import { Box, Button, TextField, Typography, Alert, Paper } from "@mui/material";
+import { login } from '../../src/services/api'; // Asegúrate de que la ruta sea correcta
+import {  Button, TextField, Typography} from "@mui/material";
 
 const Admin = () => {
   const [correo, setEmail] = useState('');
@@ -15,12 +15,12 @@ const Admin = () => {
     e.preventDefault();
     setError('');
     try {
-      //const response = await login(correo, key);
-      if (true) { 
+      const response = await login(correo, key);
+      if (response.success) { 
         authLogin(); 
         navigate('/homeadministrador');
       } else {
-        //setError(response.message || 'Error de autenticación');
+        setError(response.message || 'Error de autenticación');
       }
     } catch (err) {
       setError('Error de conexión o del servidor.');
