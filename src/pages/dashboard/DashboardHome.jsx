@@ -214,7 +214,7 @@ export default function Dashboard() {
   return (
     <div className="container-fluid mt-2">
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2>Consulta de Becarios</h2>
+        <h2>Consulta de Egresados Fundayacucho.</h2>
         <button
           onClick={exportToExcel}
           className="btn btn-success"
