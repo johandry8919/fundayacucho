@@ -26,15 +26,14 @@ const router = createBrowserRouter([
         path: "about",
         element: <About />,
       },
-
       {
-        path: "Admin",
+        path: "admin",
         element: <Admin />,
       },
     ],
   },
   {
-    path: "/homeadministrador",
+    path: "/admin/dashboard",
     element: <ProtectedRoute><HomeAdministrador /></ProtectedRoute>,
     children: [
       {

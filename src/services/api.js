@@ -88,9 +88,14 @@ export const submitForm = async (formData) => {
  
 };
 
-export const login = async (correo, contraseña) => {
+export const login = async (correo, contraseña)=> {
   try {
-    const response = await api.post('/loguin', {correo, contraseña });
+    const response = await api.get('/loguin',{
+       params: {correo, contraseña}
+    });
+
+     console.log(response)
+    
     return response.data; 
   } catch (error) {
     console.error('Error en la función login:', error);
@@ -103,5 +108,10 @@ export const get_becarios = async (estado= '' , municipio = '' , parroquia = '')
   const response = await api.get('/becarios' ,{
      params: {estado , municipio , parroquia }
   })
+  return response.data;
+};
+
+export const delete_becario = async (id) => {
+  const response = await api.delete(`/becarios/${id}`);
   return response.data;
 };
