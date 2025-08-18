@@ -110,3 +110,8 @@ export const get_becarios = async (estado= '' , municipio = '' , parroquia = '')
   })
   return response.data;
 };
+
+export const delete_becario = async (id) => {
+  const response = await api.delete(`/becarios/${id}`);
+  return response.data;
+};

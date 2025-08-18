@@ -4,9 +4,11 @@ import {
   estado,
   get_municipios,
   get_parroquias,
+  delete_becario
 } from "../../services/api";
 import * as XLSX from "xlsx";
 import BecarioDetailsModal from "../../components/BecarioDetailsModal";
+import ConfirmationModal from "../../components/ConfirmationModal";
 
 
 export default function Dashboard() {
@@ -18,6 +20,8 @@ export default function Dashboard() {
   const [municipios, setMunicipios] = React.useState(null);
   const [parroquias, setParroquias] = React.useState(null);
   const [selectedBecario, setSelectedBecario] = React.useState(null);
+  const [becarioToDelete, setBecarioToDelete] = React.useState(null);
+  const [showConfirmModal, setShowConfirmModal] = React.useState(false);
 
 
   const [filters, setFilters] = React.useState({
@@ -174,6 +178,25 @@ export default function Dashboard() {
     }
   };
 
+  const handleDelete = async () => {
+    if (!becarioToDelete) return;
+
+    try {
+      await delete_becario(becarioToDelete.id);
+      setBecarios(becarios.filter((b) => b.id !== becarioToDelete.id));
+      setShowConfirmModal(false);
+      setBecarioToDelete(null);
+    } catch (err) {
+      console.error("Error al eliminar becario:", err);
+      setError("Error al eliminar el becario. Por favor, intente de nuevo.");
+    }
+  };
+
+  const openConfirmModal = (becario) => {
+    setBecarioToDelete(becario);
+    setShowConfirmModal(true);
+  };
+
   React.useEffect(() => {
     if (
       filters.codigoestado ||
@@ -309,16 +332,15 @@ export default function Dashboard() {
 
         <div className="col-md-12 col-12 mt-4">
        <div className="table-responsive" style={{overflowX: "auto"}}>
+         {error && <div className="alert alert-danger">{error}</div>}
   <table className="table table-striped table-bordered">
     <thead className="thead-dark">
       <tr>
-
-        <th style={{width: "10%"}}>Acción</th>
+        <th style={{width: "10%"}}>Acciones</th>
         <th style={{width: "10%"}}>Nombre</th>
         <th style={{width: "7%"}}>Cédula</th>
         <th style={{width: "8%"}}>Teléfono</th>
         <th style={{width: "8%"}}>Correo</th>
-        
         <th style={{width: "10%"}}>Es militar</th>
         <th style={{width: "8%"}}>Tipo de beca</th>
         <th style={{width: "10%"}}>Universidad</th>
@@ -328,25 +350,29 @@ export default function Dashboard() {
         <th style={{width: "7%"}}>Municipio</th>
         <th style={{width: "7%"}}>Parroquia</th>
         <th style={{width: "10%"}}>Dirección</th>
-        <th style={{width: "5%"}}>Acciones</th>
+        
       </tr>
     </thead>
     <tbody>
       {becarios.length > 0 ? (
         becarios.map((becario) => (
           <tr key={becario.id}>
-          <td>
+             <td className="d-flex"> 
               <button 
-                className="btn btn-primary btn-sm"
+                className="btn btn-primary btn-sm me-1"
                 onClick={() => setSelectedBecario(becario)}>
-                 Detalles
+                Detalles
+              </button>
+              <button 
+                className="btn btn-danger btn-sm"
+                onClick={() => openConfirmModal(becario)}>
+                Eliminar
               </button>
             </td>
             <td className="text-truncate" title={becario.nombre_completo}>{becario.nombre_completo}</td>
             <td>{becario.cedula}</td>
             <td>{becario.telefono_celular}</td>
             <td className="text-truncate" title={becario.correo}>{becario.correo}</td>
-           
             <td>{becario.es_militar}</td>
             <td>{becario.tipo_beca}</td>
             <td className="text-truncate" title={becario.universidad}>{becario.universidad}</td>
@@ -355,8 +381,8 @@ export default function Dashboard() {
             <td>{becario.estado}</td>
             <td>{becario.municipio}</td>
             <td>{becario.parroquia}</td>
-             <td className="text-truncate" title={becario.direccion}>{becario.direccion}</td>
-            
+            <td className="text-truncate" title={becario.direccion}>{becario.direccion}</td>
+           
           </tr>
         ))
       ) : (
@@ -379,7 +405,7 @@ export default function Dashboard() {
       </div>
 
       {loading && <div className="text-center my-4">Cargando becarios...</div>}
-      {error && <div className="alert alert-danger">{error}</div>}
+     
 
       {selectedBecario && (
         <BecarioDetailsModal 
@@ -387,6 +413,14 @@ export default function Dashboard() {
           onClose={() => setSelectedBecario(null)} 
         />
       )}
+
+      <ConfirmationModal
+        show={showConfirmModal}
+        onClose={() => setShowConfirmModal(false)}
+        onConfirm={handleDelete}
+        title="Confirmar Eliminación"
+        message={`¿Está seguro de que desea eliminar a ${becarioToDelete?.nombre_completo}?`}
+      />
     </div>
   );
 }
