@@ -2,7 +2,7 @@
   "rendering": {
     "rewrites": [
       {
-        "source": "/admin*",
+        "source": "/Admin*",
         "destination": "/index.html"
       },
       {
