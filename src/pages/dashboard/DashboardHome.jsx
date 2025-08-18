@@ -313,7 +313,7 @@ export default function Dashboard() {
     <thead className="thead-dark">
       <tr>
 
-        <th style={{width: "10%"}}>Accion</th>
+        <th style={{width: "10%"}}>Acción</th>
         <th style={{width: "10%"}}>Nombre</th>
         <th style={{width: "7%"}}>Cédula</th>
         <th style={{width: "8%"}}>Teléfono</th>
