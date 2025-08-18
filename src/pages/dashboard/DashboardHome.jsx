@@ -6,6 +6,8 @@ import {
   get_parroquias,
 } from "../../services/api";
 import * as XLSX from "xlsx";
+import BecarioDetailsModal from "../../components/BecarioDetailsModal";
+
 
 export default function Dashboard() {
   const [becarios, setBecarios] = React.useState([]);
@@ -15,6 +17,8 @@ export default function Dashboard() {
   const [estados, setEstados] = React.useState(null);
   const [municipios, setMunicipios] = React.useState(null);
   const [parroquias, setParroquias] = React.useState(null);
+  const [selectedBecario, setSelectedBecario] = React.useState(null);
+
 
   const [filters, setFilters] = React.useState({
     codigoestado: "",
@@ -305,9 +309,11 @@ export default function Dashboard() {
 
         <div className="col-md-12 col-12 mt-4">
        <div className="table-responsive" style={{overflowX: "auto"}}>
-  <table className="table table-striped table-bordered" style={{tableLayout: "fixed", width: "100%", wordWrap: "break-word"}}>
+  <table className="table table-striped table-bordered">
     <thead className="thead-dark">
       <tr>
+
+        <th style={{width: "10%"}}>Accion</th>
         <th style={{width: "10%"}}>Nombre</th>
         <th style={{width: "7%"}}>Cédula</th>
         <th style={{width: "8%"}}>Teléfono</th>
@@ -322,12 +328,20 @@ export default function Dashboard() {
         <th style={{width: "7%"}}>Municipio</th>
         <th style={{width: "7%"}}>Parroquia</th>
         <th style={{width: "10%"}}>Dirección</th>
+        <th style={{width: "5%"}}>Acciones</th>
       </tr>
     </thead>
     <tbody>
       {becarios.length > 0 ? (
         becarios.map((becario) => (
           <tr key={becario.id}>
+          <td>
+              <button 
+                className="btn btn-primary btn-sm"
+                onClick={() => setSelectedBecario(becario)}>
+                 Detalles
+              </button>
+            </td>
             <td className="text-truncate" title={becario.nombre_completo}>{becario.nombre_completo}</td>
             <td>{becario.cedula}</td>
             <td>{becario.telefono_celular}</td>
@@ -342,11 +356,12 @@ export default function Dashboard() {
             <td>{becario.municipio}</td>
             <td>{becario.parroquia}</td>
              <td className="text-truncate" title={becario.direccion}>{becario.direccion}</td>
+            
           </tr>
         ))
       ) : (
         <tr>
-          <td colSpan="13" className="text-center">
+          <td colSpan="14" className="text-center">
             {!loading && "No se encontraron becarios"}
           </td>
         </tr>
@@ -366,6 +381,12 @@ export default function Dashboard() {
       {loading && <div className="text-center my-4">Cargando becarios...</div>}
       {error && <div className="alert alert-danger">{error}</div>}
 
+      {selectedBecario && (
+        <BecarioDetailsModal 
+          becario={selectedBecario} 
+          onClose={() => setSelectedBecario(null)} 
+        />
+      )}
     </div>
   );
 }
