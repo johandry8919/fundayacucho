@@ -18,7 +18,7 @@ const Admin = () => {
       const response = await login(correo, key);
       if (response.success) { 
         authLogin(); 
-        navigate('/homeadministrador');
+        navigate('/admin/dashboard');
       } else {
         setError(response.message || 'Error de autenticación');
       }
