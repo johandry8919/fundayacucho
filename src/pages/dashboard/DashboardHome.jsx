@@ -355,9 +355,10 @@ export default function Dashboard() {
         <th style={{width: "8%"}}>Correo</th>
         <th style={{width: "10%"}}>Es militar</th>
         <th style={{width: "8%"}}>Tipo de beca</th>
+         <th style={{width: "10%"}}>Tipo de becario</th>
+          <th style={{width: "10%"}}>Titularidad</th>
+           <th style={{width: "10%"}}>Carrera cursada</th>
         <th style={{width: "10%"}}>Universidad</th>
-        <th style={{width: "10%"}}>Tipo de becario</th>
-        <th style={{width: "10%"}}>Carrera cursada</th>
         <th style={{width: "7%"}}>Estado</th>
         <th style={{width: "7%"}}>Municipio</th>
         <th style={{width: "7%"}}>Parroquia</th>
@@ -387,9 +388,12 @@ export default function Dashboard() {
             <td className="text-truncate" title={becario.correo}>{becario.correo}</td>
             <td>{becario.es_militar}</td>
             <td>{becario.tipo_beca}</td>
-            <td className="text-truncate" title={becario.universidad}>{becario.universidad}</td>
             <td>{becario.descripcion_becario ?becario.descripcion_becario: 'Venezuela' }</td>
+
+            <td>{becario.titularidad}</td>
             <td className="text-truncate" title={becario.carrera_cursada}>{becario.carrera_cursada}</td>
+            <td className="text-truncate" title={becario.universidad}>{becario.universidad}</td>
+            
             <td>{becario.estado}</td>
             <td>{becario.municipio}</td>
             <td>{becario.parroquia}</td>
