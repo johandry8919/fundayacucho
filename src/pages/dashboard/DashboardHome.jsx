@@ -40,13 +40,25 @@ export default function Dashboard() {
     }
 
     const dataToExport = becarios.map((becario) => ({
-      ID: becario.id,
       "Nombre Completo": becario.nombre_completo,
       Cédula: becario.cedula,
+      'Fecha nacimiento': becario.fecha_nacimiento,
+      Correo: becario.correo,
+      'Telefono celular': becario.telefono_celular,
+      Es_militar: becario.es_militar, 
+      Titularidad: becario.titularidad,
+      Universidad: becario.universidad,
+      'Carrera cursada': becario.carrera_cursada,
+      fecha_egreso: becario.fecha_egreso,
+      fecha_ingreso: becario.fecha_ingreso,
+      'Tipo de becario': becario.becario_tipo,
+       Trabajando: becario.trabajando,
       Carrera: becario.carrera_cursada,
       Estado: becario.estado,
       Municipio: becario.municipio,
       Parroquia: becario.parroquia,
+      Direccion: becario.direccion,
+      'Fecha de registro': becario.fecha_registro,
     }));
 
     const ws = XLSX.utils.json_to_sheet(dataToExport);
