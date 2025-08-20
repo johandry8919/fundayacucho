@@ -104,11 +104,6 @@ const Dashboard = () => {
                 <ListItemIcon><MapIcon /></ListItemIcon>
                 <ListItemText primary="Mapa" />
               </ListItemButton>
-
-              <ListItemButton component={Link} to="consultas">
-                <ListItemIcon><SearchIcon /></ListItemIcon>
-                <ListItemText primary="Consultas" />
-              </ListItemButton>
             </List>
 
             <Divider />
