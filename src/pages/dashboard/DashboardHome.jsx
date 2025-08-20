@@ -23,10 +23,6 @@ export default function Dashboard() {
   const [becarioToDelete, setBecarioToDelete] = React.useState(null);
   const [showConfirmModal, setShowConfirmModal] = React.useState(false);
 
-
-  console.log(becarios)
-
-
   const [filters, setFilters] = React.useState({
     codigoestado: "",
     codigomunicipio: "",
@@ -51,7 +47,8 @@ export default function Dashboard() {
       'Carrera cursada': becario.carrera_cursada,
       fecha_egreso: becario.fecha_egreso,
       fecha_ingreso: becario.fecha_ingreso,
-      'Tipo de becario': becario.becario_tipo,
+      'becario': becario.becario_tipo,
+      'Tipo de becario': becario.descripcion_becario ?becario.descripcion_becario: 'Venezuela',
        Trabajando: becario.trabajando,
       Carrera: becario.carrera_cursada,
       Estado: becario.estado,
@@ -270,7 +267,7 @@ export default function Dashboard() {
             <div className="col-md-4">
               <label htmlFor="municipio" className="form-label">
                 Municipio
-              </label>
+              becario_tipo</label>
               <div className="input-group">
                 <span className="input-group-text">
                   <i className="bi bi-geo-alt"></i>
@@ -391,7 +388,7 @@ export default function Dashboard() {
             <td>{becario.es_militar}</td>
             <td>{becario.tipo_beca}</td>
             <td className="text-truncate" title={becario.universidad}>{becario.universidad}</td>
-            <td>{becario.becario_tipo}</td>
+            <td>{becario.descripcion_becario ?becario.descripcion_becario: 'Venezuela' }</td>
             <td className="text-truncate" title={becario.carrera_cursada}>{becario.carrera_cursada}</td>
             <td>{becario.estado}</td>
             <td>{becario.municipio}</td>
