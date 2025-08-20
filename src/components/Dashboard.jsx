@@ -104,6 +104,13 @@ const Dashboard = () => {
                 <ListItemIcon><MapIcon /></ListItemIcon>
                 <ListItemText primary="Mapa" />
               </ListItemButton>
+
+
+
+                <ListItemButton component={Link} to="mapa_internacional">
+                <ListItemIcon><MapIcon /></ListItemIcon>
+                <ListItemText primary="Mapa internacional " />
+              </ListItemButton>
             </List>
 
             <Divider />

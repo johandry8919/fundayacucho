@@ -10,6 +10,7 @@ import Mapa from './pages/dashboard/Mapa';
 import Consultas from './pages/dashboard/Consultas';
 import DashboardHome from './pages/dashboard/DashboardHome';
 import ProtectedRoute from './components/ProtectedRoute';
+import Mapa_internacional from './pages/dashboard/Mapa_internacional';
 
 const router = createBrowserRouter([
   {
@@ -51,6 +52,12 @@ const router = createBrowserRouter([
         path: "consultas",
         element: <Consultas />
       },
+      {
+        path: "mapa_internacional",
+        element: <Mapa_internacional />
+      },
+
+    
     ]
   },
 ]);

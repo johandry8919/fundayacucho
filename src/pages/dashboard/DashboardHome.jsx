@@ -24,6 +24,9 @@ export default function Dashboard() {
   const [showConfirmModal, setShowConfirmModal] = React.useState(false);
 
 
+  console.log(becarios)
+
+
   const [filters, setFilters] = React.useState({
     codigoestado: "",
     codigomunicipio: "",
