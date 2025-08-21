@@ -3,8 +3,6 @@ import {
   get_becarios,
 } from "../../services/api";
 
-
-
 export default function Dashboard() {
   const [becarios, setBecarios] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
