@@ -2,6 +2,8 @@ import * as React from "react";
 import {
   get_becarios,
 } from "../../services/api";
+import StatisticsPanel from "../../components/StatisticsPanel";
+
 
 export default function Dashboard() {
   const [becarios, setBecarios] = React.useState([]);
@@ -22,7 +24,7 @@ export default function Dashboard() {
           }
         } catch (err) {
           console.error("Error al cargar becarios:", err);
-          setError(err.message || "Error al cargar los datos");
+          setError(err.message || error);
           setBecarios([]);
         } finally {
           setLoading(false);
@@ -34,14 +36,8 @@ export default function Dashboard() {
  
     }, []);
 
-
-
-      console.log(becarios)
-
-
-
   return(
-    <div> aqui va panel grafico </div>
+    <div className="mt-4"> <StatisticsPanel becarios={becarios} loading={loading}/> </div>
   )
  
 }
