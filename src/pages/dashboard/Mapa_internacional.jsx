@@ -40,7 +40,7 @@ const Mapa = () => {
         const response = await get_becarios();
         
         if (response.data && Array.isArray(response.data)) {
-          console.log(response);
+        
           
           // Filtrar y validar coordenadas
           const validBecarios = response.data.filter(becario => {

@@ -65,7 +65,7 @@ const StatisticsPanel = ({ becarios, loading }) => {
       }
     });
     
-    // Ordenar estados por cantidad (descendente) y tomar los primeros 10
+   
     const sortedStates = Object.entries(stateCounts)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 10);
@@ -86,7 +86,7 @@ const StatisticsPanel = ({ becarios, loading }) => {
 
   const chartOptions = {
     responsive: true,
-    indexAxis: 'y', // Gráfico de barras horizontal
+    indexAxis: 'y', 
     plugins: {
       legend: {
         position: 'top',
@@ -110,7 +110,6 @@ const StatisticsPanel = ({ becarios, loading }) => {
 
   return (
     <>
-      {/* Panel de estadísticas */}
       <div className="row mb-4">
         <div className="col-md-3 mb-3">
           <div className="card bg-primary text-white">
@@ -146,7 +145,7 @@ const StatisticsPanel = ({ becarios, loading }) => {
         </div>
       </div>
 
-      {/* Gráfico por estados */}
+     
       <div className="row mb-4">
         <div className="col-12">
           <div className="card">
