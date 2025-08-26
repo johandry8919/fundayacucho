@@ -31,23 +31,25 @@ const StatisticsPanel = ({ becarios, loading }) => {
         exterior: 0 
       };
     }
+
+    console.log(becarios)
     
     const total = becarios.length;
     
     // Contar por tipo de beca (ajusta estas condiciones según tus datos reales)
     const nacional = becarios.filter(b => {
-      const tipo = b.tipo_beca || b.tipo_beca || '';
-      return tipo.toLowerCase().includes('nacional');
+      const tipo = b.tbecario_tipo || b.becario_tipo || '';
+      return tipo.toLowerCase().includes("venezolano en venezuela");
     }).length;
     
     const internacional = becarios.filter(b => {
-      const tipo = b.tipo_beca || b.tipo_beca || '';
+      const tipo = b.becario_tipo || b.becario_tipo || '';
       return tipo.toLowerCase().includes('internacional');
     }).length;
     
     const exterior = becarios.filter(b => {
-      const tipo = b.tipo_beca || b.tipo_beca || '';
-      return tipo.toLowerCase().includes('exterior') || tipo.toLowerCase().includes('extranjero');
+      const tipo = b.becario_tipo || b.becario_tipo || '';
+      return tipo.toLowerCase().includes('venezolano exterior') || tipo.toLowerCase().includes('venezolano exterior');
     }).length;
     
     return { total, nacional, internacional, exterior };
