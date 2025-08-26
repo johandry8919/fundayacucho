@@ -39,31 +39,6 @@ export default function Reporte() {
 );
 // -inicializar chart.js
 
-// constructor chart.js
-
-  const options = {
-     indexAxis: "y",
-    responsive: true,
-    plugins: {
-      legend: { position: "top" }
-    }};
-
-    const data = {
-       labels: ["Semana 1", "Semana 2", "Semana 3", "Semana 4"],
-    datasets: [
-      {
-        label: "Visitas al sitio",
-        data: [100, 200, 150, 300],
-        
-        borderColor: "rgba(209, 31, 179, 1)",
-        },
-        {label: "Usuarios activos",
-        data: [120, 90, 150, 80, 200],
-        backgroundColor: "rgba(54, 162, 235, 0.7)",}
-    ]};
-  
-// -constructor de chart.js
-
   const [becarios, setBecarios] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [initialLoadDone, setInitialLoadDone] = React.useState(false);
@@ -322,9 +297,64 @@ export default function Reporte() {
     return pageNumbers;
   };
   
-  return (
+// constructor chart.js
 
-      <div className="container-fluid mt-2">
+  const options = {
+     indexAxis: "y",
+    responsive: true,
+    plugins: {
+      legend: { position: "top" }
+    }};
+
+/*  const data = {    labels: ["Enero", "Febrero", "Marzo", "Abril", "Mayo"],
+    datasets: [
+      {
+        label: "Usuarios activos",
+        data: [120, 90, 150, 80, 200],
+        backgroundColor: "rgba(54, 162, 235, 0.7)",
+      },
+      {
+        label: "Usuarios inactivos",
+        data: [60, 40, 100, 30, 50],
+        backgroundColor: "rgba(255, 99, 132, 0.7)",
+      },
+    ],}
+  */
+/*const data ={
+  labeles: ["estado 1", "estado 2", "estado 3"],
+  datasets: [
+    {
+    label: "prueba",
+    data: filters.map(f => f.codigoestado),
+    backgroundColor: [
+        "rgba(255, 99, 132, 0.7)",
+        "rgba(54, 162, 235, 0.7)",
+        "rgba(255, 206, 86, 0.7)",
+    
+      },
+    ],
+} */
+
+const a = {}
+
+const data = {    labels: ["Enero", "Febrero", "Marzo", "Abril", "Mayo"],
+    datasets: [
+      {
+        label: "Usuarios activos",
+        data: [120, 90, 150, 80, 200],
+        backgroundColor: "rgba(54, 162, 235, 0.7)",
+      },
+      {
+        label: "Usuarios inactivos",
+        data: [60, 40, 100, 30, 50],
+        backgroundColor: "rgba(255, 99, 132, 0.7)",
+      },
+    ],}
+
+// -constructor de chart.js
+return (
+
+    <div className="container-fluid mt-2">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2>Consulta de Egresados Fundayacucho.</h2>
         <button
@@ -350,6 +380,8 @@ export default function Reporte() {
           <h3>Visitas Semanales</h3>
         
 <Bar data={data} options={options} />
+
+
         </div>
       </div>
     </div>
