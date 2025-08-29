@@ -45,6 +45,10 @@ function DataModal({ show, onHide, initialData, onSubmit, loading  ,cedulax, nac
   const [zoomLevel, setZoomLevel] = useState(5);
     const [paises,  setPaises] = useState(5);
   const markerRef = useRef(null);
+
+
+
+ 
   const markerEventHandlers = useMemo(
     () => ({
       dragend() {
@@ -89,6 +93,8 @@ function DataModal({ show, onHide, initialData, onSubmit, loading  ,cedulax, nac
     codigoparroquia: "",
     latitud: "",
     longitud: "",
+    latitud_pais:"",
+    longitud_pais:"",
     direccion: "",
     codigoestado2: "",
     es_militar: "",
@@ -161,40 +167,66 @@ function DataModal({ show, onHide, initialData, onSubmit, loading  ,cedulax, nac
 
 useEffect(() => {
   const fetchAndProcessCountries = async () => {
-    try {
-      const response = await fetch("/paises.csv");
-      if (!response.ok) throw new Error("Error al cargar el archivo CSV");
-      
-      const csvData = await response.text();
-      const countries = parseCountriesFromCSV(csvData);
-      
-      setPaises(countries.sort());
-    } catch (error) {
-      console.error("Error al procesar países:", error);
-      // Opcional: manejar el error en el estado (setErrorState)
-    }
-  };
+  try {
+    const response = await fetch("/paiseslatitudlongitud.csv");
+    if (!response.ok) throw new Error("Error al cargar el archivo CSV");
+    
+    const csvData = await response.text();
+    const countries = parseCountriesFromCSV(csvData);
+    
+    setPaises(countries.sort((a, b) => a.nombre.localeCompare(b.nombre)));
+  } catch (error) {
+    console.error("Error al procesar países:", error);
+    // Opcional: manejar el error en el estado (setErrorState)
+  }
+};
 
-  const parseCountriesFromCSV = (csvText) => {
-    const lines = csvText.split("\n");
-    if (lines.length < 2) return []; // CSV vacío o solo headers
+const parseCountriesFromCSV = (csvText) => {
+  const lines = csvText.split("\n");
+  if (lines.length < 2) return []; // CSV vacío o solo headers
+  
+  const headers = lines[0].split(",").map(header => header.trim());
+  
+  // Buscar índices de las columnas necesarias
+  const nameIndex = headers.indexOf("nombre");
+  const latIndex = headers.indexOf("latitud");
+  const lngIndex = headers.indexOf("longitud");
+  
+  // Verificar que todas las columnas necesarias existen
+  if (nameIndex === -1 || latIndex === -1 || lngIndex === -1) {
+    console.error("Columnas requeridas no encontradas en el CSV");
+    return [];
+  }
+  
+  const uniqueCountries = new Map(); // Usamos Map para evitar duplicados por nombre
+  
+  for (let i = 1; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line) continue; // Saltar líneas vacías
     
-    const headers = lines[0].split(",");
-    const countryNameIndex = headers.indexOf("nombre");
-    if (countryNameIndex === -1) return []; // Columna 'nombre' no encontrada
+    const columns = line.split(",").map(col => col.trim());
     
-    const uniqueCountries = new Set();
-    
-    for (let i = 1; i < lines.length; i++) {
-      const columns = lines[i].split(",");
-      if (columns.length > countryNameIndex) {
-        const countryName = columns[countryNameIndex].trim();
-        if (countryName) uniqueCountries.add(countryName);
+    if (columns.length > Math.max(nameIndex, latIndex, lngIndex)) {
+      const nombre = columns[nameIndex];
+      const latitud = parseFloat(columns[latIndex]);
+      const longitud = parseFloat(columns[lngIndex]);
+      
+      // Validar que los datos sean correctos
+      if (nombre && !isNaN(latitud) && !isNaN(longitud)) {
+        // Usar el nombre como clave para evitar duplicados
+        if (!uniqueCountries.has(nombre)) {
+          uniqueCountries.set(nombre, {
+            nombre,
+            latitud,
+            longitud
+          });
+        }
       }
     }
-    
-    return Array.from(uniqueCountries);
-  };
+  }
+  
+  return Array.from(uniqueCountries.values());
+};
 
   fetchAndProcessCountries();
 }, []);
@@ -252,6 +284,8 @@ useEffect(() => {
         codigoparroquia: "",
         latitud: "",
         longitud: "",
+        latitud_pais:"",
+        longitud_pais:"",
         direccion: "",
         codigoestado2: "",
          es_militar: ''
@@ -273,15 +307,20 @@ useEffect(() => {
         const selectedOption = e.target.options[e.target.selectedIndex];
         const lat = selectedOption.getAttribute("latitud");
         const lng = selectedOption.getAttribute("longitud");
+        const lat_pais = selectedOption.getAttribute("latitud_pais");
+        const lng_pais = selectedOption.getAttribute("longitud_pais");
 
         if (lat && lng) {
           newData.latitud = lat;
           newData.longitud = lng;
-
           setMapCenter([parseFloat(lat), parseFloat(lng)]);
           setZoomLevel(
             name === "codigoestado" ? 7 : name === "codigomunicipio" ? 10 : 12
           );
+        }
+        if (lat_pais && lng_pais) {
+          newData.latitud_pais = lat_pais;
+          newData.longitud_pais = lng_pais;
         }
       }
 
@@ -798,8 +837,13 @@ useEffect(() => {
                       >
                         <option value="">Seleccione... </option>
                         {paises.map((type) => (
-                          <option key={type} value={type}>
-                            {type}
+
+                          <option
+                            latitud_pais={type.latitud}
+                            longitud_pais={type.longitud}
+                            key={type}
+                            value={type.nombre}>
+                            {type.nombre}
                           </option>
                         ))}
                       </select>
