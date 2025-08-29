@@ -39,7 +39,7 @@ const Mapa = () => {
         if (response.data && Array.isArray(response.data)) {
 
 
-        console.log(response)
+      
         
           
           // Filtrar y validar coordenadas
@@ -98,16 +98,10 @@ const Mapa = () => {
     let filtered = becarios;
 
     if (currentFilters.estado) {
-      filtered = filtered.filter(b => b.estado === currentFilters.estado);
+      filtered = filtered.filter(b => b.descripcion_becario === currentFilters.descripcion_becario);
     }
 
-    if (currentFilters.municipio) {
-      filtered = filtered.filter(b => b.municipio === currentFilters.municipio);
-    }
-
-    if (currentFilters.parroquia) {
-      filtered = filtered.filter(b => b.parroquia === currentFilters.parroquia);
-    }
+    
 
     setFilteredBecarios(filtered);
   };
@@ -189,7 +183,7 @@ const Mapa = () => {
 
   return (
     <div style={{ height: 'calc(100vh - 120px)', width: '100%' }}>
-      <h2>Reporte de Becarios por Todos los Países</h2>
+      <h2>Reporte de Becarios por  Países</h2>
       
       {/* Filtros */}
       <div style={{ 
