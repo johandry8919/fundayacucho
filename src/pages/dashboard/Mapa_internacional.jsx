@@ -21,17 +21,14 @@ const Mapa = () => {
   // Estados para los filtros
   const [filters, setFilters] = useState({
     estado: '',
-    municipio: '',
-    parroquia: ''
   });
   
   // Estados para las opciones de los selectores
   const [estados, setEstados] = useState([]);
-  const [municipios, setMunicipios] = useState([]);
-  const [parroquias, setParroquias] = useState([]);
 
-  const mapCenter = [10.5, -66.9];
-  const zoomLevel = 6;
+
+  const mapCenter = [2.5, -60.9];
+  const zoomLevel = 3;
 
   useEffect(() => {
     const fetchBecarios = async () => {
@@ -40,12 +37,15 @@ const Mapa = () => {
         const response = await get_becarios();
         
         if (response.data && Array.isArray(response.data)) {
+
+
+        console.log(response)
         
           
           // Filtrar y validar coordenadas
           const validBecarios = response.data.filter(becario => {
-            const lat = parseFloat(becario.latitud);
-            const lng = parseFloat(becario.longitud);
+            const lat = parseFloat(becario.latitud_pais);
+            const lng = parseFloat(becario.longitud_pais);
             
             return !isNaN(lat) && !isNaN(lng) && 
                    lat >= -90 && lat <= 90 && 
@@ -75,14 +75,8 @@ const Mapa = () => {
 
   // Extraer opciones únicas para los filtros
   const extractFilterOptions = (becariosData) => {
-    const estadosUnicos = [...new Set(becariosData.map(b => b.estado).filter(Boolean))].sort();
+    const estadosUnicos = [...new Set(becariosData.map(b => b.descripcion_becario).filter(Boolean))].sort();
     setEstados(estadosUnicos);
-    
-    const municipiosUnicos = [...new Set(becariosData.map(b => b.municipio).filter(Boolean))].sort();
-    setMunicipios(municipiosUnicos);
-    
-    const parroquiasUnicas = [...new Set(becariosData.map(b => b.parroquia).filter(Boolean))].sort();
-    setParroquias(parroquiasUnicas);
   };
 
   // Manejar cambios en los filtros
@@ -139,8 +133,8 @@ const Mapa = () => {
     }
 
     return filteredBecarios.map(becario => {
-      const lat = parseFloat(becario.latitud);
-      const lng = parseFloat(becario.longitud);
+      const lat = parseFloat(becario.latitud_pais);
+      const lng = parseFloat(becario.longitud_pais);
       
       return (
         <Marker
@@ -195,7 +189,7 @@ const Mapa = () => {
 
   return (
     <div style={{ height: 'calc(100vh - 120px)', width: '100%' }}>
-      <h2>Reporte de Becarios por Ubicación</h2>
+      <h2>Reporte de Becarios por Todos los Países</h2>
       
       {/* Filtros */}
       <div style={{ 
@@ -217,44 +211,14 @@ const Mapa = () => {
             onChange={handleFilterChange}
             style={{ padding: '5px', minWidth: '150px' }}
           >
-            <option value="">Todos los estados</option>
+            <option value="">Todos los Países</option>
             {estados.map(estado => (
               <option key={estado} value={estado}>{estado}</option>
             ))}
           </select>
         </div>
         
-        <div>
-          <label htmlFor="municipio" style={{ marginRight: '10px' }}>Municipio: </label>
-          <select 
-            id="municipio"
-            name="municipio" 
-            value={filters.municipio} 
-            onChange={handleFilterChange}
-            style={{ padding: '5px', minWidth: '150px' }}
-          >
-            <option value="">Todos los municipios</option>
-            {municipios.map(municipio => (
-              <option key={municipio} value={municipio}>{municipio}</option>
-            ))}
-          </select>
-        </div>
-        
-        <div>
-          <label htmlFor="parroquia" style={{ marginRight: '10px' }}>Parroquia: </label>
-          <select 
-            id="parroquia"
-            name="parroquia" 
-            value={filters.parroquia} 
-            onChange={handleFilterChange}
-            style={{ padding: '5px', minWidth: '150px' }}
-          >
-            <option value="">Todas las parroquias</option>
-            {parroquias.map(parroquia => (
-              <option key={parroquia} value={parroquia}>{parroquia}</option>
-            ))}
-          </select>
-        </div>
+       
         
         <button 
           onClick={clearFilters}
