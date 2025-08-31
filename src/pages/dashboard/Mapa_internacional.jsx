@@ -17,6 +17,8 @@ const Mapa = () => {
   const [filteredBecarios, setFilteredBecarios] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+ 
   
   // Estados para los filtros
   const [filters, setFilters] = useState({
@@ -27,7 +29,7 @@ const Mapa = () => {
   const [estados, setEstados] = useState([]);
 
 
-  const mapCenter = [2.5, -60.9];
+  const mapCenter = [50.0, -0.0];
   const zoomLevel = 3;
 
   useEffect(() => {
@@ -82,10 +84,14 @@ const Mapa = () => {
   // Manejar cambios en los filtros
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
+
+   
     const newFilters = {
       ...filters,
       [name]: value
     };
+
+     console.log(newFilters)
     
     setFilters(newFilters);
     
@@ -109,12 +115,13 @@ const Mapa = () => {
   // Limpiar todos los filtros
   const clearFilters = () => {
     setFilters({
-      estado: '',
-      municipio: '',
-      parroquia: ''
+      estado: ''
+     
     });
     setFilteredBecarios(becarios);
   };
+
+
 
   // Función para renderizar los marcadores
   const renderMarkers = () => {
