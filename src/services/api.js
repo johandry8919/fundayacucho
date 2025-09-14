@@ -1,14 +1,12 @@
+import { Password } from '@mui/icons-material';
 import axios from 'axios';
 
-const API_BASE_URL = 'https://comunajoven.com.ve/api'; // Reemplazar con tu URL real
-  const token = 'faa3dc480981bbfb734839367d2c9367';
-
+const API_BASE_URL = 'http://localhost:3000/api'; // Reemplazar con tu URL real
 
 const api = axios.create({
   baseURL: API_BASE_URL,
   timeout: 10000,
   headers: {
-     Authorization: `Bearer ${token}`,
     'Content-Type': 'application/json',
     'Accept': 'application/json'
   }
@@ -58,19 +56,19 @@ export const searchUser = async (nacionalidad, cedula) => {
 };
 
 export const estado = async () => {
-  const response = await api.get('/get_estado');
+  const response = await api.get('/std/estado');
   return response.data;
 };
 
 export const get_municipios = async (codigomunicipio) => {
-  const response = await api.get('/get_municipios' ,{
+  const response = await api.get('/std/municipio' ,{
      params: {codigomunicipio }
   })
   return response.data;
 };
 
 export const get_parroquias = async (codigomunicipio) => {
-  const response = await api.get('/get_parroquias' ,{
+  const response = await api.get('/std/parroquia' ,{
      params: {codigomunicipio }
   })
   return response.data;
@@ -88,14 +86,9 @@ export const submitForm = async (formData) => {
  
 };
 
-export const login = async (correo, contraseña)=> {
+export const login = async (email, password)=> {
   try {
-    const response = await api.get('/loguin',{
-       params: {correo, contraseña}
-    });
-
-     console.log(response)
-    
+    const response = await api.post('/auth/login' , {email , password});
     return response.data; 
   } catch (error) {
     console.error('Error en la función login:', error);
@@ -113,5 +106,19 @@ export const get_becarios = async (estado= '' , municipio = '' , parroquia = '')
 
 export const delete_becario = async (id) => {
   const response = await api.delete(`/becarios/${id}`);
+  return response.data;
+};
+
+export const registro_usuario = async (cedula, nacionalidad , email, tipo_usuario, password) => {
+  const response = await api.post('/auth/register', { cedula, nacionalidad, email, tipo_usuario , password });
+  return response.data;
+};
+
+export const saveBecario = async (formData) => {
+  const response = await api.post('/becarios/registro', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
   return response.data;
 };
