@@ -1,135 +1,267 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { registro_usuario } from '../services/api';
 import Swal from 'sweetalert2';
-import { Button, TextField, Typography, Select, MenuItem, InputLabel, FormControl } from "@mui/material";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import '../styles/Registro.css';
 
 const Registro = () => {
-  const [cedula, setCedula] = useState('');
-  const [nacionalidad, setNacionalidad] = useState('');
-  const [correo, setCorreo] = useState('');
-  const [tipoUsuario, setTipoUsuario] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [formData, setFormData] = useState({
+    cedula: '',
+    nacionalidad: 'V',
+    correo: '',
+    tipoUsuario: '1',
+    password: ''
+  });
   
-  // Hook para redirección
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [isMounted, setIsMounted] = useState(true);
   const navigate = useNavigate();
+
+  // Cleanup function to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      setIsMounted(false);
+    };
+  }, []);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    
+    // Clear error for the field being edited
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    
+    // Validate cédula (Venezuelan ID)
+    if (!formData.cedula.trim()) {
+      newErrors.cedula = 'La cédula es requerida';
+    } else if (!/^\d{6,8}$/.test(formData.cedula)) {
+      newErrors.cedula = 'La cédula debe tener entre 6 y 8 dígitos';
+    }
+    
+    // Validate email
+    if (!formData.correo.trim()) {
+      newErrors.correo = 'El correo electrónico es requerido';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correo)) {
+      newErrors.correo = 'Por favor ingrese un correo electrónico válido';
+    }
+    
+    // Validate password
+    if (!formData.password) {
+      newErrors.password = 'La contraseña es requerida';
+    } else if (formData.password.length < 8) {
+      newErrors.password = 'La contraseña debe tener al menos 8 caracteres';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+    
     setLoading(true);
-    setError('');
     
     try {
-      await registro_usuario(cedula, nacionalidad, correo, tipoUsuario, password);
+      await registro_usuario(
+        formData.cedula, 
+        formData.nacionalidad, 
+        formData.correo, 
+        formData.tipoUsuario, 
+        formData.password
+      );
       
-      Swal.fire({
+      if (!isMounted) return;
+      
+      await Swal.fire({
         title: '¡Registrado con éxito!',
         text: 'Serás redirigido al login para iniciar sesión',
         icon: 'success',
-        draggable: true,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        allowEnterKey: false,
+        showConfirmButton: false,
         timer: 2000,
         timerProgressBar: true,
-        didClose: () => {
-          // Redirigir al login después de cerrar la alerta
-          navigate('/login');
+        didOpen: () => {
+          Swal.showLoading();
         }
       });
       
+      if (isMounted) {
+        navigate('/login');
+      }
+      
     } catch (err) {
-      setError(err.message || 'Error al registrar el usuario.');
-      Swal.fire({
-        title: 'Error al registrar',
-        text: err.message || 'Ocurrió un error, por favor intente de nuevo.',
-        icon: 'error',
-        draggable: true,
-      });
+      if (isMounted) {
+        const errorMessage = err.response?.data?.message || 'Error al registrar el usuario. Por favor intente de nuevo.';
+        
+        Swal.fire({
+          title: 'Error al registrar',
+          text: errorMessage,
+          icon: 'error',
+          confirmButtonText: 'Entendido',
+          confirmButtonColor: 'var(--primary-color)'
+        });
+      }
     } finally {
-      setLoading(false);
+      if (isMounted) {
+        setLoading(false);
+      }
     }
   };
 
   return (
-    <div className="admin-login-container">
-      <Typography variant="h5" align="center" gutterBottom>
-        Registro de Usuario
-      </Typography>
-
-      <form onSubmit={handleSubmit} className="admin-login-form">
-        {error && <p className="error-message">{error}</p>}
-        <div className="form-group">
-          <TextField
-            fullWidth
-            margin="normal"
-            label="Cédula"
-            type="number"
-            value={cedula}
-            onChange={(e) => setCedula(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <FormControl fullWidth margin="normal">
-            <InputLabel>Nacinalidad</InputLabel>
-            <Select
-              value={nacionalidad}
-              onChange={(e) => setNacionalidad(e.target.value)}
+    <div className="registro-container">
+      <div className="registro-card">
+        <h1 className="registro-title">Registro de Usuario</h1>
+        
+        <form onSubmit={handleSubmit} className="registro-form" noValidate>
+          {Object.keys(errors).length > 0 && (
+            <div className="error-message" role="alert" aria-live="assertive">
+              Por favor corrija los errores en el formulario
+            </div>
+          )}
+          
+          <div className="form-group">
+            <label htmlFor="cedula">
+              Cédula {errors.cedula && <span className="error-text">- {errors.cedula}</span>}
+            </label>
+            <input
+              id="cedula"
+              name="cedula"
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              value={formData.cedula}
+              onChange={handleChange}
+              className={`form-input ${errors.cedula ? 'input-error' : ''}`}
               required
+              placeholder="Ingrese su cédula"
+              disabled={loading}
+              aria-invalid={!!errors.cedula}
+              aria-describedby={errors.cedula ? 'cedula-error' : undefined}
+            />
+            {errors.cedula && (
+              <span id="cedula-error" className="visually-hidden">
+                Error: {errors.cedula}
+              </span>
+            )}
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="nacionalidad">Nacionalidad</label>
+            <select
+              id="nacionalidad"
+              name="nacionalidad"
+              value={formData.nacionalidad}
+              onChange={handleChange}
+              className="form-select"
+              disabled={loading}
             >
-              <MenuItem value="V">Venezolano</MenuItem>
-              <MenuItem value="E">Estrangero</MenuItem>
-            </Select>
-          </FormControl>
-        </div>
-
-        <div className="form-group">
-          <TextField
-            fullWidth
-            margin="normal"
-            label="Correo Electrónico"
-            type="email"
-            value={correo}
-            onChange={(e) => setCorreo(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <FormControl fullWidth margin="normal">
-            <InputLabel>Tipo de Usuario</InputLabel>
-            <Select
-              value={tipoUsuario}
-              onChange={(e) => setTipoUsuario(e.target.value)}
+              <option value="V">Venezolano</option>
+              <option value="E">Extranjero</option>
+            </select>
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="correo">
+              Correo Electrónico {errors.correo && <span className="error-text">- {errors.correo}</span>}
+            </label>
+            <input
+              id="correo"
+              name="correo"
+              type="email"
+              value={formData.correo}
+              onChange={handleChange}
+              className={`form-input ${errors.correo ? 'input-error' : ''}`}
               required
+              placeholder="ejemplo@correo.com"
+              autoComplete="email"
+              disabled={loading}
+              aria-invalid={!!errors.correo}
+              aria-describedby={errors.correo ? 'correo-error' : undefined}
+            />
+            {errors.correo && (
+              <span id="correo-error" className="visually-hidden">
+                Error: {errors.correo}
+              </span>
+            )}
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="tipoUsuario">Tipo de Usuario</label>
+            <select
+              id="tipoUsuario"
+              name="tipoUsuario"
+              value={formData.tipoUsuario}
+              onChange={handleChange}
+              className="form-select"
+              disabled={loading}
             >
-              <MenuItem value="1">Nuevo Becario</MenuItem>
-              <MenuItem value="2">Egresado Fundayacucho</MenuItem>
-            </Select>
-          </FormControl>
-        </div>
-
-        <div className="form-group">
-          <TextField
-            fullWidth
-            margin="normal"
-            label="Password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          fullWidth
-          sx={{ mt: 3 }}
-          disabled={loading}
-        >
-          {loading ? 'Registrando...' : 'Registrar'}
-        </Button>
-      </form>
+              <option value="1">Nuevo Becario</option>
+              <option value="2">Egresado Fundayacucho</option>
+            </select>
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="password">
+              Contraseña {errors.password && <span className="error-text">- {errors.password}</span>}
+            </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              value={formData.password}
+              onChange={handleChange}
+              className={`form-input ${errors.password ? 'input-error' : ''}`}
+              required
+              placeholder="••••••••"
+              autoComplete="new-password"
+              disabled={loading}
+              aria-invalid={!!errors.password}
+              aria-describedby={errors.password ? 'password-error' : undefined}
+            />
+            {errors.password && (
+              <span id="password-error" className="visually-hidden">
+                Error: {errors.password}
+              </span>
+            )}
+            <div className="password-hint">
+              La contraseña debe tener al menos 8 caracteres
+            </div>
+          </div>
+          
+          <button 
+            type="submit" 
+            className="submit-button"
+            disabled={loading}
+            aria-busy={loading}
+          >
+            {loading ? 'Registrando...' : 'Registrarse'}
+          </button>
+          
+          <p className="login-link">
+            ¿Ya tienes una cuenta? <Link to="/login">Inicia sesión aquí</Link>
+          </p>
+        </form>
+      </div>
     </div>
   );
 };

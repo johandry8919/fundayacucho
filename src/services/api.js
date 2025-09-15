@@ -76,7 +76,7 @@ export const get_parroquias = async (codigomunicipio) => {
 
 
 export const submitForm = async (formData) => {
-  const response = await api.post('/register', formData);
+  const response = await api.post('/egresado/register', formData);
 
   if(response.data.status == 500){
      return response.data

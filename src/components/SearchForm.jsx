@@ -1,10 +1,11 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import { estado, get_municipios, get_parroquias } from "../services/api";
+import { estado, get_municipios, get_parroquias  , submitForm} from "../services/api";
 import "leaflet/dist/leaflet.css";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from 'leaflet';
 import { useAuth } from '../context/AuthContext';
+import '../styles/SearchForm.css'; // Add this import for custom styles
 
 // Fix for default marker icon issue with bundlers
 import iconUrl from 'leaflet/dist/images/marker-icon.png';
@@ -45,6 +46,8 @@ function RegistrationForm() {
   const [paises, setPaises] = useState([]);
   const [loading, setLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
+  const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({});
 
   const [mapCenter, setMapCenter] = useState([6.4238, -66.5897]); // Centro de Venezuela por defecto
   const [zoomLevel, setZoomLevel] = useState(5);
@@ -69,15 +72,13 @@ function RegistrationForm() {
   );
 
   const [formData, setFormData] = useState({
+    id_usuario: user.id,
     nombre_completo: "",
     cedula: user.cedula,
     correo: user.email || "",
     telefono_celular: "",
     telefono_alternativo: "",
     fecha_nacimiento: "",
-    estado: "",
-    municipio: "",
-    parroquia: "",
     tipo_beca: "",
     cod_estado: "",
     carrera_cursada: "",
@@ -226,90 +227,229 @@ function RegistrationForm() {
     fetchAndProcessCountries();
   }, []);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  // Validación de campos requeridos
+  const validateField = (name, value) => {
+    const requiredFields = {
+      nombre_completo: 'Nombre completo es requerido',
+      cedula: 'Cédula es requerida',
+      correo: 'Correo electrónico es requerido',
+      telefono_celular: 'Teléfono celular es requerido',
+      fecha_nacimiento: 'Fecha de nacimiento es requerida',
+      codigoestado: 'Estado es requerido',
+      codigomunicipio: 'Municipio es requerido',
+      codigoparroquia: 'Parroquia es requerida',
+      direccion: 'Dirección es requerida',
+      tipo_beca: 'Tipo de beca es requerido',
+      carrera_cursada: 'Carrera cursada es requerida',
+      fecha_ingreso: 'Fecha de ingreso es requerida',
+      universidad: 'Universidad es requerida'
+    };
 
-    setFormData((prev) => {
-      const newData = {
-        ...prev,
-        [name]: value,
-      };
+    if (requiredFields[name] && !value) {
+      return requiredFields[name];
+    }
 
-      if (e.target.tagName === "SELECT") {
-        const selectedOption = e.target.options[e.target.selectedIndex];
-        const lat = selectedOption.getAttribute("latitud");
-        const lng = selectedOption.getAttribute("longitud");
-        const lat_pais = selectedOption.getAttribute("latitud_pais");
-        const lng_pais = selectedOption.getAttribute("longitud_pais");
-
-        if (lat && lng) {
-          newData.latitud = lat;
-          newData.longitud = lng;
-          setMapCenter([parseFloat(lat), parseFloat(lng)]);
-          setZoomLevel(
-            name === "codigoestado" ? 7 : name === "codigomunicipio" ? 10 : 12
-          );
-        }
-        if (lat_pais && lng_pais) {
-          newData.latitud_pais = lat_pais;
-          newData.longitud_pais = lng_pais;
-        }
+    // Validación de correo electrónico
+    if (name === 'correo' && value) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(value)) {
+        return 'Ingrese un correo electrónico válido';
       }
+    }
 
-      if (name === "codigoestado") {
-        get_municipio(value);
+    // Validación de teléfono
+    if ((name === 'telefono_celular' || name === 'telefono_alternativo') && value) {
+      const phoneRegex = /^[0-9+\-\s()]*$/;
+      if (!phoneRegex.test(value)) {
+        return 'Ingrese un número de teléfono válido';
       }
+    }
 
-      if (name === "codigomunicipio") {
-        get_parroquia(value);
-      }
-
-      return newData;
-    });
+    return '';
   };
 
-  const get_municipio = async (codigomunicipio) => {
+  // Validar todos los campos del paso actual
+  const validateStep = (step) => {
+    const stepFields = {
+      1: ['nombre_completo', 'cedula', 'correo', 'telefono_celular', 'fecha_nacimiento', 'codigoestado', 'codigomunicipio', 'codigoparroquia', 'direccion'],
+      2: ['tipo_beca', 'carrera_cursada', 'fecha_ingreso', 'universidad'],
+      3: ['es_militar', 'trabajando']
+    };
+
+    const newErrors = {};
+    let isValid = true;
+
+    stepFields[step]?.forEach(field => {
+      const error = validateField(field, formData[field]);
+      if (error) {
+        newErrors[field] = error;
+        isValid = false;
+      }
+    });
+
+    setErrors(prev => ({ ...prev, ...newErrors }));
+    return isValid;
+  };
+
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+    setTouched(prev => ({ ...prev, [name]: true }));
+    
+    const error = validateField(name, value);
+    setErrors(prev => ({
+      ...prev,
+      [name]: error
+    }));
+  };
+
+  const handleChange = (e) => {
+    const { name, value, type, files } = e.target;
+    
+    // Si es un campo de archivo, tomamos el primer archivo
+    const fieldValue = type === 'file' ? files[0] : value;
+    
+    setFormData(prev => ({
+      ...prev,
+      [name]: fieldValue
+    }));
+
+    // Handle map updates for location fields
+    if (e.target.tagName === "SELECT") {
+      const selectedOption = e.target.options[e.target.selectedIndex];
+      const lat = selectedOption.getAttribute("latitud");
+      const lng = selectedOption.getAttribute("longitud");
+      const lat_pais = selectedOption.getAttribute("latitud_pais");
+      const lng_pais = selectedOption.getAttribute("longitud_pais");
+
+      if (lat && lng) {
+        setFormData(prev => ({
+          ...prev,
+          latitud: lat,
+          longitud: lng
+        }));
+        setMapCenter([parseFloat(lat), parseFloat(lng)]);
+        setZoomLevel(
+          name === "codigoestado" ? 7 : name === "codigomunicipio" ? 10 : 12
+        );
+      }
+      if (lat_pais && lng_pais) {
+        setFormData(prev => ({
+          ...prev,
+          latitud_pais: lat_pais,
+          longitud_pais: lng_pais
+        }));
+      }
+    }
+
+    // Load municipalities when state changes
+    if (name === "codigoestado") {
+      get_municipio(value);
+    }
+
+    // Load parishes when municipality changes
+    if (name === "codigomunicipio") {
+      get_parroquia(value);
+    }
+
+    // Validate field if it's been touched
+    if (touched[name]) {
+      const error = validateField(name, fieldValue);
+      setErrors(prev => ({
+        ...prev,
+        [name]: error
+      }));
+    }
+  };
+
+  const get_municipio = async (codigoestado) => {
     try {
-      setMunicipio(null);
-      const data = await get_municipios(codigomunicipio);
+      const data = await get_municipios(codigoestado);
       setMunicipio(data);
+      // Clear dependent fields when state changes
+      setFormData(prev => ({
+        ...prev,
+        codigomunicipio: "",
+        codigoparroquia: ""
+      }));
+      setParroquia([]);
     } catch (err) {
       console.error("Error al obtener municipios:", err);
-      setMunicipio(null);
+      setMunicipio([]);
     }
   };
 
   const get_parroquia = async (codigomunicipio) => {
     try {
-      setParroquia(null);
       const data = await get_parroquias(codigomunicipio);
       setParroquia(data);
+      // Clear parish field when municipality changes
+      setFormData(prev => ({
+        ...prev,
+        codigoparroquia: ""
+      }));
     } catch (err) {
-      console.error("Error al obtener municipios:", err);
-      setParroquia(null);
+      console.error("Error al obtener parroquias:", err);
+      setParroquia([]);
     }
   };
 
-  const handleSubmit = (e) => {
+  const nextStep = () => {
+    if (validateStep(currentStep)) {
+      setCurrentStep(prev => prev + 1);
+      window.scrollTo(0, 0);
+    } else {
+      // Marcar todos los campos del paso actual como tocados para mostrar errores
+      const stepFields = {
+        1: ['nombre_completo', 'cedula', 'correo', 'telefono_celular', 'fecha_nacimiento', 'codigoestado', 'codigomunicipio', 'codigoparroquia', 'direccion'],
+        2: ['tipo_beca', 'carrera_cursada', 'fecha_ingreso', 'universidad'],
+        3: ['es_militar', 'trabajando']
+      };
+
+      const newTouched = {};
+      stepFields[currentStep]?.forEach(field => {
+        newTouched[field] = true;
+      });
+      setTouched(prev => ({ ...prev, ...newTouched }));
+    }
+  };
+
+  const prevStep = () => {
+    setCurrentStep(prev => prev - 1);
+    window.scrollTo(0, 0);
+  };
+
+  const handleSubmit  = async (e) => {
     e.preventDefault();
     setLoading(true);
     // Aquí iría la lógica para enviar el formulario
+    
+
+    try {
+      const data = new FormData();
+      
+      Object.keys(formData).forEach(key => {
+        if (formData[key] !== null && formData[key] !== '') {
+          data.append(key, formData[key]);
+        }
+      });
+      const response = await submitForm(data);
+      console.log('Formulario enviado con éxito:', response);
+      alert('Formulario enviado con éxito');
+    } catch (error) {
+      console.error('Error al enviar el formulario:', error);
+      alert('Error al enviar el formulario');
+    } finally {
+      setLoading(false);
+    }
+
+
+    
     console.log("Datos del formulario:", formData);
     // Simular envío
     setTimeout(() => {
       setLoading(false);
       alert("Formulario enviado con éxito");
     }, 2000);
-  };
-
-  const nextStep = () => {
-    setCurrentStep(currentStep + 1);
-    window.scrollTo(0, 0);
-  };
-
-  const prevStep = () => {
-    setCurrentStep(currentStep - 1);
-    window.scrollTo(0, 0);
   };
 
   return (
@@ -346,64 +486,78 @@ function RegistrationForm() {
             
             <div className="form-grid">
               <div className="form-field">
-                <label>Nombres y apellidos</label>
-                <div className="input-group">
-                  <span className="input-group-text">
-                    <i className="bi bi-person"></i>
-                  </span>
-                  <input
-                    type="text"
-                    name="nombre_completo"
-                    value={formData.nombre_completo}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
+                <label htmlFor="nombre_completo" className={errors.nombre_completo ? 'error' : ''}>
+                  Nombre Completo <span className="required">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="nombre_completo"
+                  name="nombre_completo"
+                  value={formData.nombre_completo}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  className={errors.nombre_completo ? 'error' : ''}
+                  required
+                />
+                {errors.nombre_completo && touched.nombre_completo && (
+                  <span className="error-message">{errors.nombre_completo}</span>
+                )}
               </div>
               
               <div className="form-field">
-                <label>Cédula o Pasaporte</label>
-                <div className="input-group">
-                  <span className="input-group-text">
-                    <i className="bi bi-person-vcard"></i>
-                  </span>
-                  <input
-                    type="text"
-                    name="cedula"
-                    value={formData.cedula}
-                    onChange={handleChange}
-                    required
-                    disabled
-                  />
-                </div>
+                <label htmlFor="cedula" className={errors.cedula ? 'error' : ''}>
+                  Cédula o Pasaporte <span className="required">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="cedula"
+                  name="cedula"
+                  value={formData.cedula}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  className={errors.cedula ? 'error' : ''}
+                  required
+                  disabled
+                />
+                {errors.cedula && touched.cedula && (
+                  <span className="error-message">{errors.cedula}</span>
+                )}
               </div>
               
               <div className="form-field">
-                <label>Fecha de nacimiento</label>
-                <div className="input-group">
-                  <span className="input-group-text">
-                    <i className="bi bi-calendar-event"></i>
-                  </span>
-                  <input
-                    type="date"
-                    name="fecha_nacimiento"
-                    value={formData.fecha_nacimiento}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
+                <label htmlFor="fecha_nacimiento" className={errors.fecha_nacimiento ? 'error' : ''}>
+                  Fecha de nacimiento <span className="required">*</span>
+                </label>
+                <input
+                  type="date"
+                  id="fecha_nacimiento"
+                  name="fecha_nacimiento"
+                  value={formData.fecha_nacimiento}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  className={errors.fecha_nacimiento ? 'error' : ''}
+                  required
+                />
+                {errors.fecha_nacimiento && touched.fecha_nacimiento && (
+                  <span className="error-message">{errors.fecha_nacimiento}</span>
+                )}
               </div>
               
               <div className="form-field">
-                <label>¿Es militar?</label>
+                <label htmlFor="es_militar" className={errors.es_militar ? 'error' : ''}>
+                  ¿Es militar? <span className="required">*</span>
+                </label>
                 <div className="input-group">
                   <span className="input-group-text">
                     <i className="bi bi-shield-check"></i>
                   </span>
                   <select
+                    id="es_militar"
                     name="es_militar"
                     value={formData.es_militar}
                     onChange={handleChange}
+                    onBlur={handleBlur}
+                    className={errors.es_militar ? 'error' : ''}
                     required
                   >
                     <option value="">Seleccione...</option>
@@ -411,54 +565,75 @@ function RegistrationForm() {
                     <option value="No">No</option>
                   </select>
                 </div>
+                {errors.es_militar && touched.es_militar && (
+                  <span className="error-message">{errors.es_militar}</span>
+                )}
               </div>
               
               <div className="form-field">
-                <label>Correo electrónico</label>
+                <label htmlFor="correo" className={errors.correo ? 'error' : ''}>
+                  Correo electrónico <span className="required">*</span>
+                </label>
                 <div className="input-group">
                   <span className="input-group-text">
                     <i className="bi bi-envelope"></i>
                   </span>
                   <input
                     type="email"
+                    id="correo"
                     name="correo"
                     value={formData.correo}
                     onChange={handleChange}
+                    onBlur={handleBlur}
+                    className={errors.correo ? 'error' : ''}
                     required
                   />
                 </div>
+                {errors.correo && touched.correo && (
+                  <span className="error-message">{errors.correo}</span>
+                )}
               </div>
               
               <div className="form-field">
-                <label>Teléfono celular</label>
+                <label htmlFor="telefono_celular" className={errors.telefono_celular ? 'error' : ''}>
+                  Teléfono celular <span className="required">*</span>
+                </label>
                 <div className="input-group">
                   <span className="input-group-text">
                     <i className="bi bi-phone"></i>
                   </span>
                   <input
                     type="tel"
+                    id="telefono_celular"
                     name="telefono_celular"
                     value={formData.telefono_celular}
                     onChange={handleChange}
+                    onBlur={handleBlur}
+                    className={errors.telefono_celular ? 'error' : ''}
                     required
                   />
                 </div>
+                {errors.telefono_celular && touched.telefono_celular && (
+                  <span className="error-message">{errors.telefono_celular}</span>
+                )}
               </div>
               
               <div className="form-field">
-                <label>Estado</label>
-                <div className="input-group">
-                  <span className="input-group-text">
-                    <i className="bi bi-geo-alt"></i>
-                  </span>
+                <label htmlFor="codigoestado" className={errors.codigoestado ? 'error' : ''}>
+                  Estado <span className="required">*</span>
+                </label>
+                <div className="select-wrapper">
                   <select
+                    id="codigoestado"
                     name="codigoestado"
                     value={formData.codigoestado}
                     onChange={handleChange}
+                    onBlur={handleBlur}
+                    className={errors.codigoestado ? 'error' : ''}
                     required
                   >
                     <option value="">Seleccione...</option>
-                    {estados.data && estados.data.map((stad) => (
+                    {estados && estados.map((stad) => (
                       <option
                         key={stad.codigoestado}
                         value={stad.codigoestado}
@@ -470,23 +645,31 @@ function RegistrationForm() {
                     ))}
                   </select>
                 </div>
+                {errors.codigoestado && touched.codigoestado && (
+                  <span className="error-message">{errors.codigoestado}</span>
+                )}
               </div>
               
               <div className="form-field">
-                <label>Municipio</label>
-                <div className="input-group">
-                  <span className="input-group-text">
-                    <i className="bi bi-geo-alt"></i>
-                  </span>
+                <label htmlFor="codigomunicipio" className={errors.codigomunicipio ? 'error' : ''}>
+                  Municipio <span className="required">*</span>
+                </label>
+                <div className="select-wrapper">
                   <select
+                    id="codigomunicipio"
                     name="codigomunicipio"
                     value={formData.codigomunicipio}
                     onChange={handleChange}
+                    onBlur={handleBlur}
+                    className={errors.codigomunicipio ? 'error' : ''}
+                    disabled={!formData.codigoestado}
                     required
                   >
-                    <option value="">Seleccione...</option>
-                    {municipios && municipios.data && municipios.data.length > 0 ? (
-                      municipios.data.map((muni) => (
+                    <option value="">
+                      {formData.codigoestado ? 'Seleccione un municipio...' : 'Seleccione un estado primero'}
+                    </option>
+                    {municipios && municipios && municipios.length > 0 ? (
+                      municipios.map((muni) => (
                         <option
                           key={muni.codigomunicipio}
                           value={muni.codigomunicipio}
@@ -503,23 +686,31 @@ function RegistrationForm() {
                     )}
                   </select>
                 </div>
+                {errors.codigomunicipio && touched.codigomunicipio && (
+                  <span className="error-message">{errors.codigomunicipio}</span>
+                )}
               </div>
               
               <div className="form-field">
-                <label>Parroquia</label>
-                <div className="input-group">
-                  <span className="input-group-text">
-                    <i className="bi bi-geo-alt"></i>
-                  </span>
+                <label htmlFor="codigoparroquia" className={errors.codigoparroquia ? 'error' : ''}>
+                  Parroquia <span className="required">*</span>
+                </label>
+                <div className="select-wrapper">
                   <select
+                    id="codigoparroquia"
                     name="codigoparroquia"
                     value={formData.codigoparroquia}
                     onChange={handleChange}
+                    onBlur={handleBlur}
+                    className={errors.codigoparroquia ? 'error' : ''}
+                    disabled={!formData.codigomunicipio}
                     required
                   >
-                    <option value="">Seleccione...</option>
-                    {parroquias && parroquias.data && parroquias.data.length > 0 ? (
-                      parroquias.data.map((parr) => (
+                    <option value="">
+                      {formData.codigomunicipio ? 'Seleccione una parroquia...' : 'Seleccione un municipio primero'}
+                    </option>
+                    {parroquias && parroquias && parroquias.length > 0 ? (
+                      parroquias.map((parr) => (
                         <option
                           key={parr.codigoparroquia}
                           value={parr.codigoparroquia}
@@ -536,22 +727,28 @@ function RegistrationForm() {
                     )}
                   </select>
                 </div>
+                {errors.codigoparroquia && touched.codigoparroquia && (
+                  <span className="error-message">{errors.codigoparroquia}</span>
+                )}
               </div>
               
               <div className="form-field full-width">
-                <label>Dirección en Venezuela</label>
-                <div className="input-group">
-                  <span className="input-group-text">
-                    <i className="bi bi-geo-alt-fill"></i>
-                  </span>
-                  <textarea
-                    value={formData.direccion}
-                    onChange={handleChange}
-                    rows="2"
-                    name="direccion"
-                    required
-                  ></textarea>
-                </div>
+                <label htmlFor="direccion" className={errors.direccion ? 'error' : ''}>
+                  Dirección en Venezuela <span className="required">*</span>
+                </label>
+                <textarea
+                  id="direccion"
+                  name="direccion"
+                  value={formData.direccion}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  className={errors.direccion ? 'error' : ''}
+                  rows="3"
+                  required
+                />
+                {errors.direccion && touched.direccion && (
+                  <span className="error-message">{errors.direccion}</span>
+                )}
               </div>
               
               <div className="form-field full-width">
@@ -591,9 +788,14 @@ function RegistrationForm() {
               </div>
             </div>
             
-            <div className="form-navigation">
-              <button type="button" className="nav-button next" onClick={nextStep}>
-                Siguiente <span className="icon">→</span>
+            <div className="form-actions">
+              <button 
+                type="button" 
+                onClick={nextStep}
+                className="btn btn-primary"
+                disabled={loading}
+              >
+                Siguiente <i className="bi bi-arrow-right"></i>
               </button>
             </div>
           </div>
@@ -617,6 +819,7 @@ function RegistrationForm() {
                     name="tipo_beca"
                     value={formData.tipo_beca}
                     onChange={handleChange}
+                    onBlur={handleBlur}
                     required
                   >
                     <option value="">Seleccione...</option>
@@ -640,6 +843,7 @@ function RegistrationForm() {
                       value="internacional"
                       checked={formData.becario_tipo === "internacional"}
                       onChange={handleChange}
+                      onBlur={handleBlur}
                       required
                     />
                     <label htmlFor="checkInternacional">
@@ -654,6 +858,7 @@ function RegistrationForm() {
                       value="venezolano en venezuela"
                       checked={formData.becario_tipo === "venezolano en venezuela"}
                       onChange={handleChange}
+                      onBlur={handleBlur}
                     />
                     <label htmlFor="checkVenezolanoVzla">
                       Becario Venezolano en Venezuela
@@ -667,6 +872,7 @@ function RegistrationForm() {
                       value="venezolano exterior"
                       checked={formData.becario_tipo === "venezolano exterior"}
                       onChange={handleChange}
+                      onBlur={handleBlur}
                     />
                     <label htmlFor="checkVenezolanoExt">
                       Becario Venezolano en el Exterior
@@ -686,6 +892,7 @@ function RegistrationForm() {
                       name="descripcion_becario"
                       value={formData.descripcion_becario}
                       onChange={handleChange}
+                      onBlur={handleBlur}
                       required
                     >
                       <option value="">Seleccione...</option>
@@ -715,6 +922,7 @@ function RegistrationForm() {
                     name="carrera_cursada"
                     value={formData.carrera_cursada}
                     onChange={handleChange}
+                    onBlur={handleBlur}
                     required
                   />
                 </div>
@@ -731,6 +939,7 @@ function RegistrationForm() {
                     name="fecha_ingreso"
                     value={formData.fecha_ingreso}
                     onChange={handleChange}
+                    onBlur={handleBlur}
                     required
                   />
                 </div>
@@ -747,6 +956,7 @@ function RegistrationForm() {
                     name="fecha_egreso"
                     value={formData.fecha_egreso}
                     onChange={handleChange}
+                    onBlur={handleBlur}
                   />
                 </div>
               </div>
@@ -761,6 +971,7 @@ function RegistrationForm() {
                     name="titularidad"
                     value={formData.titularidad}
                     onChange={handleChange}
+                    onBlur={handleBlur}
                     required
                   >
                     <option value="">Seleccione...</option>
@@ -783,10 +994,11 @@ function RegistrationForm() {
                     name="codigoestado2"
                     value={formData.codigoestado2}
                     onChange={handleChange}
+                    onBlur={handleBlur}
                     required
                   >
                     <option value="">Seleccione...</option>
-                    {estados.data && estados.data.map((stad) => (
+                    {estados && estados.map((stad) => (
                       <option
                         key={stad.codigoestado}
                         value={stad.codigoestado}
@@ -808,6 +1020,7 @@ function RegistrationForm() {
                     name="universidad"
                     value={formData.universidad}
                     onChange={handleChange}
+                    onBlur={handleBlur}
                     required
                   >
                     <option value="">Seleccione...</option>
@@ -821,12 +1034,22 @@ function RegistrationForm() {
               </div>
             </div>
             
-            <div className="form-navigation">
-              <button type="button" className="nav-button prev" onClick={prevStep}>
-                <span className="icon">←</span> Anterior
+            <div className="form-actions">
+              <button 
+                type="button" 
+                onClick={prevStep}
+                className="btn btn-outline"
+                disabled={loading}
+              >
+                <i className="bi bi-arrow-left"></i> Anterior
               </button>
-              <button type="button" className="nav-button next" onClick={nextStep}>
-                Siguiente <span className="icon">→</span>
+              <button 
+                type="button" 
+                onClick={nextStep}
+                className="btn btn-primary"
+                disabled={loading}
+              >
+                Siguiente <i className="bi bi-arrow-right"></i>
               </button>
             </div>
           </div>
@@ -851,6 +1074,7 @@ function RegistrationForm() {
                     name="ocupacion_actual"
                     value={formData.ocupacion_actual}
                     onChange={handleChange}
+                    onBlur={handleBlur}
                     required
                   />
                 </div>
@@ -866,6 +1090,7 @@ function RegistrationForm() {
                     name="trabajando"
                     value={formData.trabajando}
                     onChange={handleChange}
+                    onBlur={handleBlur}
                     required
                   >
                     <option value="">Seleccione...</option>
@@ -885,6 +1110,7 @@ function RegistrationForm() {
                     name="idiomas"
                     value={formData.idiomas}
                     onChange={handleChange}
+                    onBlur={handleBlur}
                     rows="2"
                     required
                   ></textarea>
@@ -892,18 +1118,27 @@ function RegistrationForm() {
               </div>
             </div>
             
-            <div className="form-navigation">
-              <button type="button" className="nav-button prev" onClick={prevStep}>
-                <span className="icon">←</span> Anterior
+            <div className="form-actions">
+              <button 
+                type="button" 
+                onClick={prevStep}
+                className="btn btn-outline"
+                disabled={loading}
+              >
+                <i className="bi bi-arrow-left"></i> Anterior
               </button>
-              <button type="submit" className="submit-button" disabled={loading}>
+              <button 
+                type="submit" 
+                className="btn btn-primary"
+                disabled={loading}
+              >
                 {loading ? (
                   <>
-                    <span className="spinner"></span>
+                    <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                     Enviando...
                   </>
                 ) : (
-                  "Guardar Formulario"
+                  'Enviar Solicitud'
                 )}
               </button>
             </div>

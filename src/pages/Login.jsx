@@ -1,95 +1,154 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { login } from '../../src/services/api';
-import { Button, TextField, Typography } from "@mui/material";
-import Footer from '../components/Footer';
+import { login } from '../services/api';
 import Header from '../components/Header';
+import Footer from '../components/Footer';
+import '../styles/Login.css';
 
 const Login = () => {
-  const [correo, setEmail] = useState('');
-  const [key, setKey] = useState('');
+  const [formData, setFormData] = useState({
+    correo: '',
+    key: ''
+  });
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [isMounted, setIsMounted] = useState(true);
   const navigate = useNavigate();
   const { login: authLogin } = useAuth();
 
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      setIsMounted(false);
+    };
+  }, []);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value.trimStart()
+    }));
+    
+    // Clear error when user starts typing
+    if (error) setError('');
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Client-side validation
+    if (!formData.correo.trim() || !formData.key.trim()) {
+      setError('Por favor complete todos los campos');
+      return;
+    }
+    
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.correo.trim())) {
+      setError('Por favor ingrese un correo electrónico válido');
+      return;
+    }
+    
     setError('');
+    setLoading(true);
+    
     try {
-      const response = await login(correo, key);
-      if (response.message == 'Login exitoso') {
-        authLogin(response.user); // Pass user data to context
-        navigate('/home');
+      const response = await login(formData.correo.trim(), formData.key);
+      
+      // Only update state if component is still mounted
+      if (!isMounted) return;
+      
+      if (response.message === 'Login exitoso') {
+        authLogin(response.user);
+        navigate('/home', { replace: true });
       } else {
         setError(response.message || 'Error de autenticación');
       }
     } catch (err) {
-      setError('Error de conexión o del servidor.');
       console.error('Login error:', err);
+      if (isMounted) {
+        setError('Error de conexión o del servidor. Por favor intente nuevamente.');
+      }
+    } finally {
+      if (isMounted) {
+        setLoading(false);
+      }
     }
   };
 
   return (
-    <>
-     <Header />
-        
-           
-       
-    <div className="admin-login-container">
-      <Typography variant="h5" align="center" gutterBottom>
-        Iniciar Sesión
-      </Typography>
-
-      <form onSubmit={handleSubmit} className="admin-login-form">
-        {error && <p className="error-message">{error}</p>}
-        <div className="form-group">
-          <TextField
-            fullWidth
-            margin="normal"
-            label="Correo Electrónico"
-            type="email"
-            value={correo}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+    <div className="login-page">
+      <div className="login-container">
+        <div className="login-card">
+          <h1 className="login-title">Iniciar Sesión</h1>
+          
+          {error && (
+            <div className="error-message" role="alert" aria-live="assertive">
+              {error}
+            </div>
+          )}
+          
+          <form onSubmit={handleSubmit} className="login-form" noValidate>
+            <div className="form-group">
+              <label htmlFor="correo">Correo Electrónico</label>
+              <input
+                type="email"
+                id="correo"
+                name="correo"
+                className="form-input"
+                value={formData.correo}
+                onChange={handleChange}
+                required
+                disabled={loading}
+                placeholder="Ingrese su correo electrónico"
+                autoComplete="username"
+                aria-required="true"
+                aria-invalid={!!error}
+                aria-describedby={error ? 'login-error' : undefined}
+              />
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="key">Contraseña</label>
+              <input
+                type="password"
+                id="key"
+                name="key"
+                className="form-input"
+                value={formData.key}
+                onChange={handleChange}
+                required
+                disabled={loading}
+                placeholder="Ingrese su contraseña"
+                autoComplete="current-password"
+                aria-required="true"
+                aria-invalid={!!error}
+                aria-describedby={error ? 'login-error' : undefined}
+              />
+            </div>
+            
+            <button 
+              type="submit" 
+              className="submit-button"
+              disabled={loading}
+              aria-busy={loading}
+              aria-live="polite"
+            >
+              {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+            </button>
+            
+            <p className="register-link">
+              ¿No tienes una cuenta?{' '}
+              <Link to="/registro" tabIndex={loading ? -1 : 0}>
+                Regístrate aquí
+              </Link>
+            </p>
+          </form>
         </div>
-        <div className="form-group">
-          <TextField
-            fullWidth
-            margin="normal"
-            label="Clave"
-            type="password"
-            value={key}
-            onChange={(e) => setKey(e.target.value)}
-            required
-          />
-        </div>
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          fullWidth
-          sx={{ mt: 3 }}
-        >
-          Iniciar Sesión
-        </Button>
-        <Button
-          variant="text"
-          color="primary"
-          fullWidth
-          sx={{ mt: 1 }}
-          onClick={() => navigate('/registro')}
-        >
-          ¿No tienes cuenta? Regístrate
-        </Button>
-      </form>
+      </div>
     </div>
-
-      <Footer />
-    
-    </>
-   
   );
 };
 

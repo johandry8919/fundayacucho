@@ -1,77 +1,149 @@
 // pages/Home.jsx
-import React from 'react';
-import { Outlet, Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { AppBar, Toolbar, Typography, IconButton, Drawer, List, ListItemButton, ListItemIcon, ListItemText, Box, CssBaseline, Button, Tooltip } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import LogoutIcon from '@mui/icons-material/Logout';
+import '../styles/Home.css';
 
-import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
-import AccountBoxIcon from '@mui/icons-material/AccountBox';
+// Icons (you can replace these with your own icon components or SVGs)
+const MenuIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="3" y1="12" x2="21" y2="12"></line>
+    <line x1="3" y1="6" x2="21" y2="6"></line>
+    <line x1="3" y1="18" x2="21" y2="18"></line>
+  </svg>
+);
 
-const drawerWidth = 240;
+const DashboardIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3" y="3" width="7" height="9"></rect>
+    <rect x="14" y="3" width="7" height="5"></rect>
+    <rect x="14" y="12" width="7" height="9"></rect>
+    <rect x="3" y="16" width="7" height="5"></rect>
+  </svg>
+);
+
+const AccountBoxIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+    <circle cx="12" cy="7" r="4"></circle>
+  </svg>
+);
+
+const LogoutIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+    <polyline points="16 17 21 12 16 7"></polyline>
+    <line x1="21" y1="12" x2="9" y2="12"></line>
+  </svg>
+);
 
 function Home() {
   const { logout } = useAuth();
   const navigate = useNavigate();
-  const [open, setOpen] = React.useState(false);
+  const location = useLocation();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
-  const toggleDrawer = () => setOpen(!open);
+  // Handle window resize
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      if (!mobile) {
+        setIsSidebarOpen(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
 
   const handleLogout = () => {
     logout();
     navigate('/login');
   };
 
+  // Close sidebar when clicking on a link in mobile view
+  const handleNavigation = () => {
+    if (isMobile) {
+      setIsSidebarOpen(false);
+    }
+  };
+
+  // Check if current route matches the link
+  const isActive = (path) => {
+    return location.pathname === path;
+  };
+
   return (
-    <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
-      <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-        <Toolbar>
-          <IconButton color="inherit" edge="start" onClick={toggleDrawer} sx={{ mr: 2 }}>
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap sx={{ flexGrow: 1 }}>
-            Panel de Usuario
-          </Typography>
-          <Tooltip title="Cerrar sesión">
-            <Button color="inherit" onClick={handleLogout} startIcon={<LogoutIcon />}>
-              Cerrar sesión
-            </Button>
-          </Tooltip>
-        </Toolbar>
-      </AppBar>
-      <Drawer
-        variant="persistent"
-        anchor="left"
-        open={open}
-        sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          '& .MuiDrawer-paper': { width: drawerWidth, boxSizing: 'border-box' },
-        }}
-      >
-        <Toolbar />
-        <Box sx={{ overflow: 'auto' }}>
-          <List>
-            <ListItemButton component={Link} to=".">
-              <ListItemIcon><DashboardIcon /></ListItemIcon>
-              <ListItemText primary="Dashboard" />
-            </ListItemButton>
-           
-            <ListItemButton component={Link} to="/home/becario">
-              <ListItemIcon><AccountBoxIcon /></ListItemIcon>
-              <ListItemText primary="Formulario de Registro" />
-            </ListItemButton>
-          </List>
-        </Box>
-      </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <Toolbar />
-        <Outlet />
-      </Box>
-    </Box>
+    <div className="home-container">
+      {/* Header */}
+      <header className="header">
+        <button className="menu-button" onClick={toggleSidebar} aria-label="Toggle menu">
+          <MenuIcon />
+        </button>
+        <h1 className="header-title">Panel de Usuario</h1>
+        <button className="logout-button" onClick={handleLogout}>
+          <span className="logout-icon">
+            <LogoutIcon />
+          </span>
+          Cerrar sesión
+        </button>
+      </header>
+
+      {/* Sidebar */}
+      <nav className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
+        <ul className="sidebar-list">
+          <li>
+            <Link 
+              to="." 
+              className={`sidebar-link ${isActive('/home') ? 'active' : ''}`}
+              onClick={handleNavigation}
+            >
+              <span className="sidebar-icon">
+                <DashboardIcon />
+              </span>
+              Dashboard
+            </Link>
+          </li>
+          <li>
+            <Link 
+              to="/home/becario" 
+              className={`sidebar-link ${isActive('/home/becario') ? 'active' : ''}`}
+              onClick={handleNavigation}
+            >
+              <span className="sidebar-icon">
+                <AccountBoxIcon />
+              </span>
+              Formulario de Registro
+            </Link>
+          </li>
+        </ul>
+      </nav>
+
+      {/* Overlay for mobile */}
+      {isSidebarOpen && isMobile && (
+        <div 
+          className="overlay visible" 
+          onClick={toggleSidebar}
+          role="button"
+          tabIndex="0"
+          aria-label="Close menu"
+          onKeyDown={(e) => e.key === 'Enter' && toggleSidebar()}
+        />
+      )}
+
+      {/* Main content */}
+      <main className={`main-content ${!isMobile && isSidebarOpen ? 'shifted' : ''}`}>
+        <div className="fade-in">
+          <Outlet />
+        </div>
+      </main>
+    </div>
   );
 }
 
