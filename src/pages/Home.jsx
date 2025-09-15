@@ -86,7 +86,7 @@ function Home() {
         <button className="menu-button" onClick={toggleSidebar} aria-label="Toggle menu">
           <MenuIcon />
         </button>
-        <h1 className="header-title">Panel de Usuario</h1>
+        <h1 className="header-title text-white"></h1>
         <button className="logout-button" onClick={handleLogout}>
           <span className="logout-icon">
             <LogoutIcon />

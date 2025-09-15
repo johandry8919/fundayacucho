@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { login } from '../services/api';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 import '../styles/Login.css';
 
 const Login = () => {
@@ -56,9 +54,9 @@ const Login = () => {
     
     try {
       const response = await login(formData.correo.trim(), formData.key);
-      
-      // Only update state if component is still mounted
-      if (!isMounted) return;
+
+           console.log(response)
+  
       
       if (response.message === 'Login exitoso') {
         authLogin(response.user);

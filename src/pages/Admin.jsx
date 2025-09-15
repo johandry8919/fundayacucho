@@ -66,9 +66,6 @@ const Admin = () => {
     
     try {
       const response = await login(formData.correo, formData.key);
-      
-      if (!isMounted) return;
-      
       if (response && response.message === 'Login exitoso' && response.user) {
         authLogin(response.user);
         navigate('/admin/dashboard');

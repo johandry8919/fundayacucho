@@ -7,10 +7,11 @@ import '../styles/Registro.css';
 const Registro = () => {
   const [formData, setFormData] = useState({
     cedula: '',
-    nacionalidad: 'V',
+    nacionalidad: '',
     correo: '',
-    tipoUsuario: '1',
-    password: ''
+    tipoUsuario: '',
+    password: '',
+    id_rol : '1'
   });
   
   const [errors, setErrors] = useState({});

@@ -1,10 +1,37 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect ,useMemo, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { estado, get_municipios, get_parroquias, saveBecario } from '../services/api';
 import './../styles/BecarioView.css';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import L from 'leaflet';
+
+
+// Fix for default marker icon issue with bundlers
+import iconUrl from 'leaflet/dist/images/marker-icon.png';
+import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
+
+L.Marker.prototype.options.icon = L.icon({
+  iconUrl,
+  shadowUrl,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+});
+
+  function ChangeView({ center, zoom }) {
+    const map = useMap();
+    useEffect(() => {
+      map.setView(center, zoom);
+    }, [center, zoom]);
+    return null;
+  }
+
+
 
 const BecarioView = () => {
   const { user } = useAuth();
+
 
   const [formData, setFormData] = useState({
     id_usuario: user?.id || '',
@@ -47,6 +74,29 @@ const BecarioView = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
+
+   const [mapCenter, setMapCenter] = useState([6.4238, -66.5897]); // Centro de Venezuela por defecto
+    const [zoomLevel, setZoomLevel] = useState(5);
+    const markerRef = useRef(null);
+
+
+      const markerEventHandlers = useMemo(
+        () => ({
+          dragend() {
+            const marker = markerRef.current
+            if (marker != null) {
+              const { lat, lng } = marker.getLatLng();
+              setFormData(prev => ({
+                ...prev,
+                latitud: lat.toString(),
+                longitud: lng.toString(),
+              }));
+              setMapCenter([lat, lng]);
+            }
+          },
+        }),
+        [],
+      );
 
   // Validación de campos requeridos
   const validateField = (name, value) => {
@@ -525,6 +575,42 @@ const BecarioView = () => {
                   )}
                 </select>
                 {errors.codigoparroquia && touched.codigoparroquia && <div className="error-message">{errors.codigoparroquia}</div>}
+              </div>
+
+               <div className="form-field full-width">
+                <label>Ubicación seleccionada</label>
+                <div className="map-container">
+                  <MapContainer
+                    center={mapCenter}
+                    zoom={zoomLevel}
+                    style={{ height: "100%", width: "100%" }}
+                    dragging={true}
+                    touchZoom={true}
+                    doubleClickZoom={true}
+                    scrollWheelZoom={true}
+                    zoomControl={true}
+                    tap={true}
+                  >
+                    <ChangeView center={mapCenter} zoom={zoomLevel} />
+                    <TileLayer
+                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    />
+                    {formData.latitud && formData.longitud && (
+                      <Marker
+                        draggable={true}
+                        eventHandlers={markerEventHandlers}
+                        position={[
+                          parseFloat(formData.latitud),
+                          parseFloat(formData.longitud)
+                        ]}
+                        ref={markerRef}
+                      >
+                        <Popup>Puedes arrastrar el marcador para ajustar la ubicación</Popup>
+                      </Marker>
+                    )}
+                  </MapContainer>
+                </div>
               </div>
               
               <div className="form-field">
