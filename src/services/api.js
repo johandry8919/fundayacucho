@@ -1,7 +1,7 @@
 import { Password } from '@mui/icons-material';
 import axios from 'axios';
 
-const API_BASE_URL = 'https://backend-becarios.fundayacucho.gob.ve/api'; 
+const API_BASE_URL = 'http://localhost:3001/api'; 
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -75,8 +75,22 @@ export const get_parroquias = async (codigomunicipio) => {
 };
 
 export const get_egresado = async (id) => {
-  const response = await api.get('/b/get_egresado' ,{
+  const response = await api.get('/egresado/get_egresado' ,{
      params: {id}
+  })
+  return response.data;
+};
+
+export const get_becario = async (id) => {
+  const response = await api.get('/becario/get_becario' ,{
+     params: {id}
+  })
+  return response.data;
+};
+
+export const get_becarios = async (estado= '' , municipio = '' , parroquia = '') => {
+  const response = await api.get('/becarios' ,{
+     params: {estado , municipio , parroquia }
   })
   return response.data;
 };
@@ -107,12 +121,6 @@ export const login = async (email, password)=> {
 };
 
 
-export const get_becarios = async (estado= '' , municipio = '' , parroquia = '') => {
-  const response = await api.get('/becarios' ,{
-     params: {estado , municipio , parroquia }
-  })
-  return response.data;
-};
 
 export const delete_becario = async (id) => {
   const response = await api.delete(`/becarios/${id}`);
