@@ -1,7 +1,7 @@
 import { Password } from '@mui/icons-material';
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:3000/api'; // Reemplazar con tu URL real
+const API_BASE_URL = 'http://200.6.157.90:3000/api'; // Reemplazar con tu URL real
 
 const api = axios.create({
   baseURL: API_BASE_URL,

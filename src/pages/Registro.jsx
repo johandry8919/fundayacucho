@@ -9,7 +9,7 @@ const Registro = () => {
     cedula: '',
     nacionalidad: '',
     correo: '',
-    tipoUsuario: '',
+    tipoUsuario: '1',
     password: '',
     id_rol : '1'
   });
@@ -88,8 +88,6 @@ const Registro = () => {
         formData.password
       );
       
-      if (!isMounted) return;
-      
       await Swal.fire({
         title: '¡Registrado con éxito!',
         text: 'Serás redirigido al login para iniciar sesión',
@@ -105,12 +103,12 @@ const Registro = () => {
         }
       });
       
-      if (isMounted) {
+     
         navigate('/login');
-      }
+      
       
     } catch (err) {
-      if (isMounted) {
+      
         const errorMessage = err.response?.data?.message || 'Error al registrar el usuario. Por favor intente de nuevo.';
         
         Swal.fire({
@@ -120,11 +118,10 @@ const Registro = () => {
           confirmButtonText: 'Entendido',
           confirmButtonColor: 'var(--primary-color)'
         });
-      }
+      
     } finally {
-      if (isMounted) {
         setLoading(false);
-      }
+  
     }
   };
 

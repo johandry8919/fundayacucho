@@ -1,37 +1,38 @@
-import React, { useState, useEffect ,useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { estado, get_municipios, get_parroquias, saveBecario } from '../services/api';
 import './../styles/BecarioView.css';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from 'leaflet';
 
-
 // Fix for default marker icon issue with bundlers
 import iconUrl from 'leaflet/dist/images/marker-icon.png';
+import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
 import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
+import 'leaflet/dist/leaflet.css';
 
-L.Marker.prototype.options.icon = L.icon({
-  iconUrl,
-  shadowUrl,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41]
+// Initialize the default icon
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: iconRetinaUrl,
+  iconUrl: iconUrl,
+  shadowUrl: shadowUrl,
 });
 
-  function ChangeView({ center, zoom }) {
-    const map = useMap();
-    useEffect(() => {
+function ChangeView({ center, zoom }) {
+  const map = useMap();
+  
+  useEffect(() => {
+    if (center && center[0] && center[1]) {
       map.setView(center, zoom);
-    }, [center, zoom]);
-    return null;
-  }
-
-
+    }
+  }, [center, zoom, map]);
+  
+  return null;
+}
 
 const BecarioView = () => {
   const { user } = useAuth();
-
 
   const [formData, setFormData] = useState({
     id_usuario: user?.id || '',
@@ -75,28 +76,61 @@ const BecarioView = () => {
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
 
-   const [mapCenter, setMapCenter] = useState([6.4238, -66.5897]); // Centro de Venezuela por defecto
-    const [zoomLevel, setZoomLevel] = useState(5);
-    const markerRef = useRef(null);
+  // Map state
+  const [mapCenter, setMapCenter] = useState([6.4238, -66.5897]); // Default center of Venezuela
+  const [zoomLevel, setZoomLevel] = useState(6);
+  const markerRef = useRef(null);
+  const mapRef = useRef(null);
 
+  const markerEventHandlers = useMemo(
+    () => ({
+      dragend() {
+        const marker = markerRef.current;
+        if (marker) {
+          const { lat, lng } = marker.getLatLng();
+          setFormData(prev => ({
+            ...prev,
+            latitud: lat.toString(),
+            longitud: lng.toString(),
+          }));
+        }
+      },
+    }),
+    []
+  );
 
-      const markerEventHandlers = useMemo(
-        () => ({
-          dragend() {
-            const marker = markerRef.current
-            if (marker != null) {
-              const { lat, lng } = marker.getLatLng();
-              setFormData(prev => ({
-                ...prev,
-                latitud: lat.toString(),
-                longitud: lng.toString(),
-              }));
-              setMapCenter([lat, lng]);
-            }
-          },
-        }),
-        [],
-      );
+  // Update map center when location changes
+  useEffect(() => {
+    if (formData.latitud && formData.longitud) {
+      const lat = parseFloat(formData.latitud);
+      const lng = parseFloat(formData.longitud);
+      if (!isNaN(lat) && !isNaN(lng)) {
+        setMapCenter([lat, lng]);
+        setZoomLevel(10); // Zoom in when a specific location is set
+      }
+    }
+  }, [formData.latitud, formData.longitud]);
+
+  // Handle map click to add/update marker
+  const handleMapClick = useCallback((e) => {
+    const { lat, lng } = e.latlng;
+    setFormData(prev => ({
+      ...prev,
+      latitud: lat.toString(),
+      longitud: lng.toString(),
+    }));
+  }, []);
+
+  // Handle map ready event
+  const handleMapReady = useCallback((map) => {
+    mapRef.current = map;
+    // Add click handler to the map
+    map.on('click', handleMapClick);
+    
+    return () => {
+      map.off('click', handleMapClick);
+    };
+  }, [handleMapClick]);
 
   // Validación de campos requeridos
   const validateField = (name, value) => {
@@ -579,16 +613,20 @@ const BecarioView = () => {
 
                <div className="form-field full-width">
                 <label>Ubicación seleccionada</label>
-                <div className="map-container">
+                <div className="map-container" style={{ height: '400px', width: '100%', margin: '10px 0' }}>
                   <MapContainer
                     center={mapCenter}
                     zoom={zoomLevel}
-                    style={{ height: "100%", width: "100%" }}
+                    style={{ height: '100%', width: '100%' }}
+                    whenCreated={handleMapReady}
+                    zoomControl={true}
+                    doubleClickZoom={true}
+                    closePopupOnClick={false}
+                    keyboard={true}
+                    scrollWheelZoom={true}
                     dragging={true}
                     touchZoom={true}
-                    doubleClickZoom={true}
-                    scrollWheelZoom={true}
-                    zoomControl={true}
+                    boxZoom={true}
                     tap={true}
                   >
                     <ChangeView center={mapCenter} zoom={zoomLevel} />
@@ -601,15 +639,23 @@ const BecarioView = () => {
                         draggable={true}
                         eventHandlers={markerEventHandlers}
                         position={[
-                          parseFloat(formData.latitud),
-                          parseFloat(formData.longitud)
+                          parseFloat(formData.latitud) || mapCenter[0],
+                          parseFloat(formData.longitud) || mapCenter[1]
                         ]}
                         ref={markerRef}
                       >
-                        <Popup>Puedes arrastrar el marcador para ajustar la ubicación</Popup>
+                        <Popup closeButton={false}>
+                          <div style={{ textAlign: 'center' }}>
+                            <p>Ubicación seleccionada</p>
+                            <small>Arrastra para ajustar</small>
+                          </div>
+                        </Popup>
                       </Marker>
                     )}
                   </MapContainer>
+                </div>
+                <div style={{ marginTop: '8px', fontSize: '0.9em', color: '#666' }}>
+                  <p>Haz clic en el mapa para seleccionar una ubicación o arrastra el marcador para ajustarla.</p>
                 </div>
               </div>
               

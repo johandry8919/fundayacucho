@@ -455,7 +455,7 @@ function RegistrationForm() {
   return (
     <div className="registration-container">
       <div className="registration-header">
-        <h1>Formulario de Registro de Becario</h1>
+        <h1>Formulario de Registro de Egresado Fundayacucho</h1>
         <p>Complete toda la información solicitada para su registro en el sistema</p>
       </div>
 

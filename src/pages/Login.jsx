@@ -54,10 +54,6 @@ const Login = () => {
     
     try {
       const response = await login(formData.correo.trim(), formData.key);
-
-           console.log(response)
-  
-      
       if (response.message === 'Login exitoso') {
         authLogin(response.user);
         navigate('/home', { replace: true });
@@ -70,9 +66,9 @@ const Login = () => {
         setError('Error de conexión o del servidor. Por favor intente nuevamente.');
       }
     } finally {
-      if (isMounted) {
+      
         setLoading(false);
-      }
+    
     }
   };
 
@@ -130,8 +126,7 @@ const Login = () => {
             <button 
               type="submit" 
               className="submit-button"
-              disabled={loading}
-              aria-busy={loading}
+             
               aria-live="polite"
             >
               {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
