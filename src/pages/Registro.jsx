@@ -16,13 +16,13 @@ const Registro = () => {
   
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [isMounted, setIsMounted] = useState(true);
+  //const [isMounted, setIsMounted] = useState(true);
   const navigate = useNavigate();
 
   // Cleanup function to prevent memory leaks
   useEffect(() => {
     return () => {
-      setIsMounted(false);
+      //setIsMounted(false);
     };
   }, []);
 
