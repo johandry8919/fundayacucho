@@ -4,20 +4,10 @@ import { RouterProvider } from 'react-router-dom';
 import router from './routes';
 import { AuthProvider } from './context/AuthContext';
 
-// Import global styles first
-import './styles/App.css';
-import './styles/main.css';
+// Import global styles
 import './index.css';
-
-// Clear any existing styles that might be causing conflicts
-const styleTags = document.querySelectorAll('style, link[rel="stylesheet"]');
-styleTags.forEach(tag => {
-  if (tag.href && !tag.href.includes('App.css') && 
-      !tag.href.includes('main.css') && 
-      !tag.href.includes('index.css')) {
-    tag.remove();
-  }
-});
+import './App.css';
+import './styles/main.css';
 
 // Ensure body has proper styling
 const style = document.createElement('style');
@@ -31,8 +21,8 @@ style.textContent = `
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     line-height: 1.5;
-    color: var(--text-color);
-    background-color: var(--background-color);
+    color: var(--text-color, #333);
+    background-color: var(--background-color, #f8f9fa);
   }
   
   #root {
@@ -41,12 +31,11 @@ style.textContent = `
     flex-direction: column;
   }
 `;
+
 document.head.appendChild(style);
 
-// Initialize the app
-const root = ReactDOM.createRoot(document.getElementById('root'));
-
-root.render(
+// Render the app
+ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <AuthProvider>
       <RouterProvider router={router} />
