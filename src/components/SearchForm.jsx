@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import { estado, get_municipios, get_parroquias  , submitForm} from "../services/api";
+import { estado, get_municipios, get_parroquias  , submitForm ,get_egresado} from "../services/api";
 import "leaflet/dist/leaflet.css";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from 'leaflet';
@@ -48,6 +48,12 @@ function RegistrationForm() {
   const [currentStep, setCurrentStep] = useState(1);
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
+   const [egresado,   setEgresado] = useState();
+
+
+   console.log(egresado)
+
+
 
   const [mapCenter, setMapCenter] = useState([6.4238, -66.5897]); // Centro de Venezuela por defecto
   const [zoomLevel, setZoomLevel] = useState(5);
@@ -114,8 +120,18 @@ function RegistrationForm() {
     }
   };
 
+    const get_Egresado = async () => {
+    try {
+      let data = await get_egresado(user.id);
+      setEgresado(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   useEffect(() => {
     SubmitEstado();
+    
   }, []);
 
   useEffect(() => {
@@ -881,7 +897,7 @@ function RegistrationForm() {
                 </div>
               </div>
               
-              {formData.becario_tipo && (
+              {formData.becario_tipo === "internacional" || formData.becario_tipo === "venezolano exterior" ? (
                 <div className="form-field">
                   <label>{DYNAMIC_LABELS[formData.becario_tipo]}</label>
                   <div className="input-group">
@@ -909,7 +925,7 @@ function RegistrationForm() {
                     </select>
                   </div>
                 </div>
-              )}
+              ) : null}
               
               <div className="form-field">
                 <label>Carrera cursada</label>

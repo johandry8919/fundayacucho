@@ -74,6 +74,16 @@ export const get_parroquias = async (codigomunicipio) => {
   return response.data;
 };
 
+export const get_egresado = async (id) => {
+  const response = await api.get('/b/get_egresado' ,{
+     params: {id}
+  })
+  return response.data;
+};
+
+
+
+
 
 export const submitForm = async (formData) => {
   const response = await api.post('/egresado/register', formData);
