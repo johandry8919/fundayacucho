@@ -4,10 +4,10 @@ import { Link } from 'react-router-dom';
 
 function Welcome() {
   return (
-    <div className="container text-center mt-5">
+    <div className="container-fluid  text-center mt-5  ">
       <h1>Bienvenido a Fundayacucho</h1>
       <p>Por favor, inicie sesión o regístrese para continuar.</p>
-      <div className="d-flex justify-content-center">
+      <div className="justify-content-center">
         <Link to="/login" className="btn btn-primary mx-2">
           Iniciar Sesión
         </Link>

@@ -700,7 +700,7 @@ const BecarioView = () => {
               </div>
               <div className="form-field">
                 <label>Año de Ingreso a la Carrera</label>
-                <input type="number" name="anioIngreso" value={formData.anioIngreso} onChange={handleChange} onBlur={handleBlur} required />
+                <input placeholder='Ejemplo:2000' type="number" name="anioIngreso" value={formData.anioIngreso} onChange={handleChange} onBlur={handleBlur} required />
                 {errors.anioIngreso && touched.anioIngreso && <div className="error-message">{errors.anioIngreso}</div>}
               </div>
               <div className="form-field">
