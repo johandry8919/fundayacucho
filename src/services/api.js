@@ -1,7 +1,7 @@
 import { Password } from '@mui/icons-material';
 import axios from 'axios';
 
-const API_BASE_URL = 'http://200.6.157.90:3000/api'; 
+const API_BASE_URL = 'https://becarios.fundayacucho.gob.ve/api'; 
 
 const api = axios.create({
   baseURL: API_BASE_URL,
