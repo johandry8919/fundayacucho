@@ -126,7 +126,7 @@ function RegistrationForm() {
 
   const get_Egresado = async () => {
     try {
-      let data = await get_egresado(user.id);
+      let data = await get_egresado(user.cedula);
       setEgresado(data);
     } catch (err) {
       console.log(err);
@@ -722,6 +722,8 @@ function RegistrationForm() {
                     required
                   >
                     <option value="">Seleccione...</option>
+
+                    
                     {estados &&
                       estados.map((stad) => (
                         <option

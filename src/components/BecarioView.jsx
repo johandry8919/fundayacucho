@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { estado, get_municipios, get_parroquias, saveBecario } from '../services/api';
+import { estado, get_municipios, get_parroquias, saveBecario, get_becario } from '../services/api';
 import './../styles/BecarioView.css';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from 'leaflet';
@@ -35,14 +35,14 @@ function ChangeView({ center, zoom }) {
 
 const BecarioView = () => {
   const { user } = useAuth();
-
+   const [dataBecario, setBecario] = useState([]);
   const [formData, setFormData] = useState({
-    id_usuario: user?.id || '',
+   id_usuario: user?.id || '',
     nombresApellidos: '',
     cedula: user?.cedula || '',
     fechaNacimiento: '',
     genero: '',
-    nacionalidad: user.nacionalidad == 'V' ? 'Venezolano'  :   'Estrangero',
+    nacionalidad: user?.nacionalidad === 'V' ? 'Venezolano' : 'Extranjero',
     correo: user?.email || '',
     telefonoPrincipal: '',
     telefonoAlternativo: '',
@@ -62,11 +62,11 @@ const BecarioView = () => {
     anexoConstancia: null,
     anexoResidencia: null,
     anexoFoto: null,
-    codigoestado: "",
-    codigomunicipio: "",
-    codigoparroquia: "",
-    latitud: "",
-    longitud: "",
+    codigoestado: '',
+    codigomunicipio: '',
+    codigoparroquia: '',
+    latitud: '',
+    longitud: '',
   });
 
   const [estados, setEstados] = useState([]);
@@ -78,6 +78,8 @@ const BecarioView = () => {
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
     const navigate = useNavigate();
+
+
 
   // Map state
   const [mapCenter, setMapCenter] = useState([6.4238, -66.5897]); // Default center of Venezuela
@@ -102,19 +104,19 @@ const BecarioView = () => {
     []
   );
 
-  // Update map center when location changes
+
   useEffect(() => {
     if (formData.latitud && formData.longitud) {
       const lat = parseFloat(formData.latitud);
       const lng = parseFloat(formData.longitud);
       if (!isNaN(lat) && !isNaN(lng)) {
         setMapCenter([lat, lng]);
-        setZoomLevel(10); // Zoom in when a specific location is set
+        setZoomLevel(10); 
       }
     }
   }, [formData.latitud, formData.longitud]);
 
-  // Handle map click to add/update marker
+
   const handleMapClick = useCallback((e) => {
     const { lat, lng } = e.latlng;
     setFormData(prev => ({
@@ -124,18 +126,15 @@ const BecarioView = () => {
     }));
   }, []);
 
-  // Handle map ready event
+
   const handleMapReady = useCallback((map) => {
     mapRef.current = map;
-    // Add click handler to the map
     map.on('click', handleMapClick);
-    
     return () => {
       map.off('click', handleMapClick);
     };
   }, [handleMapClick]);
 
-  // Validación de campos requeridos
   const validateField = (name, value) => {
     const requiredFields = {
       nombresApellidos: 'Nombres y Apellidos es requerido',
@@ -369,17 +368,15 @@ const BecarioView = () => {
   useEffect(() => {
     const fetchEstados = async () => {
       try {
-        console.log('Fetching estados...');
         const response = await estado();
-        console.log('Estados received:', response);
         setEstados(response);
       } catch (error) {
         console.error("Error fetching estados:", error);
-        // Set empty array to prevent infinite loading
         setEstados([]);
       }
     };
     fetchEstados();
+    get_becarios();
   }, []);
 
   useEffect(() => {
@@ -430,7 +427,7 @@ const BecarioView = () => {
     setFormData({ 
       ...formData, 
       codigoestado: estadoId, 
-      codigomunicipio: '', 
+      codigomunicipio: '02', 
       codigoparroquia: '',
       latitud: latitud || "",
       longitud: longitud || ""
@@ -444,6 +441,62 @@ const BecarioView = () => {
       console.error("Error fetching municipios:", error);
     }
   };
+
+    const get_becarios = async () => {
+    try {
+      const response = await get_becario(user.id);
+      setBecario(response);
+
+      if (response) {
+        setFormData(prev => ({
+          ...prev,
+          nombresApellidos: response.nombres_apellidos || '',
+          genero: response.genero || '',
+          telefonoPrincipal: response.telefono_principal || '',
+          telefonoAlternativo: response.telefono_alternativo || '',
+          comuna: response.comuna || '',
+          direccion: response.direccion || '',
+          institucion: response.institucion || '',
+          programaEstudio: response.programa_estudio || '',
+          anioIngreso: response.anio_ingreso || '',
+          semestreActual: response.semestre_actual || '',
+          turnoEstudio: response.turno_estudio || '',
+          modalidadEstudio: response.modalidad_estudio || '',
+          programaBeca: response.programa_beca || '',
+          estadoBeca: response.estado_beca || '',
+          tipoTarea: response.tipo_tarea || '',
+          dependencia: response.dependencia || '',
+          codigoestado: response.codigoestado || '',
+          codigomunicipio: response.codigomunicipio || '',
+          codigoparroquia: response.codigoparroquia || '',
+          latitud: response.latitud || '',
+          longitud: response.longitud || '',
+          fechaNacimiento: response.fecha_nacimiento || '',
+        }));
+        
+        // Si hay coordenadas, centrar el mapa
+        if (response.latitud && response.longitud) {
+          const lat = parseFloat(response.latitud);
+          const lng = parseFloat(response.longitud);
+          if (!isNaN(lat) && !isNaN(lng)) {
+            setMapCenter([lat, lng]);
+            setZoomLevel(10);
+          }
+        }
+      }
+
+    } catch (error) {
+      console.error("Error fetching municipios:", error);
+    }
+  };
+
+
+  
+
+
+    useEffect(() => {
+    get_becarios();
+  }, []);
 
   const handleMunicipioChange = async (e) => {
     const selectedOption = e.target.options[e.target.selectedIndex];
@@ -563,11 +616,19 @@ const BecarioView = () => {
               </div>
               <div className="form-field">
                 <label>Género</label>
-                <select name="genero" value={formData.genero} onChange={handleChange} onBlur={handleBlur} required>
-                  <option value="">Seleccione...</option>
-                  <option value="masculino">Masculino</option>
-                  <option value="femenino">Femenino</option>
-                  <option value="otro">Otro</option>
+                <select select name="genero" value={formData.genero} onChange={handleChange} onBlur={handleBlur} required>
+
+                  {dataBecario.genero && 
+                   <option value={dataBecario.genero}>{dataBecario.genero}</option>
+                   }:{
+                    <option value="">Seleccione...</option>
+
+                   }
+                  
+                  
+                  <option value="Masculino">Masculino</option>
+                  <option value="Femenino">Femenino</option>
+                  <option value="Otro">Otro</option>
                 </select>
                 {errors.genero && touched.genero && <div className="error-message">{errors.genero}</div>}
               </div>
@@ -593,10 +654,14 @@ const BecarioView = () => {
               
               <div className="form-field">
                 <label>Estado de Residencia</label>
-                <select name="codigoestado" value={formData.codigoestado} onChange={handleEstadoChange}  required>
+                <select   name="codigoestado" value={formData.codigoestado} onChange={handleEstadoChange}  required>
                   <option value="">Seleccione...</option>
-                  {estados.map(e => 
-                    <option 
+                   
+
+                {estados.map(e => 
+
+
+                    <option selected 
                       key={e.codigoestado}
                       value={e.codigoestado}
                       latitud={e.latitud}
@@ -612,7 +677,7 @@ const BecarioView = () => {
               <div className="form-field">
                 <label>Municipio de Residencia</label>
                 <select name="codigomunicipio" value={formData.codigomunicipio} onChange={handleMunicipioChange} onBlur={handleBlur} required>
-                  <option value="">Seleccione...</option>
+                  <option value={dataBecario.codigomunicipio}>{dataBecario.municipio_nombre}</option>
                   {municipios.map(m => 
                     <option
                       key={m.codigomunicipio} 
@@ -630,7 +695,7 @@ const BecarioView = () => {
               <div className="form-field">
                 <label>Parroquia de Residencia</label>
                 <select name="codigoparroquia" value={formData.codigoparroquia} onChange={handleParroquiaChange} onBlur={handleBlur} required>
-                  <option value="">Seleccione...</option>
+                  <option value={dataBecario.codigomunicipio}>{dataBecario.parroquia_nombre}</option>
                   {parroquias.map(p =>
                     <option 
                       key={p.codigoparroquia} 
