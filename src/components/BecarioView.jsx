@@ -447,6 +447,15 @@ const BecarioView = () => {
       setBecario(response);
 
       if (response) {
+
+
+        let fechaNacimientoFormateada = '';
+        if (response.fecha_nacimiento) {
+          const fecha = new Date(response.fecha_nacimiento);
+          if (!isNaN(fecha.getTime())) {
+            fechaNacimientoFormateada = fecha.toISOString().split('T')[0];
+          }
+        }
         setFormData(prev => ({
           ...prev,
           nombresApellidos: response.nombres_apellidos || '',
@@ -470,7 +479,7 @@ const BecarioView = () => {
           codigoparroquia: response.codigoparroquia || '',
           latitud: response.latitud || '',
           longitud: response.longitud || '',
-          fechaNacimiento: response.fecha_nacimiento || '',
+          fechaNacimiento: fechaNacimientoFormateada || '',
         }));
         
         // Si hay coordenadas, centrar el mapa
