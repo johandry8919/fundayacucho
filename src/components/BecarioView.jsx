@@ -959,12 +959,16 @@ const BecarioView = () => {
               </div>
             </div>
             <div className="form-navigation">
+
+            
               <button type="button" className="nav-button prev" onClick={prevStep}>
                 <span className="icon">←</span> Anterior
               </button>
-              <button type="submit" className="submit-button" disabled={isSubmitting}>
-                {isSubmitting ? 'Enviando...' : 'Registrar Datos'}
-              </button>
+
+                <button type="submit" className="submit-button" disabled={isSubmitting}>
+                  {isSubmitting ? 'Enviando...' : (dataBecario ? 'Actualizar datos' : 'Registrar Datos')}
+                </button>
+             
             </div>
           </div>
         )}
