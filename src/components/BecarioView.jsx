@@ -63,7 +63,7 @@ const BecarioView = () => {
     anexoResidencia: null,
     anexoFoto: null,
     codigoestado: '',
-    codigomunicipio: '',
+    codigomunicipio: '02',
     codigoparroquia: '',
     latitud: '',
     longitud: '',
@@ -376,7 +376,6 @@ const BecarioView = () => {
       }
     };
     fetchEstados();
-    get_becarios();
   }, []);
 
   useEffect(() => {
@@ -494,7 +493,7 @@ const BecarioView = () => {
   
 
 
-    useEffect(() => {
+  useEffect(() => {
     get_becarios();
   }, []);
 
@@ -655,7 +654,7 @@ const BecarioView = () => {
               <div className="form-field">
                 <label>Estado de Residencia</label>
                 <select   name="codigoestado" value={formData.codigoestado} onChange={handleEstadoChange}  required>
-                  <option value="">Seleccione...</option>
+                  <option value={dataBecario.codigoestado}>{dataBecario.estado_nombre}</option>
                    
 
                 {estados.map(e => 
