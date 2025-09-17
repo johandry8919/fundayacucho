@@ -10,6 +10,8 @@ import iconUrl from 'leaflet/dist/images/marker-icon.png';
 import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
 import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
 import 'leaflet/dist/leaflet.css';
+import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 // Initialize the default icon
 delete L.Icon.Default.prototype._getIconUrl;
@@ -75,6 +77,7 @@ const BecarioView = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
+    const navigate = useNavigate();
 
   // Map state
   const [mapCenter, setMapCenter] = useState([6.4238, -66.5897]); // Default center of Venezuela
@@ -269,68 +272,99 @@ const BecarioView = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    // Validar todos los pasos antes de enviar
-    let allStepsValid = true;
+  e.preventDefault();
+  
+  // Validar todos los pasos antes de enviar
+  let allStepsValid = true;
+  for (let i = 1; i <= 4; i++) {
+    if (!validateStep(i)) {
+      allStepsValid = false;
+    }
+  }
+  
+  if (!allStepsValid) {
+    // Ir al primer paso con errores
     for (let i = 1; i <= 4; i++) {
       if (!validateStep(i)) {
-        allStepsValid = false;
+        setCurrentStep(i);
+        // Marcar todos los campos como tocados para mostrar errores
+        const stepFields = {
+          1: ['nombresApellidos', 'cedula', 'fechaNacimiento', 'genero', 'nacionalidad', 'correo', 'telefonoPrincipal', 'comuna', 'direccion', 'codigoestado', 'codigomunicipio', 'codigoparroquia'],
+          2: ['institucion', 'programaEstudio', 'anioIngreso', 'semestreActual', 'turnoEstudio', 'modalidadEstudio'],
+          3: ['programaBeca', 'estadoBeca', 'tipoTarea', 'dependencia'],
+          4: ['anexoCedula', 'anexoConstancia', 'anexoResidencia', 'anexoFoto']
+        };
+
+        const newTouched = {};
+        stepFields[i].forEach(field => {
+          newTouched[field] = true;
+        });
+        setTouched(prev => ({ ...prev, ...newTouched }));
+        
+        // Mostrar mensaje de error con SweetAlert
+        await Swal.fire({
+          title: 'Campos requeridos',
+          text: 'Por favor complete todos los campos requeridos antes de enviar el formulario',
+          icon: 'warning',
+          confirmButtonText: 'Entendido'
+        });
+        
+        window.scrollTo(0, 0);
+        return;
       }
     }
-    
-    if (!allStepsValid) {
-      // Ir al primer paso con errores
-      for (let i = 1; i <= 4; i++) {
-        if (!validateStep(i)) {
-          setCurrentStep(i);
-          // Marcar todos los campos como tocados para mostrar errores
-          const stepFields = {
-            1: ['nombresApellidos', 'cedula', 'fechaNacimiento', 'genero', 'nacionalidad', 'correo', 'telefonoPrincipal', 'comuna', 'direccion', 'codigoestado', 'codigomunicipio', 'codigoparroquia'],
-            2: ['institucion', 'programaEstudio', 'anioIngreso', 'semestreActual', 'turnoEstudio', 'modalidadEstudio'],
-            3: ['programaBeca', 'estadoBeca', 'tipoTarea', 'dependencia'],
-            4: ['anexoCedula', 'anexoConstancia', 'anexoResidencia', 'anexoFoto']
-          };
+  }
 
-          const newTouched = {};
-          stepFields[i].forEach(field => {
-            newTouched[field] = true;
-          });
-          setTouched(prev => ({ ...prev, ...newTouched }));
-          
-          // Mostrar mensaje de error
-          alert('Por favor complete todos los campos requeridos antes de enviar el formulario');
-          window.scrollTo(0, 0);
-          return;
-        }
+  setIsSubmitting(true);
+  
+  try {
+    const data = new FormData();
+    
+    Object.keys(formData).forEach(key => {
+      if (formData[key] !== null && formData[key] !== '') {
+        data.append(key, formData[key]);
       }
-    }
-
-    setIsSubmitting(true);
+    });
     
-    try {
-      const data = new FormData();
-      
-      Object.keys(formData).forEach(key => {
-        if (formData[key] !== null && formData[key] !== '') {
-          data.append(key, formData[key]);
-        }
-      });
-      
-      data.append('fileDestination', 'imagenes');
-      
-      const response = await saveBecario(data);
-      console.log('Formulario enviado con éxito:', response);
-      
-      alert('Datos registrados exitosamente');
-      
-    } catch (error) {
-      console.error('Error al enviar el formulario:', error);
-      alert('Error al enviar el formulario. Por favor, intente nuevamente.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+    data.append('fileDestination', 'imagenes');
+    
+    const response = await saveBecario(data);
+    console.log('Formulario enviado con éxito:', response);
+    
+    // Mostrar alerta de éxito y redirigir
+    await Swal.fire({
+      title: '¡Éxito!',
+      text: 'Datos registrados exitosamente. Serás redirigido al home.',
+      icon: 'success',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      allowEnterKey: false,
+      showConfirmButton: false,
+      timer: 2000,
+      timerProgressBar: true,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+    
+    // Redirigir al home después del éxito
+    navigate('/home');
+    
+  } catch (error) {
+    console.error('Error al enviar el formulario:', error);
+    
+    // Mostrar alerta de error con SweetAlert
+    await Swal.fire({
+      title: 'Error',
+      text: 'El becario ya está registrado con esta cédula o correo',
+      icon: 'error',
+      confirmButtonText: 'Entendido'
+    });
+    
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   useEffect(() => {
     const fetchEstados = async () => {
