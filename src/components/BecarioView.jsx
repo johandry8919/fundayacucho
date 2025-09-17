@@ -475,12 +475,12 @@ const BecarioView = () => {
           tipoTarea: response.tipo_tarea || '',
           dependencia: response.dependencia || '',
           anexoCedula: response.anexo_cedula,
-          anexoConstancia: response.anexo_constancia || '',
-          anexoResidencia: response.anexo_residencia || '',
+          anexoConstancia: response.anexo_constancia || 'sfsdfsdf',
+          anexoResidencia: response.anexo_residencia || 'sdfsdfsdf',
           anexoFoto: response.anexoFoto || '',
-          codigoestado: response.codigoestado || '',
-          codigomunicipio: response.codigomunicipio || '',
-          codigoparroquia: response.codigoparroquia || '',
+          codigoestado: response.codigo_estado || '',
+          codigomunicipio: response.codigo_municipio || '',
+          codigoparroquia: response.codigo_parroquia || '',
           latitud: response.latitud || '',
           longitud: response.longitud || '',
           fechaNacimiento: fechaNacimientoFormateada || '',
@@ -931,7 +931,7 @@ const BecarioView = () => {
               <div className="form-field">
                 <label>Constancia de Estudio/Inscripción</label>
                 <div className="file-upload-container">
-                  <input type="file" id="anexoConstancia" name="anexoConstancia" onChange={handleFileChange} required className="file-input" />
+                  <input  type="file" id="anexoConstancia" name="anexoConstancia" onChange={handleFileChange} required className="file-input" />
                   <label htmlFor="anexoConstancia" className="file-upload-button">
                     <span className="upload-icon">📎</span> Seleccionar archivo
                   </label>
