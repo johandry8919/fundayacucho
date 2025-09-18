@@ -108,8 +108,19 @@ const Registro = () => {
       
       
     } catch (err) {
+
+      console.log(err.status)
+
+      let errorMessage =  ''; 
+
+      if(err.status == 400 ) {
+         errorMessage =  err.data.message ; 
+
+      } else{
+        errorMessage =  err.data.message ; 
+      }
       
-        const errorMessage = err.response?.data?.message || 'Error al registrar el usuario. Por favor intente de nuevo.';
+       
         
         Swal.fire({
           title: 'Error al registrar',
