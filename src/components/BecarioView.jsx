@@ -445,10 +445,7 @@ const BecarioView = () => {
     try {
       const response = await get_becario(user.id);
       setBecario(response);
-
       if (response) {
-
-
         let fechaNacimientoFormateada = '';
         if (response.fecha_nacimiento) {
           const fecha = new Date(response.fecha_nacimiento);

@@ -56,10 +56,10 @@ function RegistrationForm() {
   const [currentStep, setCurrentStep] = useState(1);
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
-  const [egresado, setEgresado] = useState();
+  const [egresado, setEgresado] = useState([]);
   const navigate = useNavigate();
 
-  console.log(egresado);
+
 
   const [mapCenter, setMapCenter] = useState([6.4238, -66.5897]); // Centro de Venezuela por defecto
   const [zoomLevel, setZoomLevel] = useState(5);
@@ -127,7 +127,82 @@ function RegistrationForm() {
   const get_Egresado = async () => {
     try {
       let data = await get_egresado(user.cedula);
+
+      console.log(data)
       setEgresado(data);
+      let fechaNacimientoFormateada = '';
+      let ingresoFormateada = '';
+      let egresoFormateada = '';
+      if (data) {
+        
+        if (data.fecha_nacimiento) {
+          const fecha = new Date(data.fecha_nacimiento);
+          const ingreso = new Date(data.fecha_ingreso);
+           const egreso = new Date(data.fecha_egreso);
+          
+          
+          if (!isNaN(fecha.getTime())) {
+            fechaNacimientoFormateada = fecha.toISOString().split('T')[0];
+          }
+          if (!isNaN(ingreso.getTime())) {
+            ingresoFormateada = ingreso.toISOString().split('T')[0];
+          }
+
+          if (!isNaN(egreso.getTime())) {
+            egresoFormateada = egreso.toISOString().split('T')[0];
+          }
+        }
+      
+      
+      }
+
+       setFormData(prev => ({
+          ...prev,
+          id_usuario: user.id,
+          nombre_completo: data.nombre_completo || '',
+          cedula: user.cedula,
+          correo: user.email || "",
+          telefono_celular: data.telefono_celular || "",
+          telefono_alternativo: "",
+          fecha_nacimiento: fechaNacimientoFormateada || '',
+          tipo_beca: data.tipo_beca ||  "",
+          cod_estado: "",
+          carrera_cursada: data.carrera_cursada ||  "",
+          fecha_ingreso: ingresoFormateada ||  "",
+          fecha_egreso:egresoFormateada ||  "",
+          titularidad: data.titularidad || "",
+          idiomas: data.idiomas ||  "",
+          ocupacion_actual: data.ocupacion_actual ||  "",
+          universidad: data.universidad || "",
+          becario_tipo: data.becario_tipo ||  "",
+          descripcion_becario: "",
+          codigoestado: data.codigoestado,
+          codigomunicipio: data.codigomunicipio,
+          codigoparroquia: data.codigoparroquia || "",
+          latitud: data.latitud || "",
+          longitud: data.longitud || "",
+          latitud_pais: "",
+          longitud_pais: "",
+          direccion: data.direccion || "",
+          codigoestado2: data.codigoestado ||  "",
+          es_militar: data.es_militar,
+          trabajando: data.trabajando ||  "",
+         
+        }));
+
+        if (data.latitud && data.longitud) {
+          const lat = parseFloat(data.latitud);
+          const lng = parseFloat(data.longitud);
+          if (!isNaN(lat) && !isNaN(lng)) {
+            setMapCenter([lat, lng]);
+            setZoomLevel(5);
+          }
+        }
+
+
+
+
+
     } catch (err) {
       console.log(err);
     }
@@ -765,7 +840,13 @@ function RegistrationForm() {
                         ? "Seleccione un municipio..."
                         : "Seleccione un estado primero"}
                     </option>
+
+
+                          <option value={egresado.codigomunicipio}>{egresado.municipio_nombre}</option>
+
                     {municipios && municipios && municipios.length > 0 ? (
+
+                      
                       municipios.map((muni) => (
                         <option
                           key={muni.codigomunicipio}
@@ -814,7 +895,12 @@ function RegistrationForm() {
                       {formData.codigomunicipio
                         ? "Seleccione una parroquia..."
                         : "Seleccione un municipio primero"}
+
+
                     </option>
+
+
+                     <option value={egresado.codigoparroquia}>{egresado.parroquia_nombre}</option>
                     {parroquias && parroquias && parroquias.length > 0 ? (
                       parroquias.map((parr) => (
                         <option
