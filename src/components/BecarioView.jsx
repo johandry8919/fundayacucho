@@ -1053,7 +1053,7 @@ const BecarioView = () => {
               </button>
 
                 <button type="submit" className="submit-button" disabled={isSubmitting}>
-                  {isSubmitting ? 'Enviando...' : (dataBecario ? 'Actualizar datos' : 'Registrar Datos')}
+                  {isSubmitting ? 'Enviando...' : (dataBecario.length ? 'Actualizar datos' : 'Registrar Datos')}
                 </button>
              
             </div>
