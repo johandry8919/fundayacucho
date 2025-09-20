@@ -138,7 +138,7 @@ function Home() {
       )}
 
       {/* Main content */}
-      <main className={`main-content ${!isMobile && isSidebarOpen ? 'shifted' : ''}`}>
+      <main className={`main-content  ${!isMobile && isSidebarOpen ? 'shifted' : ''}`}>
         <div className="fade-in">
           <Outlet />
         </div>

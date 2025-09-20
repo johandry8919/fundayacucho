@@ -91,8 +91,10 @@ export const get_becario = async (id) => {
 
 
 
+
+
 export const get_becarios = async (estado= '' , municipio = '' , parroquia = '') => {
-  const response = await api.get('/becarios' ,{
+  const response = await api.get('becarios/becarios' ,{
      params: {estado , municipio , parroquia }
   })
   return response.data;

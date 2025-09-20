@@ -108,9 +108,6 @@ const Registro = () => {
       
       
     } catch (err) {
-
-      console.log(err.status)
-
       let errorMessage =  ''; 
 
       if(err.status == 400 ) {

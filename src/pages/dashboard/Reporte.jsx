@@ -72,30 +72,17 @@ export default function Reporte() {
     );
   };
 
-  React.useEffect(() => {
-    const cargarEstados = async () => {
-      try {
-        const data = await estado();
-        setEstados(data);
-      } catch (err) {
-        console.error("Error al cargar estados:", err);
-        setEstados(null);
-      }
-    };
-    cargarEstados();
-  }, []);
-
-  React.useEffect(() => {
+    React.useEffect(() => {
     if (initialLoadDone) return;
-
     const cargarDatosIniciales = async () => {
       try {
         setLoading(true);
         const response = await get_becarios();
 
-        if (response.success) {
-          setBecarios(response.data || []);
-          setTotalItems(response.data.length || 0);
+        console.log(response)
+        if (response) {
+          setBecarios(response || []);
+          setTotalItems(response.length || 0);
           setError(null);
         } else {
           throw new Error(response.message || "Error al cargar becarios");
@@ -114,6 +101,21 @@ export default function Reporte() {
 
     cargarDatosIniciales();
   }, [initialLoadDone]);
+
+  React.useEffect(() => {
+    const cargarEstados = async () => {
+      try {
+        const data = await estado();
+        setEstados(data);
+      } catch (err) {
+        console.error("Error al cargar estados:", err);
+        setEstados(null);
+      }
+    };
+    cargarEstados();
+  }, []);
+
+
 
   const cargarMunicipios = async (codigoestado) => {
     try {

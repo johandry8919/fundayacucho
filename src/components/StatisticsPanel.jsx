@@ -32,8 +32,6 @@ const StatisticsPanel = ({ becarios, loading }) => {
       };
     }
 
-    console.log(becarios)
-    
     const total = becarios.length;
     
     // Contar por tipo de beca (ajusta estas condiciones según tus datos reales)

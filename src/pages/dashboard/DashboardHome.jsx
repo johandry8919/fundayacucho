@@ -16,8 +16,8 @@ export default function Dashboard() {
         try {
           setLoading(true);
           const response = await get_becarios();
-          if (response.success) {
-            setBecarios(response.data || []);
+          if (response) {
+            setBecarios(response || []);
             setError(null);
           } else {
             throw new Error(response.message || "Error al cargar becarios");
@@ -37,7 +37,13 @@ export default function Dashboard() {
     }, []);
 
   return(
-    <div className="mt-4"> <StatisticsPanel becarios={becarios} loading={loading}/> </div>
+    <div className="mt-4"> <StatisticsPanel becarios={becarios} loading={loading}/>
+
+
+
+    
+    
+     </div>
   )
  
 }

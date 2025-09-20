@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom';
+//import { createBrowserRouter } from 'react-router-dom';
 import App from './App';
 import About from './pages/About';
 import Home from './pages/Home';
@@ -16,8 +16,10 @@ import Registro from './pages/Registro';
 import Welcome from './pages/Welcome'; // Import Welcome
 import UserDashboard from './pages/dashboard/UserDashboard'; // Import UserDashboard
 import BecarioRouteHandler from './components/BecarioRouteHandler'; // Import BecarioRouteHandler
+import { createHashRouter } from 'react-router-dom';
 
-const router = createBrowserRouter([
+
+const router = createHashRouter([
   {
     path: "/",
     element: <App />,
@@ -59,6 +61,8 @@ const router = createBrowserRouter([
       }
     ],
   },
+
+  
   {
     path: "/admin/dashboard",
     element: <ProtectedRoute><HomeAdministrador /></ProtectedRoute>,
