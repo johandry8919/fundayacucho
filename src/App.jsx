@@ -6,15 +6,13 @@ import './styles/App.css';
 function App() {
   return (
     <div className="app-layout ">
-      
+      <Header />
       <main className="main-content">
-        <Header />
         <div className="container ">
           <Outlet />
         </div>
-        <Footer />
       </main>
-      
+      <Footer />
     </div>
   );
 }

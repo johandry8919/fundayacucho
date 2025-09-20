@@ -12,6 +12,9 @@ import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
 import 'leaflet/dist/leaflet.css';
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import QRCode from 'qrcode';
+import { jsPDF } from 'jspdf';
+import 'jspdf-autotable';
 
 // Initialize the default icon
 delete L.Icon.Default.prototype._getIconUrl;
@@ -63,7 +66,7 @@ const BecarioView = () => {
     anexoResidencia: null,
     anexoFoto: null,
     codigoestado: '',
-    codigomunicipio: '02',
+    codigomunicipio: '',
     codigoparroquia: '',
     latitud: '',
     longitud: '',
@@ -270,100 +273,177 @@ const BecarioView = () => {
     window.scrollTo(0, 0);
   };
 
+  // Función para generar código QR
+  const generateQRCode = async (data) => {
+    try {
+      const qrData = JSON.stringify({
+        nombresApellidos: data.nombresApellidos,
+        cedula: data.cedula,
+        institucion: data.institucion,
+        programaBeca: data.programaBeca,
+        fechaRegistro: new Date().toISOString()
+      });
+      
+      return await QRCode.toDataURL(qrData, {
+        width: 200,
+        margin: 1,
+        color: {
+          dark: '#000000',
+          light: '#FFFFFF'
+        }
+      });
+    } catch (err) {
+      console.error('Error generando QR:', err);
+      return null;
+    }
+  };
+
+  // Función para generar PDF
+  const generatePDF = async (data, qrCodeUrl) => {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 15;
+    const lineHeight = 7;
+    let yPos = 20;
+
+    // Logo y Título
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Comprobante de Registro', pageWidth / 2, yPos, { align: 'center' });
+    yPos += lineHeight * 2;
+
+    // Línea divisoria
+    doc.setDrawColor(0);
+    doc.setLineWidth(0.5);
+    doc.line(margin, yPos, pageWidth - margin, yPos);
+    yPos += 10;
+
+    // Información del becario
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'normal');
+    
+    doc.setFont('helvetica', 'bold');
+    doc.text('Datos Personales', margin, yPos);
+    yPos += lineHeight;
+    
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Nombre: ${data.nombresApellidos || ''}`, margin, yPos);
+    yPos += lineHeight;
+    doc.text(`Cédula: ${data.cedula || ''}`, margin, yPos);
+    yPos += lineHeight;
+    doc.text(`Fecha de Nacimiento: ${data.fechaNacimiento || ''}`, margin, yPos);
+    yPos += lineHeight;
+    doc.text(`Teléfono: ${data.telefonoPrincipal || ''}`, margin, yPos);
+    yPos += lineHeight * 1.5;
+
+    // Información académica
+    doc.setFont('helvetica', 'bold');
+    doc.text('Información Académica', margin, yPos);
+    yPos += lineHeight;
+    
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Institución: ${data.institucion || ''}`, margin, yPos);
+    yPos += lineHeight;
+    doc.text(`Programa: ${data.programaEstudio || ''}`, margin, yPos);
+    yPos += lineHeight;
+    doc.text(`Año de Ingreso: ${data.anioIngreso || ''}`, margin, yPos);
+    yPos += lineHeight * 1.5;
+
+    // Información de la beca
+    doc.setFont('helvetica', 'bold');
+    doc.text('Información de la Beca', margin, yPos);
+    yPos += lineHeight;
+    
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Programa: ${data.programaBeca || ''}`, margin, yPos);
+    yPos += lineHeight;
+    doc.text(`Estado: ${data.estadoBeca || ''}`, margin, yPos);
+    yPos += lineHeight;
+    doc.text(`Tipo de Tarea: ${data.tipoTarea || ''}`, margin, yPos);
+    yPos += lineHeight * 1.5;
+
+    // Código QR
+    if (qrCodeUrl) {
+      const qrSize = 60;
+      doc.addImage(qrCodeUrl, 'PNG', pageWidth - margin - qrSize, 40, qrSize, qrSize);
+      doc.setFontSize(8);
+      doc.text('Escanee este código para verificar', pageWidth - margin - qrSize/2, 40 + qrSize + 5, { align: 'center' });
+    }
+
+    // Pie de página
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'italic');
+    doc.text('Este documento es un comprobante de registro. Consérvelo para futuras referencias.', 
+      pageWidth / 2, doc.internal.pageSize.getHeight() - 10, { align: 'center' });
+
+    return doc;
+  };
+
+  // Función para manejar el envío del formulario
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  
-  // Validar todos los pasos antes de enviar
-  let allStepsValid = true;
-  for (let i = 1; i <= 4; i++) {
-    if (!validateStep(i)) {
-      allStepsValid = false;
+    e.preventDefault();
+    
+    // Validar el paso actual
+    const stepErrors = validateStep(currentStep);
+    if (Object.keys(stepErrors).length > 0) {
+      setErrors(stepErrors);
+      return;
     }
-  }
-  
-  if (!allStepsValid) {
-    // Ir al primer paso con errores
-    for (let i = 1; i <= 4; i++) {
-      if (!validateStep(i)) {
-        setCurrentStep(i);
-        // Marcar todos los campos como tocados para mostrar errores
-        const stepFields = {
-          1: ['nombresApellidos', 'cedula', 'fechaNacimiento', 'genero', 'nacionalidad', 'correo', 'telefonoPrincipal', 'comuna', 'direccion', 'codigoestado', 'codigomunicipio', 'codigoparroquia'],
-          2: ['institucion', 'programaEstudio', 'anioIngreso', 'semestreActual', 'turnoEstudio', 'modalidadEstudio'],
-          3: ['programaBeca', 'estadoBeca', 'tipoTarea', 'dependencia'],
-          4: ['anexoCedula', 'anexoConstancia', 'anexoResidencia', 'anexoFoto']
-        };
 
-        const newTouched = {};
-        stepFields[i].forEach(field => {
-          newTouched[field] = true;
-        });
-        setTouched(prev => ({ ...prev, ...newTouched }));
-        
-        // Mostrar mensaje de error con SweetAlert
-        await Swal.fire({
-          title: 'Campos requeridos',
-          text: 'Por favor complete todos los campos requeridos antes de enviar el formulario',
-          icon: 'warning',
-          confirmButtonText: 'Entendido'
-        });
-        
-        window.scrollTo(0, 0);
-        return;
-      }
+    // Si no es el último paso, ir al siguiente
+    if (currentStep < 4) {
+      setCurrentStep(currentStep + 1);
+      window.scrollTo(0, 0);
+      return;
     }
-  }
 
-  setIsSubmitting(true);
-  
-  try {
-    const data = new FormData();
-    
-    Object.keys(formData).forEach(key => {
-      if (formData[key] !== null && formData[key] !== '') {
-        data.append(key, formData[key]);
+    // Si es el último paso, enviar el formulario
+    setIsSubmitting(true);
+    try {
+      const formDataToSend = new FormData();
+      
+      // Agregar todos los campos del formulario al FormData
+      Object.keys(formData).forEach(key => {
+        if (formData[key] !== null && formData[key] !== undefined) {
+          formDataToSend.append(key, formData[key]);
+        }
+      });
+
+      const response = await saveBecario(formDataToSend);
+     
+      if (response) {
+        // Generar y descargar el PDF con el código QR
+        const qrCodeUrl = await generateQRCode(formData);
+        const pdfDoc = await generatePDF(formData, qrCodeUrl);
+        
+        // Guardar el PDF
+        const fileName = `comprobante_beca_${formData.cedula}_${new Date().getTime()}.pdf`;
+        pdfDoc.save(fileName);
+        
+        Swal.fire({
+          icon: 'success',
+          title: '¡Registro exitoso!',
+          html: 'Tus datos han sido guardados correctamente.<br><br>Se ha generado un comprobante con un código QR para verificación.',
+          confirmButtonText: 'Aceptar',
+          allowOutsideClick: false
+        }).then(() => {
+          navigate('/home');
+        });
+      } else {
+        throw new Error(response.message || 'Error al guardar los datos');
       }
-    });
-    
-    data.append('fileDestination', 'imagenes');
-    
-    const response = await saveBecario(data);
-    console.log('Formulario enviado con éxito:', response);
-    
-    // Mostrar alerta de éxito y redirigir
-    await Swal.fire({
-      title: '¡Éxito!',
-      text: 'Datos registrados exitosamente. Serás redirigido al home.',
-      icon: 'success',
-      allowOutsideClick: false,
-      allowEscapeKey: false,
-      allowEnterKey: false,
-      showConfirmButton: false,
-      timer: 2000,
-      timerProgressBar: true,
-      didOpen: () => {
-        Swal.showLoading();
-      }
-    });
-    
-    // Redirigir al home después del éxito
-    navigate('/home');
-    
-  } catch (error) {
-    console.error('Error al enviar el formulario:', error);
-    
-    // Mostrar alerta de error con SweetAlert
-    await Swal.fire({
-      title: 'Error',
-      text: 'El becario ya está registrado con esta cédula o correo',
-      icon: 'error',
-      confirmButtonText: 'Entendido'
-    });
-    
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+    } catch (error) {
+      console.error('Error al guardar los datos:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.message || 'Ocurrió un error al guardar los datos. Por favor, inténtalo de nuevo.',
+        confirmButtonText: 'Aceptar'
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   useEffect(() => {
     const fetchEstados = async () => {
