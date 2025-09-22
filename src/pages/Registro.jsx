@@ -7,7 +7,7 @@ import '../styles/Registro.css';
 const Registro = () => {
   const [formData, setFormData] = useState({
     cedula: '',
-    nacionalidad: '',
+    nacionalidad: 'V',
     correo: '',
     tipoUsuario: '1',
     password: '',
@@ -221,7 +221,7 @@ const Registro = () => {
               className="form-select"
               disabled={loading}
             >
-              <option value="1">Nuevo Becario</option>
+              <option value="1">Becario Fundayacucho</option>
               <option value="2">Egresado Fundayacucho</option>
             </select>
           </div>

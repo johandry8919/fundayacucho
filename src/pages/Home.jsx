@@ -107,7 +107,7 @@ function Home() {
               <span className="sidebar-icon">
                 <DashboardIcon />
               </span>
-              Dashboard
+              Inicio
             </Link>
           </li>
           <li>

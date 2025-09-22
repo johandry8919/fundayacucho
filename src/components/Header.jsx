@@ -6,7 +6,7 @@ const Header = () => {
   return (
     <header className="app-header">
       <div className="header-container">
-        <Link to="/" className="logo-link" aria-label="Inicio">
+        <Link to="#" className="logo-link" aria-label="Inicio">
           <img 
             src="/img/cintillo6.png" 
             alt="Fundayacucho - Logo" 

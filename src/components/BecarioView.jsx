@@ -2,8 +2,9 @@ import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import { useAuth } from '../context/AuthContext';
 import { estado, get_municipios, get_parroquias, saveBecario, get_becario } from '../services/api';
 import './../styles/BecarioView.css';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Popup, useMap } from "react-leaflet";
 import L from 'leaflet';
+import BecarioMarker from './BecarioMarker';
 
 // Fix for default marker icon issue with bundlers
 import iconUrl from 'leaflet/dist/images/marker-icon.png';
@@ -658,7 +659,7 @@ const BecarioView = () => {
   return (
     <div className="becario-container">
       <div className="becario-header">
-        <h1>Formulario de Registro de Nuevo Becario</h1>
+        <h1>Formulario de Registro </h1>
         <p>Complete toda la información solicitada para su registro en el sistema</p>
       </div>
 
@@ -829,22 +830,12 @@ const BecarioView = () => {
                       attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     />
                     {formData.latitud && formData.longitud && (
-                      <Marker
-                        draggable={true}
-                        eventHandlers={markerEventHandlers}
-                        position={[
-                          parseFloat(formData.latitud) || mapCenter[0],
-                          parseFloat(formData.longitud) || mapCenter[1]
-                        ]}
-                        ref={markerRef}
-                      >
-                        <Popup closeButton={false}>
-                          <div style={{ textAlign: 'center' }}>
-                            <p>Ubicación seleccionada</p>
-                            <small>Arrastra para ajustar</small>
-                          </div>
-                        </Popup>
-                      </Marker>
+                      <BecarioMarker
+                        latitud={formData.latitud}
+                        longitud={formData.longitud}
+                        markerRef={markerRef}
+                        markerEventHandlers={markerEventHandlers}
+                      />
                     )}
                   </MapContainer>
                 </div>
@@ -892,9 +883,14 @@ const BecarioView = () => {
                 <input type="text" name="programaEstudio" value={formData.programaEstudio} onChange={handleChange} onBlur={handleBlur} required />
                 {errors.programaEstudio && touched.programaEstudio && <div className="error-message">{errors.programaEstudio}</div>}
               </div>
-              <div className="form-field">
+         
+
+               <div className="form-field">
                 <label>Año de Ingreso a la Carrera</label>
-                <input placeholder='Ejemplo:2000' type="number" name="anioIngreso" value={formData.anioIngreso} onChange={handleChange} onBlur={handleBlur} required />
+                <input 
+                type="date" 
+                name="anioIngreso"
+                 value={formData.anioIngreso} onChange={handleChange} onBlur={handleBlur} required />
                 {errors.anioIngreso && touched.anioIngreso && <div className="error-message">{errors.anioIngreso}</div>}
               </div>
               <div className="form-field">
