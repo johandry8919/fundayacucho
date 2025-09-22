@@ -96,7 +96,7 @@ function Home() {
       </header>
 
       {/* Sidebar */}
-      <nav className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
+      <nav  className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
         <ul className="sidebar-list">
           <li>
             <Link 

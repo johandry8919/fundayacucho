@@ -434,7 +434,7 @@ const BecarioView = () => {
           confirmButtonText: 'Aceptar',
           allowOutsideClick: false
         }).then(() => {
-          navigate('/home');
+          navigate('/home/becario');
         });
       } else {
         throw new Error(response.message || 'Error al guardar los datos');
@@ -534,10 +534,17 @@ const BecarioView = () => {
       setBecario(response);
       if (response) {
         let fechaNacimientoFormateada = '';
-        if (response.fecha_nacimiento) {
+        let anioIngresoFormateada = '';
+        if (response.fecha_nacimiento || response.anio_ingreso) {
+
           const fecha = new Date(response.fecha_nacimiento);
+          const ingreso = new Date(response.anio_ingreso);
           if (!isNaN(fecha.getTime())) {
             fechaNacimientoFormateada = fecha.toISOString().split('T')[0];
+          }
+
+          if (!isNaN(ingreso.getTime())) {
+            anioIngresoFormateada = ingreso.toISOString().split('T')[0];
           }
         }
         setFormData(prev => ({
@@ -550,7 +557,7 @@ const BecarioView = () => {
           direccion: response.direccion || '',
           institucion: response.institucion || '',
           programaEstudio: response.programa_estudio || '',
-          anioIngreso: response.anio_ingreso || '',
+          anioIngreso: anioIngresoFormateada || '',
           semestreActual: response.semestre_actual || '',
           turnoEstudio: response.turno_estudio || '',
           modalidadEstudio: response.modalidad_estudio || '',
