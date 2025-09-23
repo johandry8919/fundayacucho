@@ -1,7 +1,7 @@
 import { Password } from '@mui/icons-material';
 import axios from 'axios';
 
-const API_BASE_URL = 'https://backend-becarios.fundayacucho.gob.ve/api'; 
+const API_BASE_URL = 'http://localhost:3000/api'; 
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -145,3 +145,20 @@ export const saveBecario = async (formData) => {
   });
   return response.data;
 };
+
+export const get_Uner = async (estado= '') => {
+  const response = await api.get('becarios/uner' ,{
+     params: {estado}
+  })
+  return response.data;
+};
+
+export const get_carreras = async (codigo= '') => {
+  const response = await api.get('becarios/carreras' ,{
+     params: {codigo}
+  })
+  return response.data;
+};
+
+
+

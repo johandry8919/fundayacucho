@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { estado, get_municipios, get_parroquias, saveBecario, get_becario } from '../services/api';
+import { estado, get_municipios, get_parroquias, saveBecario, get_becario ,get_Uner ,get_carreras} from '../services/api';
 import './../styles/BecarioView.css';
 import { MapContainer, TileLayer, Popup, useMap } from "react-leaflet";
 import L from 'leaflet';
@@ -76,13 +76,14 @@ const BecarioView = () => {
   const [estados, setEstados] = useState([]);
   const [municipios, setMunicipios] = useState([]);
   const [parroquias, setParroquias] = useState([]);
-  const [universidades, setUniversidades] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
     const navigate = useNavigate();
 
+  const [uner, setUner] = useState([]);
+  const [carrera, setcarrera] = useState([]);
 
 
   // Map state
@@ -229,16 +230,12 @@ const BecarioView = () => {
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
-    
-    // Si es un campo de archivo, tomamos el primer archivo
     const fieldValue = type === 'file' ? files[0] : value;
     
     setFormData(prev => ({
       ...prev,
       [name]: fieldValue
     }));
-
-    // Si el campo ha sido tocado, validamos al cambiar
     if (touched[name]) {
       const error = validateField(name, fieldValue);
       setErrors(prev => ({
@@ -453,6 +450,7 @@ const BecarioView = () => {
   };
 
   useEffect(() => {
+    console.log('useEffect ejecutado'); // Verifica cuántas veces se ejecuta
     const fetchEstados = async () => {
       try {
         const response = await estado();
@@ -462,54 +460,44 @@ const BecarioView = () => {
         setEstados([]);
       }
     };
+  
+
     fetchEstados();
+
+
+     
   }, []);
 
-  useEffect(() => {
-    const loadUniversidades = async () => {
-      if (!formData.codigoestado) return;
-      try {
-        const response = await fetch("/uner.csv");
-        const csvData = await response.text();
-        const lines = csvData.split("\n");
-        const headers = lines[0].split(",");
-        const nomEstIndex = headers.indexOf("nomb_uni");
-        const idEstadoIndex = headers.indexOf("id\r");
 
-        if (nomEstIndex === -1 || idEstadoIndex === -1) {
-          console.error("Columnas requeridas no encontradas en el CSV");
-          return;
-        }
-
-        const universidadesFiltradas = [];
-        const universidadesSet = new Set();
-
-        for (let i = 1; i < lines.length; i++) {
-          const currentLine = lines[i].split(",");
-          if (currentLine.length > Math.max(nomEstIndex, idEstadoIndex)) {
-            const idEstado = currentLine[idEstadoIndex].trim();
-            const nombreUniversidad = currentLine[nomEstIndex].trim();
-            if (idEstado === formData.codigoestado.toString() && nombreUniversidad && !universidadesSet.has(nombreUniversidad)) {
-              universidadesSet.add(nombreUniversidad);
-              universidadesFiltradas.push(nombreUniversidad);
-            }
-          }
-        }
-        setUniversidades(universidadesFiltradas.sort());
-      } catch (error) {
-        console.error("Error al cargar universidades:", error);
-      }
-    };
-
-    loadUniversidades();
-  }, [formData.codigoestado]);
 
   const handleEstadoChange = async (e) => {
     const selectedOption = e.target.options[e.target.selectedIndex];
     const estadoId = e.target.value;
     const latitud = selectedOption.getAttribute('latitud');
     const longitud = selectedOption.getAttribute('longitud');
-    
+
+    if(estadoId){ 
+      try {
+        const response = await get_Uner('23');
+         setUner(response);
+        if(response){
+          try {
+            for (let index = 0; index < response.length; index++) {
+              const element = response[index];   
+              const response2 = await get_carreras(element.codigo);
+              element.carreras = response2;
+              setcarrera(response2);
+            }
+          } catch (error) {
+            console.error("Error fetching carreras:", error);
+           setcarrera([]);
+          }
+        }
+        setUner(response);
+      } catch (error) {
+        console.error("Error fetching municipios:", error);
+      }
+    }
     setFormData({ 
       ...formData, 
       codigoestado: estadoId, 
@@ -881,14 +869,18 @@ const BecarioView = () => {
                 <label>Institución de Educación Universitaria de adscripción</label>
                 <select name="institucion" value={formData.institucion} onChange={handleChange} onBlur={handleBlur} required>
                   <option value="">Seleccione...</option>
-                  {universidades.map(u => <option key={u} value={u}>{u}</option>)}
+                  {uner.map(u => <option key={u.id} value={u.nombre_uner}>{u.nombre_uner}</option>)}
                 </select>
                 {errors.institucion && touched.institucion && <div className="error-message">{errors.institucion}</div>}
               </div>
               <div className="form-field">
                 <label>Programa de Estudio (Carrera)</label>
-                <input type="text" name="programaEstudio" value={formData.programaEstudio} onChange={handleChange} onBlur={handleBlur} required />
+               <select name="programaEstudio" value={formData.programaEstudio} onChange={handleChange} onBlur={handleBlur} required>
+                  <option value="">Seleccione...</option>
+                  {carrera.map(u => <option key={u.id} value={u.carreras}>{u.carreras}</option>)}
+                </select>
                 {errors.programaEstudio && touched.programaEstudio && <div className="error-message">{errors.programaEstudio}</div>}
+                
               </div>
          
 
