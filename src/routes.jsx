@@ -4,7 +4,7 @@ import About from './pages/About';
 import Home from './pages/Home';
 import ErrorPage from './pages/ErrorPage';
 import Admin from './pages/Admin';
-import HomeAdministrador from './pages/HomeAdministrador';
+import HomeAdministrador from './pages/dashboard/Dashboard';
 import Reporte from './pages/dashboard/Reporte';
 import Mapa from './pages/dashboard/Mapa';
 import Consultas from './pages/dashboard/Consultas';

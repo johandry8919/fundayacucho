@@ -8,7 +8,7 @@ function App() {
     <div className="app-layout ">
       <Header />
       <main className="main-content">
-        <div className="container ">
+        <div className="container-fluid">
           <Outlet />
         </div>
       </main>

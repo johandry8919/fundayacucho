@@ -56,7 +56,7 @@ const Login = () => {
       const response = await login(formData.correo.trim(), formData.key);
       if (response.message === 'Login exitoso') {
         authLogin(response.user);
-        navigate('/home/becario', { replace: true });
+        navigate('/home', { replace: true });
       } else {
         setError(response.message || 'Error de autenticación');
       }

@@ -221,7 +221,9 @@ const Registro = () => {
               className="form-select"
               disabled={loading}
             >
-              <option value="1">Becario Fundayacucho</option>
+              <option value="1">Becario En Venezuela </option>
+              <option value="3">Becario Venezolano en el Exterior</option>
+              <option value="4">Becarios Internacional en Venezuela</option>
               <option value="2">Egresado Fundayacucho</option>
             </select>
           </div>

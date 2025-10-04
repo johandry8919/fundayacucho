@@ -86,6 +86,16 @@ function Home() {
         <button className="menu-button" onClick={toggleSidebar} aria-label="Toggle menu">
           <MenuIcon />
         </button>
+        <nav className={`header-nav${isMobile ? (isSidebarOpen ? ' visible' : ' hidden') : ''}`}>
+          <Link to="/home" className={isActive('/home') ? 'active' : ''} onClick={handleNavigation}>
+            <span className="nav-icon"><DashboardIcon /></span>
+            Inicio
+          </Link>
+          <Link to="/home/becario" className={isActive('/home/becario') ? 'active' : ''} onClick={handleNavigation}>
+            <span className="nav-icon"><AccountBoxIcon /></span>
+            Formulario de Registro
+          </Link>
+        </nav>
         <h1 className="header-title text-white"></h1>
         <button className="logout-button" onClick={handleLogout}>
           <span className="logout-icon">
@@ -96,34 +106,9 @@ function Home() {
       </header>
 
       {/* Sidebar */}
-      <nav  className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
-        <ul className="sidebar-list">
-          <li>
-            <Link 
-              to="." 
-              className={`sidebar-link ${isActive('/home') ? 'active' : ''}`}
-              onClick={handleNavigation}
-            >
-              <span className="sidebar-icon">
-                <DashboardIcon />
-              </span>
-              Inicio
-            </Link>
-          </li>
-          <li>
-            <Link 
-              to="/home/becario" 
-              className={`sidebar-link ${isActive('/home/becario') ? 'active' : ''}`}
-              onClick={handleNavigation}
-            >
-              <span className="sidebar-icon">
-                <AccountBoxIcon />
-              </span>
-              Formulario de Registro
-            </Link>
-          </li>
-        </ul>
-      </nav>
+
+    
+     
 
       {/* Overlay for mobile */}
       {isSidebarOpen && isMobile && (
