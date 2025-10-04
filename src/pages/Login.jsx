@@ -125,7 +125,7 @@ const Login = () => {
                   Contraseña
                 </label>
                 <Link 
-                  to="/forgot-password" 
+                  to="/#" 
                   className="text-sm font-medium text-blue-600 hover:text-blue-500"
                   tabIndex={loading ? -1 : 0}
                 >

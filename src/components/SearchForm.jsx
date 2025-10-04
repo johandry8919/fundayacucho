@@ -584,15 +584,15 @@ function RegistrationForm() {
       <div className="progress-container">
         <div className="progress-bar">
           <div className={`progress-step ${currentStep >= 1 ? "active" : ""}`}>
-            <span className="step-number">1</span>
+            <span className="step-number"></span>
             <span className="step-label">Datos Personales</span>
           </div>
           <div className={`progress-step ${currentStep >= 2 ? "active" : ""}`}>
-            <span className="step-number">2</span>
+            <span className="step-number"></span>
             <span className="step-label">Información Académica</span>
           </div>
           <div className={`progress-step ${currentStep >= 3 ? "active" : ""}`}>
-            <span className="step-number">3</span>
+            <span className="step-number"></span>
             <span className="step-label">Información Adicional</span>
           </div>
         </div>
