@@ -74,8 +74,8 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-      <div className="w-full max-w-md">
+    <div className="fixed inset-0 flex items-center justify-center p-4 bg-cover bg-center overflow-hidden" style={{ backgroundImage: 'url(/img/fon5.png)' , backgroundSize: '100% 100%' , backgroundPosition: 'center' , backgroundRepeat: 'no-repeat' }}>
+      <div className="w-full max-w-md bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden">
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           {/* Header */}
           <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-6 text-center">
@@ -125,7 +125,7 @@ const Login = () => {
                   Contraseña
                 </label>
                 <Link 
-                  to="/#" 
+                  to="login/recupera_clave" 
                   className="text-sm font-medium text-blue-600 hover:text-blue-500"
                   tabIndex={loading ? -1 : 0}
                 >

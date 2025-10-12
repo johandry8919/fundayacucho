@@ -14,6 +14,7 @@ import {
   get_becario,
   get_Uner,
   get_carreras,
+  get_anexo_cedula,
 } from "../services/api";
 import "./../styles/BecarioView.css";
 import { MapContainer, TileLayer, Popup, useMap } from "react-leaflet";
@@ -80,11 +81,14 @@ const BecarioView = () => {
     anexoConstancia: null,
     anexoResidencia: null,
     anexoFoto: null,
+    Contrato_convenio: null,
+    constancia_semestre: null,
     codigoestado: "",
     codigomunicipio: "",
     codigoparroquia: "",
     latitud: "",
     longitud: "",
+    
   });
 
   const [estados, setEstados] = useState([]);
@@ -136,7 +140,7 @@ const BecarioView = () => {
       ...prev,
       latitud: lat.toString(),
       longitud: lng.toString(),
-    }));  console.log(formData.institucion);
+    })); 
   }, []);
 
   const handleMapReady = useCallback(
@@ -175,6 +179,8 @@ const BecarioView = () => {
       anexoConstancia: "Constancia de estudio es requerida",
       anexoResidencia: "Constancia de residencia es requerida",
       anexoFoto: "Fotografía es requerida",
+      Contrato_convenio: "Contrato convenio es requerida",
+      constancia_semestre: "Contrato convenio es requerida",
       codigoestado: "Estado es requerido",
       codigomunicipio: "Municipio es requerido",
       codigoparroquia: "Parroquia es requerida",
@@ -230,9 +236,10 @@ const BecarioView = () => {
         "semestreActual",
         "turnoEstudio",
         "modalidadEstudio",
+        "constancia_semestre"
       ],
       3: ["programaBeca", "estadoBeca", "tipoTarea", "dependencia"],
-      4: ["anexoCedula", "anexoConstancia", "anexoResidencia", "anexoFoto"],
+      4: ["anexoCedula", "anexoConstancia", "anexoResidencia", "anexoFoto" , "Contrato_convenio" ],
     };
 
     const newErrors = {};
@@ -323,9 +330,10 @@ const BecarioView = () => {
           "semestreActual",
           "turnoEstudio",
           "modalidadEstudio",
+          "constancia_semestre"
         ],
         3: ["programaBeca", "estadoBeca", "tipoTarea", "dependencia"],
-        4: ["anexoCedula", "anexoConstancia", "anexoResidencia", "anexoFoto"],
+        4: ["anexoCedula", "anexoConstancia", "anexoResidencia", "anexoFoto" , "Contrato_convenio" ],
       };
 
       const newTouched = {};
@@ -353,7 +361,7 @@ const BecarioView = () => {
         url: becarioUrl,
         nombresApellidos: data.nombresApellidos,
         cedula: data.cedula,
-        institucion: data.institucion,
+        institucion: data.uner,
         programaBeca: data.programaBeca,
         fechaRegistro: new Date().toISOString(),
       });
@@ -372,113 +380,212 @@ const BecarioView = () => {
     }
   };
 
-  // Función para generar PDF
+  // Función para generar PDF con mejor formato y manejo de contenido
   const generatePDF = async (data, qrCodeUrl) => {
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
-    const margin = 15;
-    const lineHeight = 7;
-    let yPos = 20;
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const margin = 10; // Reducido de 15 a 10
+    const lineHeight = 6; // Reducido de 7 a 6
+    const maxContentWidth = pageWidth - 2 * margin;
+    const footerHeight = 15; // Altura fija para el pie de página
+    
+    // Función para agregar nueva página si es necesario
+    const addNewPageIfNeeded = (requiredSpace) => {
+      if (yPos + requiredSpace > pageHeight - footerHeight - 10) {
+        doc.addPage();
+        yPos = margin;
+        addHeader();
+        return true;
+      }
+      return false;
+    };
 
-    // Logo y Título
-    doc.setFontSize(18);
-    doc.setFont("helvetica", "bold");
-    doc.text("Comprobante de Registro", pageWidth / 2, yPos, {
-      align: "center",
-    });
-    yPos += lineHeight * 2;
-
-    // Línea divisoria
-    doc.setDrawColor(0);
-    doc.setLineWidth(0.5);
-    doc.line(margin, yPos, pageWidth - margin, yPos);
-    yPos += 10;
-
-    // Información del becario
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "normal");
-
-    doc.setFont("helvetica", "bold");
-    doc.text("Datos Personales", margin, yPos);
-    yPos += lineHeight;
-
-    doc.setFont("helvetica", "normal");
-    doc.text(`Nombre: ${data.nombresApellidos || ""}`, margin, yPos);
-    yPos += lineHeight;
-    doc.text(`Cédula: ${data.cedula || ""}`, margin, yPos);
-    yPos += lineHeight;
-    doc.text(
-      `Fecha de Nacimiento: ${data.fechaNacimiento || ""}`,
-      margin,
-      yPos
-    );
-    yPos += lineHeight;
-    doc.text(`Teléfono: ${data.telefonoPrincipal || ""}`, margin, yPos);
-    yPos += lineHeight * 1.5;
-
-    // Información académica
-    doc.setFont("helvetica", "bold");
-    doc.text("Información Académica", margin, yPos);
-    yPos += lineHeight;
-
-    doc.setFont("helvetica", "normal");
-    // Imprimir la institución, dividiendo en varias líneas si es muy larga
-    const institucionText = `Institución: ${data.institucion || ""}`;
-    const maxWidth = pageWidth - margin * 2;
-    const splitted = doc.splitTextToSize(institucionText, maxWidth);
-    splitted.forEach((line) => {
-      doc.text(line, margin, yPos);
-      yPos += lineHeight;
-    });
-    yPos += lineHeight;
-    doc.text(`Programa: ${data.programaEstudio || ""}`, margin, yPos);
-    yPos += lineHeight;
-    doc.text(`Año de Ingreso: ${data.anioIngreso || ""}`, margin, yPos);
-    yPos += lineHeight * 1.5;
-
-    // Información de la beca
-    doc.setFont("helvetica", "bold");
-    doc.text("Información de la Beca", margin, yPos);
-    yPos += lineHeight;
-
-    doc.setFont("helvetica", "normal");
-    doc.text(`Programa: ${data.programaBeca || ""}`, margin, yPos);
-    yPos += lineHeight;
-    doc.text(`Estado: ${data.estadoBeca || ""}`, margin, yPos);
-    yPos += lineHeight;
-    doc.text(`Tipo de Tarea: ${data.tipoTarea || ""}`, margin, yPos);
-    yPos += lineHeight * 1.5;
-
-    // Código QR
-    if (qrCodeUrl) {
-      const qrSize = 60;
+    // Función para agregar el encabezado
+    const addHeader = () => {
+      const headerHeight = 25;
       doc.addImage(
-        qrCodeUrl,
-        "PNG",
-        pageWidth - margin - qrSize,
-        40,
-        qrSize,
-        qrSize
+        "/img/cintillo6.png", 
+        "PNG", 
+        margin, 
+        margin, 
+        pageWidth - 2 * margin, 
+        headerHeight
       );
-      doc.setFontSize(8);
-      doc.text(
-        "Escanee este código para verificar",
-        pageWidth - margin - qrSize / 2,
-        40 + qrSize + 5,
-        { align: "center" }
-      );
+      
+      // Título del documento
+      doc.setFontSize(18);
+      doc.setFont("helvetica", "bold");
+      doc.text("COMPROBANTE DE REGISTRO", pageWidth / 2, margin + headerHeight + 10, {
+        align: "center"
+      });
+      
+      // Fecha de generación
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "normal");
+      const now = new Date();
+      const dateStr = now.toLocaleDateString('es-ES', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      doc.text(`Generado: ${dateStr}`, pageWidth - margin, margin + 10, { align: 'right' });
+      // Línea divisoria
+      doc.setDrawColor(0);
+      doc.setLineWidth(0.3);
+      doc.line(margin, margin + headerHeight + 15, pageWidth - margin, margin + headerHeight + 15);
+    };
+
+    // Inicializar posición Y y agregar encabezado
+    let yPos = margin + 40; // Reducido de 50 a 40 para ahorrar espacio
+    addHeader();
+    yPos += 5; // Reducido de 10 a 5 para ahorrar espacio
+
+    // Función para agregar sección con título
+    const addSection = (title, content) => {
+      // Verificar si necesitamos una nueva página antes de agregar el título
+      const needsNewPage = addNewPageIfNeeded(lineHeight * 3); // Menos espacio para el título
+      
+      if (!needsNewPage) {
+        // Solo agregar espacio extra si no estamos al inicio de una nueva página
+        yPos += lineHeight * 0.5;
+      }
+      
+      // Título de la sección
+      doc.setFontSize(11); // Reducido de 12 a 11
+      doc.setFont("helvetica", "bold");
+      doc.text(title, margin, yPos);
+      yPos += lineHeight * 0.8; // Reducido el espacio después del título
+      
+      // Contenido de la sección
+      doc.setFont("helvetica", "normal");
+      const lines = doc.splitTextToSize(content, maxContentWidth);
+      
+      // Verificar si necesitamos una nueva página para el contenido
+      const neededSpace = lines.length * lineHeight;
+      if (yPos + neededSpace > pageHeight - footerHeight - 10) {
+        doc.addPage();
+        yPos = margin;
+        addHeader();
+        // No agregar espacio extra después del encabezado en este caso
+      }
+      
+      // Agregar el texto
+      doc.text(lines, margin, yPos);
+      yPos += (lines.length * lineHeight) + (lineHeight * 0.5); // Reducido el espacio entre secciones
+    };
+
+    // Agregar información personal
+    const personalInfo = [
+      `Nombre: ${data.nombresApellidos || "No especificado"}`,
+      `Cédula: ${data.cedula || "No especificada"}`,
+      `Fecha de Nacimiento: ${data.fechaNacimiento || "No especificada"}`,
+      `Teléfono: ${data.telefonoPrincipal || "No especificado"}`
+    ].join('\n');
+    
+    addSection("Datos Personales", personalInfo);
+
+    // Agregar información académica
+    const academicInfo = [
+      `Institución: ${data.uner || "No especificada"}`,
+      `Programa: ${data.programaEstudio || "No especificado"}`,
+      `Año de Ingreso: ${data.anioIngreso || "No especificado"}`
+    ].join('\n');
+    
+    addSection("Información Académica", academicInfo);
+
+    // Agregar información de la beca
+    const scholarshipInfo = [
+      `Programa: ${data.programaBeca || "No especificado"}`,
+      `Estado: ${data.estadoBeca || "No especificado"}`,
+      `Tipo de Tarea: ${data.tipoTarea || "No especificado"}`
+    ].join('\n');
+    
+    addSection("Información de la Beca", scholarshipInfo);
+
+    // Agregar código QR con mejor posicionamiento
+    if (qrCodeUrl) {
+      const qrSize = 40; // Reducido de 50 a 40
+      const qrX = pageWidth - margin - qrSize;
+      const qrY = pageHeight - footerHeight - qrSize - 5; // Ajustado para usar el espacio del footer
+      
+      // Asegurar que el QR no se superponga con el contenido
+      if (yPos > qrY - 10) {
+        // En lugar de forzar una nueva página, reducimos el tamaño del QR
+        const smallerQrSize = 30;
+        doc.addImage(
+          qrCodeUrl,
+          "PNG",
+          pageWidth - margin - smallerQrSize,
+          yPos,
+          smallerQrSize,
+          smallerQrSize
+        );
+        
+        // Texto debajo del QR
+        doc.setFontSize(7); // Texto más pequeño
+        doc.text(
+          "Escanear",
+          pageWidth - margin - (smallerQrSize / 2),
+          yPos + smallerQrSize + 3,
+          { align: "center" }
+        );
+        
+        yPos += smallerQrSize + 8; // Ajustar posición Y después del QR
+      } else {
+        // Si hay espacio, usar el tamaño normal
+        doc.addImage(
+          qrCodeUrl,
+          "PNG",
+          qrX,
+          qrY,
+          qrSize,
+          qrSize
+        );
+        
+        // Texto debajo del QR
+        doc.setFontSize(7); // Texto más pequeño
+        doc.text(
+          "Escanee para verificar",
+          qrX + (qrSize / 2),
+          qrY + qrSize + 3,
+          { align: "center" }
+        );
+      }
     }
 
     // Pie de página
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "italic");
-    doc.text(
-      "Este documento es un comprobante de registro. Consérvelo para futuras referencias.",
-      pageWidth / 2,
-      doc.internal.pageSize.getHeight() - 10,
-      { align: "center" }
-    );
-
+    const addFooter = () => {
+      doc.setFontSize(7); // Reducido de 8 a 7
+      doc.setFont("helvetica", "italic");
+      const pageCount = doc.internal.getNumberOfPages();
+      
+      for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        
+        // Número de página (más compacto)
+        doc.text(
+          `${i}/${pageCount}`,
+          pageWidth - margin,
+          pageHeight - 5,
+          { align: "right" }
+        );
+        
+        // Texto del pie de página (más corto y compacto)
+        doc.text(
+          "Comprobante de registro - Fundación Ayacucho",
+          pageWidth / 2,
+          pageHeight - 5,
+          { align: "center" }
+        );
+      }
+    };
+    
+    // Agregar pie de página a todas las páginas
+    addFooter();
+    
     return doc;
   };
 
@@ -562,6 +669,7 @@ const BecarioView = () => {
     };
 
     fetchEstados();
+    get_becarios();
   }, []);
 
   const handleEstadoChange = async (e) => {
@@ -599,6 +707,9 @@ const BecarioView = () => {
   const get_becarios = async () => {
     try {
       const response = await get_becario(user.id);
+     const responseAnexoCedula = await get_anexo_cedula(response.cedula);
+      
+  
       setBecario(response);
       if (response) {
         let fechaNacimientoFormateada = "";
@@ -632,9 +743,9 @@ const BecarioView = () => {
           estadoBeca: response.estado_beca || "",
           tipoTarea: response.tipo_tarea || "",
           dependencia: response.dependencia || "",
-          anexoCedula: response.anexo_cedula,
-          anexoConstancia: response.anexo_constancia || "sfsdfsdf",
-          anexoResidencia: response.anexo_residencia || "sdfsdfsdf",
+          anexoCedula: responseAnexoCedula || "",
+          anexoConstancia: response.anexo_constancia || "",
+          anexoResidencia: response.anexo_residencia || "",
           anexoFoto: response.anexoFoto || "",
           codigoestado: response.codigo_estado || "",
           codigomunicipio: response.codigo_municipio || "",
@@ -642,6 +753,7 @@ const BecarioView = () => {
           latitud: response.latitud || "",
           longitud: response.longitud || "",
           fechaNacimiento: fechaNacimientoFormateada || "",
+          uner: response.uner
         }));
 
         // Si hay coordenadas, centrar el mapa
@@ -689,9 +801,6 @@ const BecarioView = () => {
     }
   };
 
-  useEffect(() => {
-    get_becarios();
-  }, []);
 
   const handleMunicipioChange = async (e) => {
     const selectedOption = e.target.options[e.target.selectedIndex];
@@ -745,6 +854,20 @@ const BecarioView = () => {
         return;
       }
 
+      if (name === "Contrato_convenio" && !validImageTypes.includes(files[0].type)) {
+        alert("Por favor, seleccione una imagen válida (JPEG, PNG)");
+        return;
+      }
+
+      if (name === "constancia_semestre" && !validImageTypes.includes(files[0].type)) {
+        alert("Por favor, seleccione una imagen válida (JPEG, PNG)");
+        return;
+      }
+
+
+            
+
+      
       if (
         ["anexoCedula", "anexoConstancia", "anexoResidencia"].includes(name) &&
         !validDocumentTypes.includes(files[0].type)
@@ -1230,13 +1353,22 @@ const BecarioView = () => {
                 <div className="file-upload-container">
                   <input
                     type="file"
-                    id="anexo"
-                    name="anexo"
+                    id="constancia_semestre"
+                    name="constancia_semestre"
+                    onChange={handleFileChange}
                     className="file-input"
                   />
-                  <label htmlFor="anexo" className="file-upload-button">
+                  <label htmlFor="constancia_semestre" className="file-upload-button">
                     <span className="upload-icon">📎</span> Seleccionar archivo
                   </label>
+
+                   {formData.constancia_semestre && (
+                    <span className="file-name">{formData.constancia_semestre.name}</span>
+                  )}
+                  {errors.constancia_semestre && touched.constancia_semestre && (
+                    <div className="error-message">{errors.constancia_semestre}</div>
+                  )}
+                  
                 </div>
               </div>
             </div>
@@ -1495,16 +1627,27 @@ const BecarioView = () => {
                 <div className="file-upload-container">
                   <input
                     type="file"
-                    id="anexoContancias"
-                    name=""
+                    id="Contrato_convenio"
+                    name="Contrato_convenio"
                     className="file-input"
+                    onChange={handleFileChange}
+                    required
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    
                   />
                   <label
-                    htmlFor="anexoContancias"
+                    htmlFor="Contrato_convenio"
                     className="file-upload-button"
                   >
                     <span className="upload-icon">📎</span> Seleccionar archivo
                   </label>
+
+                  {formData.Contrato_convenio && (
+                    <span className="file-name">{formData.Contrato_convenio.name}</span>
+                  )}
+                  {errors.Contrato_convenio && touched.Contrato_convenio && (
+                    <div className="error-message">{errors.Contrato_convenio}</div>
+                  )}
                   
                 
                 </div>
