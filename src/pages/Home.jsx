@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { FiUser } from 'react-icons/fi';
 
 // Icons
 const MenuIcon = () => (
@@ -70,6 +71,7 @@ function Home() {
   const navItems = [
     { path: '/home', icon: <DashboardIcon />, label: 'Inicio' },
     { path: '/home/becario', icon: <AccountBoxIcon />, label: 'Formulario de Registro' },
+    { path: '/home/perfil', icon: <AccountBoxIcon />, label: 'Perfil' },
   ];
 
   return (
@@ -140,6 +142,7 @@ function Home() {
                     </span>
                     {item.label}
                   </Link>
+                  
                 ))}
               </nav>
             </div>

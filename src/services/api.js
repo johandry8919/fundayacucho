@@ -85,6 +85,13 @@ export const get_becario = async (id) => {
   return response.data;
 };
 
+export const get_becario_esteriol = async (id) => {
+  const response = await api.get("/becarios/get_becario_esteriol", {
+    params: { id },
+  });
+  return response.data;
+};
+
 export const get_becarios = async (
   estado = "",
   municipio = "",
@@ -150,12 +157,28 @@ export const saveBecario = async (formData) => {
   return response.data;
 };
 
+export const saveBecarioEsteriol = async (formData) => {
+  const response = await api.post("/becarios/registroBecarioExteriol", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response.data;
+};
+
+
 export const get_Uner = async (estado = "") => {
   const response = await api.get("becarios/uner", {
     params: { estado },
   });
   return response.data;
 };
+export const get_Paises = async () => {
+  const response = await api.get("becarios/tbl_pais");
+  return response.data;
+};
+
+
 
 export const get_carreras = async (codigo = "") => {
   const response = await api.get("becarios/carreras", {

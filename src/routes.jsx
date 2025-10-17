@@ -17,6 +17,7 @@ import UserDashboard from './pages/dashboard/UserDashboard'; // Import UserDashb
 import BecarioRouteHandler from './components/BecarioRouteHandler'; // Import BecarioRouteHandler
 import { createHashRouter } from 'react-router-dom';
 import Recupera_clave from './pages/Recupera_clave';
+import PerfilUsuario from './components/PerfilUsuario';
 
 
 const router = createHashRouter([
@@ -28,9 +29,6 @@ const router = createHashRouter([
       {
         index: true,
         element: <Login />, // Login page at root
-        
-
-        
       },
 
 
@@ -45,6 +43,10 @@ const router = createHashRouter([
           {
             path: "becario",
             element: <BecarioRouteHandler />,
+          },
+          {
+            path: "perfil",
+            element: <PerfilUsuario />,
           },
         ],
       },
@@ -65,7 +67,7 @@ const router = createHashRouter([
         element: <Registro />,
       },
       {
-        path: "login/recupera_clave",
+        path: "recuperaClave",
         element: <Recupera_clave />,
       }
     ],
