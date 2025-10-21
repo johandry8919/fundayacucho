@@ -12,8 +12,6 @@ import {
   get_parroquias,
   saveBecarioEsteriol,
   get_becario_esteriol,
-  get_Uner,
-  get_carreras,
   get_anexo_cedula,
   get_Paises,
 } from "../services/api";
@@ -92,8 +90,6 @@ const BecarioEsteriol = () => {
     longitud: "",
     latitud_pais: "",
     longitud_pais: "",
-    pais_procedencia: "",
-    
   });
 
   const [estados, setEstados] = useState([]);
@@ -671,14 +667,7 @@ useEffect(() => {
     const latitud_pais = selectedOption.getAttribute("latitud_pais");
     const longitud_pais = selectedOption.getAttribute("longitud_pais");
 
-    if (estadoId || dataBecario.codigo_estado  ) {
-      try {
-        const response = await get_Uner(estadoId);
-        setUner(response);
-      } catch (error) {
-        console.error("Error fetching municipios:", error);
-      }
-    }
+
     setFormData({
       ...formData,
       codigoestado: estadoId,
@@ -748,7 +737,6 @@ useEffect(() => {
           longitud: response.longitud || "",
           latitud_pais: response.latitud_pais || "",
           longitud_pais: response.longitud_pais || "",
-          pais_procedencia: response.pais_procedencia || "",
           fechaNacimiento: fechaNacimientoFormateada || "",
           
         }));

@@ -79,7 +79,7 @@ const Login = () => {
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           {/* Header */}
           <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-6 text-center">
-            <h1 className="text-2xl font-bold text-white">Bienvenido de vuelta</h1>
+            <h1 className="text-2xl font-bold text-white">Bienvenido</h1>
             <p className="text-blue-100 mt-1">Inicia sesión para continuar</p>
           </div>
           
