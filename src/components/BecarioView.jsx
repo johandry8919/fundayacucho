@@ -13,15 +13,15 @@ import {
   saveBecario,
   get_becario,
   get_Uner,
-  get_carreras,
-  get_anexo_cedula,
+  get_carreras
+  
 } from "../services/api";
 import "./../styles/BecarioView.css";
 import { MapContainer, TileLayer, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import BecarioMarker from "./BecarioMarker";
 
-// Fix for default marker icon issue with bundlers
+// Fix for default marker icon issue with bundlers get_anexo_cedula,
 import iconUrl from "leaflet/dist/images/marker-icon.png";
 import iconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
 import shadowUrl from "leaflet/dist/images/marker-shadow.png";
@@ -81,13 +81,14 @@ const BecarioView = () => {
     anexoConstancia: null,
     anexoResidencia: null,
     anexoFoto: null,
-    Contrato_convenio: null,
+    Contrato_convenio: 'null.png',
     constancia_semestre: null,
     codigoestado: "",
     codigomunicipio: "",
     codigoparroquia: "",
     latitud: "",
     longitud: "",
+    codigoestado2: ""
     
   });
 
@@ -179,11 +180,12 @@ const BecarioView = () => {
       anexoConstancia: "Constancia de estudio es requerida",
       anexoResidencia: "Constancia de residencia es requerida",
       anexoFoto: "Fotografía es requerida",
-      Contrato_convenio: "Contrato convenio es requerida",
+     // Contrato_convenio: "Contrato convenio es requerida",
       constancia_semestre: "Contrato convenio es requerida",
       codigoestado: "Estado es requerido",
       codigomunicipio: "Municipio es requerido",
       codigoparroquia: "Parroquia es requerida",
+      codigoestado2: "Estado es requerido"
     };
 
     if (requiredFields[name] && !value) {
@@ -230,6 +232,7 @@ const BecarioView = () => {
         "codigoparroquia",
       ],
       2: [
+        "codigoestado2",
         "institucion",
         "programaEstudio",
         "anioIngreso",
@@ -239,7 +242,7 @@ const BecarioView = () => {
         "constancia_semestre"
       ],
       3: ["programaBeca", "estadoBeca", "tipoTarea", "dependencia"],
-      4: ["anexoCedula", "anexoConstancia", "anexoResidencia", "anexoFoto" , "Contrato_convenio" ],
+      4: ["anexoCedula", "anexoConstancia", "anexoResidencia", "anexoFoto"  ],
     };
 
     const newErrors = {};
@@ -285,9 +288,22 @@ const BecarioView = () => {
     }
   }, [formData.institucion]);
 
-  const handleChange = (e) => {
+  const handleChange = async (e) => {
     const { name, value, type, files } = e.target;
     const fieldValue = type === "file" ? files[0] : value;
+
+
+    //console.log(name , value)
+
+
+    if (name == "codigoestado2" && value) {
+      try {
+        const response = await get_Uner(value);
+        setUner(response);
+      } catch (error) {
+        console.error("Error fetching municipios:", error);
+      }
+    }
 
     setFormData((prev) => ({
       ...prev,
@@ -333,7 +349,7 @@ const BecarioView = () => {
           "constancia_semestre"
         ],
         3: ["programaBeca", "estadoBeca", "tipoTarea", "dependencia"],
-        4: ["anexoCedula", "anexoConstancia", "anexoResidencia", "anexoFoto" , "Contrato_convenio" ],
+        4: ["anexoCedula", "anexoConstancia", "anexoResidencia", "anexoFoto"  ],
       };
 
       const newTouched = {};
@@ -678,14 +694,6 @@ const BecarioView = () => {
     const latitud = selectedOption.getAttribute("latitud");
     const longitud = selectedOption.getAttribute("longitud");
 
-    if (estadoId || dataBecario.codigo_estado) {
-      try {
-        const response = await get_Uner(estadoId);
-        setUner(response);
-      } catch (error) {
-        console.error("Error fetching municipios:", error);
-      }
-    }
     setFormData({
       ...formData,
       codigoestado: estadoId,
@@ -707,7 +715,7 @@ const BecarioView = () => {
   const get_becarios = async () => {
     try {
       const response = await get_becario(user.id);
-     const responseAnexoCedula = await get_anexo_cedula(response.cedula);
+     //const responseAnexoCedula = await get_anexo_cedula(response.cedula);
       
   
       setBecario(response);
@@ -743,7 +751,7 @@ const BecarioView = () => {
           estadoBeca: response.estado_beca || "",
           tipoTarea: response.tipo_tarea || "",
           dependencia: response.dependencia || "",
-          anexoCedula: responseAnexoCedula || "",
+          anexoCedula: response.anexoCedula || "",
           anexoConstancia: response.anexo_constancia || "",
           anexoResidencia: response.anexo_residencia || "",
           anexoFoto: response.anexoFoto || "",
@@ -753,7 +761,8 @@ const BecarioView = () => {
           latitud: response.latitud || "",
           longitud: response.longitud || "",
           fechaNacimiento: fechaNacimientoFormateada || "",
-          uner: response.uner
+          uner: response.uner,
+          codigoestado2: response.codigoestado2 || ""
         }));
 
         // Si hay coordenadas, centrar el mapa
@@ -850,11 +859,6 @@ const BecarioView = () => {
       ];
 
       if (name === "anexoFoto" && !validImageTypes.includes(files[0].type)) {
-        alert("Por favor, seleccione una imagen válida (JPEG, PNG)");
-        return;
-      }
-
-      if (name === "Contrato_convenio" && !validImageTypes.includes(files[0].type)) {
         alert("Por favor, seleccione una imagen válida (JPEG, PNG)");
         return;
       }
@@ -1226,6 +1230,39 @@ const BecarioView = () => {
               <span className="section-icon">🎓</span>
               DATOS ACADÉMICOS
             </h3>
+
+
+            <div className="form-grid">
+              <div className="form-field full-width">
+                <label htmlFor="">Estado de la Universidad </label>
+
+                 <select
+                    name="codigoestado2"
+                    value={formData.codigoestado2}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    required
+                  >
+                    <option value="">Seleccione...</option>
+                    {estados &&
+                      estados.map((stad) => (
+                        <option
+                          key={stad.codigoestado}
+                          value={stad.codigoestado}
+                        >
+                          {stad.nombre}
+                        </option>
+                      ))}
+                  </select>
+
+
+              </div>
+            </div>
+
+
+
+
+
             <div className="form-grid">
               <div className="form-field full-width">
                 <label>
@@ -1622,10 +1659,11 @@ const BecarioView = () => {
                 </div>
               </div>
 
-              <div className="form-field">
+              {/* <div className="form-field">
                 <label>Contrato convenio</label>
                 <div className="file-upload-container">
                   <input
+                    disabled
                     type="file"
                     id="Contrato_convenio"
                     name="Contrato_convenio"
@@ -1651,7 +1689,7 @@ const BecarioView = () => {
                   
                 
                 </div>
-              </div>
+              </div> */}
             </div>
             <div className="form-navigation">
               <button

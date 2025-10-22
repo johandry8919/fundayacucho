@@ -3,7 +3,7 @@ import React, {
   useEffect,
   useMemo,
   useRef,
-  useCallback,
+  useCallback
 } from "react";
 import { useAuth } from "../context/AuthContext";
 import {
@@ -12,7 +12,7 @@ import {
   get_parroquias,
   saveBecarioEsteriol,
   get_becario_esteriol,
-  get_anexo_cedula,
+  
   get_Paises,
 } from "../services/api";
 import "./../styles/BecarioView.css";
@@ -20,7 +20,7 @@ import { MapContainer, TileLayer, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import BecarioMarker from "./BecarioMarker";
 
-// Fix for default marker icon issue with bundlers
+// Fix for default marker icon issue with bundlers get_anexo_cedula,
 import iconUrl from "leaflet/dist/images/marker-icon.png";
 import iconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
 import shadowUrl from "leaflet/dist/images/marker-shadow.png";
@@ -54,9 +54,16 @@ function ChangeView({ center, zoom }) {
 const DEGREE_TYPES = ["Pre-grado", "Maestría", "Doctorado", "Postgrado"];
 
 const BecarioEsteriol = () => {
+
+//let  tipo_becario =  'Becario_Venezolano_en_el_Exterior'
+
+
   const { user } = useAuth();
+
+  console.log(user)
+
   const [dataBecario, setBecario] = useState([]);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState({ 
     id_usuario: user?.id || "",
     nombresApellidos: "",
     cedula: user?.cedula || "",
@@ -70,7 +77,7 @@ const BecarioEsteriol = () => {
     nombre_representante: "",
     parentesco: "",
     institucion: "",
-    tipo_becario: "",
+    tipo_becario:user?.tipo_usuario == "3" ? "Becario_Venezolano_en_el_Exterior" : '',
     pais_procedencia: "",
     institucion_academica: "",
     carrera: "",
@@ -82,7 +89,7 @@ const BecarioEsteriol = () => {
     anexoConstancia: null,
     anexoResidencia: null,
     anexoFoto: null,
-    Contrato_convenio: null,
+    Contrato_convenio: "null.png",
     codigoestado: "",
     codigomunicipio: "",
     codigoparroquia: "",
@@ -166,7 +173,6 @@ const BecarioEsteriol = () => {
       correo: "Correo electrónico es requerido",
       telefonoPrincipal: "Teléfono principal es requerido",
       institucion: "Institución es requerida",
-      tipo_becario: "Programa de estudio es requerido",
       pais_procedencia: "Pais de estudio es requerido",
       institucion_academica: "Institución académica es requerida",
       carrera: "Carrera es requerida",
@@ -177,7 +183,7 @@ const BecarioEsteriol = () => {
       anexoConstancia: "Constancia de estudio es requerida",
       anexoResidencia: "Constancia de residencia es requerida",
       anexoFoto: "Fotografía es requerida",
-      Contrato_convenio: "Contrato convenio es requerida",
+     // Contrato_convenio: "Contrato convenio es requerida",
       codigoestado: "Estado es requerido",
       codigomunicipio: "Municipio es requerido",
       codigoparroquia: "Parroquia es requerida",
@@ -236,8 +242,8 @@ const BecarioEsteriol = () => {
         "institucion_academica"
      
       ],
-      3: ["tipo_becario","tipoBeca"],
-      4: ["anexoCedula", "anexoConstancia", "anexoResidencia", "anexoFoto" , "Contrato_convenio" ],
+      3: ["tipoBeca"],
+      4: ["anexoCedula", "anexoConstancia", "anexoResidencia", "anexoFoto"  ],
     };
 
     const newErrors = {};
@@ -321,7 +327,7 @@ useEffect(() => {
 
         ],
         3: ["tipo_becario" , "tipoBeca"],
-        4: ["anexoCedula", "anexoConstancia", "anexoResidencia", "anexoFoto" , "Contrato_convenio" ],
+        4: ["anexoCedula", "anexoConstancia", "anexoResidencia", "anexoFoto"  ],
       };
 
       const newTouched = {};
@@ -484,8 +490,7 @@ useEffect(() => {
 
     // Agregar información de la beca
     const scholarshipInfo = [
-      `Tipo de becario: ${data.tipo_becario || "No especificado"}`,
-      `Tipo de beca: ${data.tipoBeca || "No especificado"}`,
+      `Tipo de beca: ${data.tipoBeca || "No especificado"}`
    
      
     ].join('\n');
@@ -691,7 +696,7 @@ useEffect(() => {
   const get_becarios = async () => {
     try {
       const response = await get_becario_esteriol(user.id);
-     const responseAnexoCedula = await get_anexo_cedula(response.cedula);
+    // const responseAnexoCedula = await get_anexo_cedula(response.cedula);
       
   
       setBecario(response);
@@ -719,14 +724,14 @@ useEffect(() => {
           nombre_representante: response.nombre_representante || "",
           parentesco: response.parentesco || "",
           institucion: response.institucion || "",
-          tipo_becario: response.tipo_becario || "",
+          tipo_becario: response.tipo_becario,
           pais_procedencia: response.pais_procedencia || "",
           institucion_academica: response.institucion_academica || "",
           carrera: response.carrera || "",
           titularidad: response.titularidad || "",
           anioIngreso: anioIngresoFormateada || "",
           semestreActual: response.semestre_actual || "",
-          anexoCedula: responseAnexoCedula || "",
+          anexoCedula: response.anexo_foto || "",
           anexoConstancia: response.anexo_constancia || "",
           anexoResidencia: response.anexo_residencia || "",
           anexoFoto: response.anexoFoto || "",
@@ -821,12 +826,12 @@ useEffect(() => {
         return;
       }
 
-      if (name === "Contrato_convenio" && !validImageTypes.includes(files[0].type)) {
-        alert("Por favor, seleccione una imagen válida (JPEG, PNG)");
-        return;
-      }
-      if (name === "constancia_semestre" && !validImageTypes.includes(files[0].type)) {
-        alert("Por favor, seleccione una imagen válida (JPEG, PNG)");
+      // if (name === "Contrato_convenio" && !validImageTypes.includes(files[0].type)) {
+      //   alert("Por favor, seleccione una imagen válida (JPEG, PNG)");
+      //   return;
+      // }
+      if (name === "constancia_semestre" && !validDocumentTypes.includes(files[0].type)) {
+        alert("Por favor, seleccione una imagen válida (JPEG, PNG PDF)");
         return;
       }
 
@@ -1378,8 +1383,8 @@ useEffect(() => {
                   onBlur={handleBlur}
                   required
                 >
-                  <option  value="">Seleccione</option>
-                  <option   value="Internacional">Internacional</option>
+                
+                  <option selected disabled  value="Internacional">Internacional</option>
                   
                 </select>
                 {errors.institucion && touched.institucion && (
@@ -1395,8 +1400,7 @@ useEffect(() => {
                   onBlur={handleBlur}
                   required
                 >
-                  <option   value="">Seleccione</option>
-                  <option value="Becario_Venezolano_en_el_Exterior">Becario Venezolano en el Exterior</option>
+                  <option selected disabled value="Becario_Venezolano_en_el_Exterior">Becario Venezolano en el Exterior</option>
                  
                 </select>
                 {errors.tipo_becario && touched.tipo_becario && (
@@ -1407,9 +1411,7 @@ useEffect(() => {
 
 
 
-             
-        
-      
+            
             </div>
             <div className="form-navigation">
               <button
@@ -1543,7 +1545,7 @@ useEffect(() => {
                 </div>
               </div>
 
-              <div className="form-field">
+              {/* <div className="form-field">
                 <label>Contrato convenio</label>
                 <div className="file-upload-container">
                   <input
@@ -1572,7 +1574,7 @@ useEffect(() => {
                   
                 
                 </div>
-              </div>
+              </div> */}
             </div>
             <div className="form-navigation">
               <button
