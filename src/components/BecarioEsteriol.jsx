@@ -55,13 +55,8 @@ const DEGREE_TYPES = ["Pre-grado", "Maestría", "Doctorado", "Postgrado"];
 
 const BecarioEsteriol = () => {
 
-//let  tipo_becario =  'Becario_Venezolano_en_el_Exterior'
-
 
   const { user } = useAuth();
-
-  console.log(user)
-
   const [dataBecario, setBecario] = useState([]);
   const [formData, setFormData] = useState({ 
     id_usuario: user?.id || "",
@@ -97,6 +92,7 @@ const BecarioEsteriol = () => {
     longitud: "",
     latitud_pais: "",
     longitud_pais: "",
+    nivel_academico :"",
   });
 
   const [estados, setEstados] = useState([]);
@@ -179,6 +175,7 @@ const BecarioEsteriol = () => {
       titularidad: "Titularidad es requerida",
       anioIngreso: "Año de ingreso es requerido",
       semestreActual: "Semestre actual es requerido",
+      nivel_academico :"nivel_academico es requerido",
       anexoCedula: "Cédula es requerida",
       anexoConstancia: "Constancia de estudio es requerida",
       anexoResidencia: "Constancia de residencia es requerida",
@@ -239,6 +236,7 @@ const BecarioEsteriol = () => {
         "titularidad",
         "anioIngreso",
         "semestreActual",
+        "nivel_academico",
         "institucion_academica"
      
       ],
@@ -405,6 +403,19 @@ useEffect(() => {
         pageWidth - 2 * margin, 
         headerHeight
       );
+
+        // Fecha de generación
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "normal");
+      const now = new Date();
+      const dateStr = now.toLocaleDateString('es-ES', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      doc.text(`Generado: ${dateStr}`, pageWidth - margin, margin + 25, { align: 'right' });
       
       // Título del documento
       doc.setFontSize(18);
@@ -459,6 +470,7 @@ useEffect(() => {
     const personalInfo = [
       `Nombre: ${data.nombresApellidos || "No especificado"}`,
       `Cédula: ${data.cedula || "No especificada"}`,
+      `Pasaporte: ${data.pasaporte || "No especificada"}`,
       `Fecha de Nacimiento: ${data.fechaNacimiento || "No especificada"}`,
       `Teléfono: ${data.telefonoPrincipal || "No especificado"}`
     ].join('\n');
@@ -469,10 +481,23 @@ useEffect(() => {
       `Nombre: ${data.nombre_representante || "No especificado"}`,
       `Parentesco: ${data.parentesco || "No especificado"}`,
       `Teléfono: ${data.telefonoPrincipal || "No especificado"}`,
-      `Correo: ${data.correo || "No especificado"}`,
+      `Correo: ${data.correo || "No especificado"}`
+     
     ].join('\n');
+
+
+    console.log(data);
     
     addSection("Datos del representante", parentescoInfo);
+
+       // agregar los campos de estado, municipio y parroquia si están disponibles
+       const estadoInfo = [
+        `Estado: ${data.estado || "No especificado"}`,
+        `municipio: ${data.municipio || "No especificado"}`,
+        `parroquia: ${data.parroquia || "No especificado"}`,
+      ].join('\n');
+      
+      addSection("Datos de la Ubicación", estadoInfo);
 
     // Agregar información académica
     const academicInfo = [
@@ -483,19 +508,14 @@ useEffect(() => {
       `Titularidad: ${data.titularidad || "No especificada"}`,
       `Año de Ingreso: ${data.anioIngreso || "No especificado"}`,
       `Semestre Actual: ${data.semestreActual || "No especificado"}`,
+      `Nivel Academico: ${data.nivel_academico || "No especificado"}`,
+      
       //`Constancia Semestre Actual: ${data.constancia_semestre || "No especificado"}`,
     ].join('\n');
     
     addSection("Información Académica", academicInfo);
 
-    // Agregar información de la beca
-    const scholarshipInfo = [
-      `Tipo de beca: ${data.tipoBeca || "No especificado"}`
-   
-     
-    ].join('\n');
-    
-    addSection("Información de la Beca", scholarshipInfo);
+  
 
     // Agregar código QR con mejor posicionamiento
     if (qrCodeUrl) {
@@ -743,6 +763,10 @@ useEffect(() => {
           latitud_pais: response.latitud_pais || "",
           longitud_pais: response.longitud_pais || "",
           fechaNacimiento: fechaNacimientoFormateada || "",
+          nivel_academico: response.nivel_academico || "",
+          estado: response.estado || "",
+          municipio: response.municipio || "",
+          parroquia: response.parroquia || "",
           
         }));
 
@@ -1297,10 +1321,10 @@ useEffect(() => {
                 )}
               </div>
               <div className="form-field">
-                <label>Semestre o Trimestre Actual que Cursa</label>
+                <label>Tipo de nivel académico </label>
                 <select
-                  name="semestreActual"
-                  value={formData.semestreActual}
+                  name="nivel_academico"
+                  value={formData.nivel_academico}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   required
@@ -1310,6 +1334,35 @@ useEffect(() => {
                   <option value="semestre ">semestre </option>
                   <option value="año_cursando">año cursando</option>
              
+                </select>
+                {errors.nivel_academico && touched.nivel_academico && (
+                  <div className="error-message">{errors.nivel_academico}</div>
+                )}
+              </div>
+
+
+               <div className="form-field">
+                <label>Trimestres, semestre o año cursando</label>
+                <select
+                  name="semestreActual"
+                  value={formData.semestreActual}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  required
+                >
+                  <option value="">Seleccione...</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                   <option value="7">7</option>
+                    <option value="8">8</option>
+                      <option value="9">9</option>
+                       <option value="10">10</option>
+                        <option value="11">11</option>
+                         <option value="12">12</option>
                 </select>
                 {errors.semestreActual && touched.semestreActual && (
                   <div className="error-message">{errors.semestreActual}</div>

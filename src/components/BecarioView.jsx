@@ -88,7 +88,8 @@ const BecarioView = () => {
     codigoparroquia: "",
     latitud: "",
     longitud: "",
-    codigoestado2: ""
+    codigoestado2: "",
+    nivel_academico:""
     
   });
 
@@ -185,7 +186,8 @@ const BecarioView = () => {
       codigoestado: "Estado es requerido",
       codigomunicipio: "Municipio es requerido",
       codigoparroquia: "Parroquia es requerida",
-      codigoestado2: "Estado es requerido"
+      codigoestado2: "Estado es requerido",
+      nivel_academico: "Nivel academico es requerido"
     };
 
     if (requiredFields[name] && !value) {
@@ -237,6 +239,7 @@ const BecarioView = () => {
         "programaEstudio",
         "anioIngreso",
         "semestreActual",
+        "nivel_academico",
         "turnoEstudio",
         "modalidadEstudio",
         "constancia_semestre"
@@ -344,6 +347,7 @@ const BecarioView = () => {
           "programaEstudio",
           "anioIngreso",
           "semestreActual",
+          "nivel_academico",
           "turnoEstudio",
           "modalidadEstudio",
           "constancia_semestre"
@@ -447,12 +451,14 @@ const BecarioView = () => {
         hour: '2-digit',
         minute: '2-digit'
       });
-      doc.text(`Generado: ${dateStr}`, pageWidth - margin, margin + 10, { align: 'right' });
+      doc.text(`Generado: ${dateStr}`, pageWidth - margin, margin + 25, { align: 'right' });
       // Línea divisoria
       doc.setDrawColor(0);
       doc.setLineWidth(0.3);
       doc.line(margin, margin + headerHeight + 15, pageWidth - margin, margin + headerHeight + 15);
     };
+
+    //agregar un foto de perfil del becario con un tamaño de 100x100
 
     // Inicializar posición Y y agregar encabezado
     let yPos = margin + 40; // Reducido de 50 a 40 para ahorrar espacio
@@ -499,15 +505,29 @@ const BecarioView = () => {
       `Cédula: ${data.cedula || "No especificada"}`,
       `Fecha de Nacimiento: ${data.fechaNacimiento || "No especificada"}`,
       `Teléfono: ${data.telefonoPrincipal || "No especificado"}`
+    ].join('\n'); 
+    addSection("Datos Personales", personalInfo);
+
+
+     // agregar los campos de estado, municipio y parroquia si están disponibles
+     const estadoInfo = [
+      `Estado: ${data.estado || "No especificado"}`,
+      `municipio: ${data.municipio || "No especificado"}`,
+      `parroquia: ${data.parroquia || "No especificado"}`,
     ].join('\n');
     
-    addSection("Datos Personales", personalInfo);
+    addSection("Datos de la Ubicación", estadoInfo);
+
+
 
     // Agregar información académica
     const academicInfo = [
       `Institución: ${data.uner || "No especificada"}`,
       `Programa: ${data.programaEstudio || "No especificado"}`,
-      `Año de Ingreso: ${data.anioIngreso || "No especificado"}`
+      `Año de Ingreso: ${data.anioIngreso || "No especificado"}`,
+      `Semestre Actual: ${data.semestreActual || "No especificado"}`,
+      `Nivel academico: ${data.nivel_academico || "No especificado"}`
+  
     ].join('\n');
     
     addSection("Información Académica", academicInfo);
@@ -762,7 +782,11 @@ const BecarioView = () => {
           longitud: response.longitud || "",
           fechaNacimiento: fechaNacimientoFormateada || "",
           uner: response.uner,
-          codigoestado2: response.codigoestado2 || ""
+          codigoestado2: response.codigoestado2 || "",
+          nivel_academico: response.nivel_academico || "",
+          estado: response.estado || "",
+          municipio: response.municipio || "",
+          parroquia: response.parroquia || "",
         }));
 
         // Si hay coordenadas, centrar el mapa
@@ -936,6 +960,7 @@ const BecarioView = () => {
                   onChange={handleChange}
                   onBlur={handleBlur}
                   required
+                 
                 />
                 {errors.nombresApellidos && touched.nombresApellidos && (
                   <div className="error-message">{errors.nombresApellidos}</div>
@@ -1321,6 +1346,30 @@ const BecarioView = () => {
                   <div className="error-message">{errors.anioIngreso}</div>
                 )}
               </div>
+
+
+              <div className="form-field">
+                <label>Tipo de nivel académico </label>
+                <select
+                  name="nivel_academico"
+                  value={formData.nivel_academico}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  required
+                >
+                  <option value="">Seleccione...</option>
+                  <option value="trimestres">trimestres</option>
+                  <option value="semestre ">semestre </option>
+                  <option value="año_cursando">año cursando</option>
+             
+                </select>
+                {errors.nivel_academico && touched.nivel_academico && (
+                  <div className="error-message">{errors.nivel_academico}</div>
+                )}
+              </div>
+
+
+
               <div className="form-field">
                 <label>Semestre o Trimestre Actual que Cursa</label>
                 <select

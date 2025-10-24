@@ -135,7 +135,7 @@ export const registro_usuario = async (
   email,
   tipo_usuario,
   password,
-  id_rol,
+  id_rol
 ) => {
   const response = await api.post("/auth/register", {
     cedula,
@@ -143,7 +143,7 @@ export const registro_usuario = async (
     email,
     tipo_usuario,
     password,
-    id_rol
+    id_rol,
   });
   return response.data;
 };
@@ -158,14 +158,17 @@ export const saveBecario = async (formData) => {
 };
 
 export const saveBecarioEsteriol = async (formData) => {
-  const response = await api.post("/becarios/registroBecarioExteriol", formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
+  const response = await api.post(
+    "/becarios/registroBecarioExteriol",
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
   return response.data;
 };
-
 
 export const get_Uner = async (estado = "") => {
   const response = await api.get("becarios/uner", {
@@ -177,8 +180,6 @@ export const get_Paises = async () => {
   const response = await api.get("becarios/tbl_pais");
   return response.data;
 };
-
-
 
 export const get_carreras = async (codigo = "") => {
   const response = await api.get("becarios/carreras", {
