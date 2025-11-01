@@ -182,7 +182,7 @@ const BecarioView = () => {
       anexoResidencia: "Constancia de residencia es requerida",
       anexoFoto: "Fotografía es requerida",
      // Contrato_convenio: "Contrato convenio es requerida",
-      constancia_semestre: "Contrato convenio es requerida",
+      //constancia_semestre: "Contrato convenio es requerida",
       codigoestado: "Estado es requerido",
       codigomunicipio: "Municipio es requerido",
       codigoparroquia: "Parroquia es requerida",
@@ -242,7 +242,7 @@ const BecarioView = () => {
         "nivel_academico",
         "turnoEstudio",
         "modalidadEstudio",
-        "constancia_semestre"
+        //"constancia_semestre"
       ],
       3: ["programaBeca", "estadoBeca", "tipoTarea", "dependencia"],
       4: ["anexoCedula", "anexoConstancia", "anexoResidencia", "anexoFoto"  ],
@@ -350,7 +350,7 @@ const BecarioView = () => {
           "nivel_academico",
           "turnoEstudio",
           "modalidadEstudio",
-          "constancia_semestre"
+          //"constancia_semestre"
         ],
         3: ["programaBeca", "estadoBeca", "tipoTarea", "dependencia"],
         4: ["anexoCedula", "anexoConstancia", "anexoResidencia", "anexoFoto"  ],
@@ -1434,7 +1434,7 @@ const BecarioView = () => {
                 )}
               </div>
 
-              <div className="form-field">
+          {/* <div className="form-field">
                 <label>Constancia Semestre Actual Aprobado </label>
                 <div className="file-upload-container">
                   <input
@@ -1456,7 +1456,7 @@ const BecarioView = () => {
                   )}
                   
                 </div>
-              </div>
+              </div> */}
             </div>
             <div className="form-navigation">
               <button
